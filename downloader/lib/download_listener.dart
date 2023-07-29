@@ -1,4 +1,3 @@
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'download_event.dart';
 import 'download_status_constants.dart';
@@ -28,14 +27,5 @@ class DownloadListener {
     }  else {
       onProgress!(downloadEvent.url!, downloadEvent.progress);
     }
-  }
-
-  void showToast(String msg) {
-    Fluttertoast.showToast(
-        msg: msg,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        fontSize: 16.0);
   }
 }
