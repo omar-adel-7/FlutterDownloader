@@ -2,7 +2,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'download_event.dart';
 import 'download_status_constants.dart';
-import 'download_utils.dart';
 
 class DownloadListener {
 
@@ -14,14 +13,10 @@ class DownloadListener {
     required this.onComplete,
     required this.onError});
 
-  String? iosErrorMessage = "error in download";
 
   publishDownloadResult(DownloadEvent downloadEvent) {
     if (downloadEvent.status == STATUS_DOWNLOAD_ERROR ||
         downloadEvent.status == STATUS_DOWNLOAD_REMOVED) {
-      if (isPlatformIos()) {
-        showToast(iosErrorMessage!);
-      }
       onError!(downloadEvent.url!);
     }
     else if (downloadEvent.status ==
