@@ -6,10 +6,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.ResultReceiver
-import android.util.Log
 import androidx.annotation.NonNull
 import com.file.downloader.download.IDownload
-import com.file.downloader.utils.FileUtility
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall

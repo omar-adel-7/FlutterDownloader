@@ -15,7 +15,6 @@ import com.file.downloader.download.IDownload.ResultReceiver_Status
 import com.file.downloader.download.IDownload.SRC_URL_KEY
 import com.file.downloader.download.IDownloadService
 import com.file.downloader.download.model_download.entity.DownloadModel
-import com.file.downloader.utils.LocaleManager.Companion.getLocaleString
 import com.file.downloader.utils.NotificationUtils
 
 
