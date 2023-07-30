@@ -1,8 +1,8 @@
 import '../method_channels/android_download_method_channel.dart';
 import '../method_channels/ios_download_method_channel.dart';
-import 'download_file_utils.dart';
+import 'download_file_util.dart';
 import 'download_listener.dart';
-import 'download_utils.dart';
+import 'download_util.dart';
 
 class DownloaderPlugin {
   static init() async {

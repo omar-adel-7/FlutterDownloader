@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
                   DownloaderPlugin.downloadFile(
                       url: url,
                       destinationDirPath: destinationDirPath,
-                      fileNameWithoutExtension: "test file name",
+                      fileNameWithoutExtension: "testFileName",
                       extension: ".db",
                       notificationMessage: "test notification message",
                       androidNotificationProgressMessage: "downloading",
