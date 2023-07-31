@@ -53,22 +53,22 @@ class AndroidDownloadMethodChannel {
   }
 
   downloadFile(
-      String url,
-      String fileNameWithoutExtension,
-      String extension,
-      String destinationPath,
-      String notificationMessage,
-      String? notificationProgressMessage,
-      String? notificationCompleteMessage,
-      String? errorMessage,
-      DownloadListener? downloadListener) {
+  {required String url,
+  required String destinationDirPath,
+  required String fileNameWithoutExtension,
+  required String extension,
+  required String notificationMessage,
+  String? notificationProgressMessage,
+  String? notificationCompleteMessage,
+  String? errorMessage,
+  DownloadListener? downloadListener}) {
     addDownloadListener(url, downloadListener);
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
       'url': url,
+      'destinationDirPath': destinationDirPath,
       'fileNameWithoutExtension': fileNameWithoutExtension,
       'extension': extension,
-      'destinationDirPath': destinationPath,
       'notificationMessage': notificationMessage,
       'notificationProgressMessage': notificationProgressMessage,
       'notificationCompleteMessage': notificationCompleteMessage,

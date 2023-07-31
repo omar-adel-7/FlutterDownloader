@@ -22,33 +22,42 @@ class DownloaderPlugin {
       DownloadListener? downloadListener}) async {
     if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance.downloadFile(
-          url,
-          fileNameWithoutExtension,
-          extension,
-          destinationDirPath,
-          notificationMessage,
-          androidNotificationProgressMessage,
-          androidNotificationCompleteMessage,
-          androidErrorMessage,
-          downloadListener);
+          url: url,
+          destinationDirPath: destinationDirPath,
+          fileNameWithoutExtension: fileNameWithoutExtension,
+          extension: extension,
+          notificationMessage: notificationMessage,
+          notificationProgressMessage: androidNotificationProgressMessage,
+          notificationCompleteMessage: androidNotificationCompleteMessage,
+          errorMessage: androidErrorMessage,
+          downloadListener: downloadListener);
     } else if (isPlatformIos()) {
       String fileName = fileNameWithoutExtension + extension;
-      IOSDownloadMethodChannel.instance
-          .downloadFile(url, fileName, destinationDirPath, downloadListener);
+      IOSDownloadMethodChannel.instance.downloadFile(
+          url: url,
+          destinationDirPath: destinationDirPath,
+          fileName: fileName,
+          downloadListener: downloadListener);
     }
   }
 
-  static bool getFileDownloadStatus(String destinationDirPath,
-      String fileNameWithoutExtension, String extension) {
+  static bool getFileDownloadStatus({
+    required String destinationDirPath,
+    required String fileNameWithoutExtension,
+    required String extension,
+  }) {
     return isFileExist(
         destinationDirPath: destinationDirPath,
         fileName: fileNameWithoutExtension + extension);
   }
-  static addDownloadListener(String url,DownloadListener downloadListener){
+
+  static addDownloadListener(String url, DownloadListener downloadListener) {
     if (isPlatformAndroid()) {
-      AndroidDownloadMethodChannel.instance.addDownloadListener(url,downloadListener);
+      AndroidDownloadMethodChannel.instance
+          .addDownloadListener(url, downloadListener);
     } else if (isPlatformIos()) {
-      IOSDownloadMethodChannel.instance.addDownloadListener(url,downloadListener);
-     }
+      IOSDownloadMethodChannel.instance
+          .addDownloadListener(url, downloadListener);
+    }
   }
 }

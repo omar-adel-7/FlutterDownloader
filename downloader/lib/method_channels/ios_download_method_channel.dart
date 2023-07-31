@@ -60,13 +60,14 @@ class IOSDownloadMethodChannel {
       }
     }
   }
-  downloadFile(
-      String url, String fileName, String destinationPath,
-      DownloadListener? downloadListener) {
+  downloadFile({required String url,
+  required String destinationDirPath,
+  required String fileName,
+  DownloadListener? downloadListener}) {
     addDownloadListener(url, downloadListener);
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll(
-        {'url': url, 'fileName': fileName, 'destinationPath': destinationPath});
+        {'url': url,'destinationPath': destinationDirPath,'fileName': fileName});
     _channelMethod?.invokeMethod(_iOSStartDownload, argsMap);
   }
 
