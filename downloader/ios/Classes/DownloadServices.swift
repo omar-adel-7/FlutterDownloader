@@ -12,7 +12,8 @@ class DownloadServices {
     static func download(fileURLString: String, destinationPath: String, fileName: String, completionHandler: @escaping (URL?, URL?, Error?, Int?) -> ()) {
        guard let fileURL = URL(string: fileURLString),
               let destinationURL = destinationPath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-              let destinationPath = URL(string: "file://" + destinationURL + fileName) else { return }
+             let fileName = fileName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+             let destinationPath = URL(string: "file://" + destinationURL + fileName) else { return } 
         
         let destination: DownloadRequest.Destination = { _, _ in
             return (destinationPath, [.removePreviousFile, .createIntermediateDirectories])
