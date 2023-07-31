@@ -14,8 +14,7 @@ class DownloadServices {
               let destinationURL = destinationPath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
              let fileName = fileName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
              let destinationPath = URL(string: "file://" + destinationURL + fileName) else { return } 
-        
-        let destination: DownloadRequest.Destination = { _, _ in
+      let destination: DownloadRequest.Destination = { _, _ in
             return (destinationPath, [.removePreviousFile, .createIntermediateDirectories])
         }
         

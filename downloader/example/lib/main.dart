@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
                   DownloaderPlugin.downloadFile(
                       url: url,
                       destinationDirPath: destinationDirPath,
-                      fileNameWithoutExtension: "test File Name",
+                      fileNameWithoutExtension: "test File Name'with'apostrophe ' and comma, , 12",
                       extension: ".db",
                       notificationMessage: "test notification message",
                       androidNotificationProgressMessage: "downloading",
@@ -100,7 +100,7 @@ class _MyAppState extends State<MyApp> {
               height: 20,
             ),
             Container(
-              height: 200,
+              height: 100,
               color: Colors.yellow,
               child: Column(
                 children: [
