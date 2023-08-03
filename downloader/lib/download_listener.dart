@@ -17,9 +17,8 @@ class DownloadListener {
 
 
   publishDownloadResult(DownloadEvent downloadEvent) {
-    if (downloadEvent.status == STATUS_DOWNLOAD_ERROR ||
-        downloadEvent.status == STATUS_DOWNLOAD_REMOVED) {
-       if (isPlatformIos()) {
+    if (downloadEvent.status == STATUS_DOWNLOAD_ERROR) {
+      if (isPlatformIos()) {
         Fluttertoast.showToast(
             msg: iosErrorMessage,
             toastLength: Toast.LENGTH_SHORT,
@@ -27,6 +26,10 @@ class DownloadListener {
             timeInSecForIosWeb: 1,
             fontSize: 16.0);
       }
+      onError!(downloadEvent.url!);
+    }
+    else
+    if (downloadEvent.status == STATUS_DOWNLOAD_REMOVED) {
       onError!(downloadEvent.url!);
     }
     else if (downloadEvent.status ==
