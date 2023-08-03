@@ -18,7 +18,7 @@ class DownloaderPlugin {
       required String notificationMessage,
       String? androidNotificationProgressMessage,
       String? androidNotificationCompleteMessage,
-      String? androidErrorMessage,
+      String? errorMessage,
       DownloadListener? downloadListener}) async {
     if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance.downloadFile(
@@ -29,7 +29,7 @@ class DownloaderPlugin {
           notificationMessage: notificationMessage,
           notificationProgressMessage: androidNotificationProgressMessage,
           notificationCompleteMessage: androidNotificationCompleteMessage,
-          errorMessage: androidErrorMessage,
+          errorMessage: errorMessage,
           downloadListener: downloadListener);
     } else if (isPlatformIos()) {
       String fileName = fileNameWithoutExtension + extension;

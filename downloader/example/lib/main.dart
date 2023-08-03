@@ -36,44 +36,50 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-           children: [
+          children: [
             Center(
               child: GestureDetector(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Container(color: Colors.cyan, child: Text('Download now')),
+                  child: Container(
+                      color: Colors.cyan, child: Text('Download now')),
                 ),
                 onTap: () async {
                   String url =
                       "https://books9.arabia-it-key.com/storage/app/public/bfdf117a-7885-41ba-8cab-6357150ffb05/4a2a98e9-997f-43b6-83a7-12d30f9ef2ca.db";
                   String destinationDirPath = await getDestination();
+                  String errorMessage = "error in download";
                   DownloaderPlugin.downloadFile(
                       url: url,
                       destinationDirPath: destinationDirPath,
-                      fileNameWithoutExtension: "test File Name'with'apostrophe ' and comma, , 12",
+                      fileNameWithoutExtension:
+                          "test File Name'with'apostrophe ' and comma, , 12",
                       extension: ".db",
                       notificationMessage: "test notification message",
                       androidNotificationProgressMessage: "downloading",
                       androidNotificationCompleteMessage: "complete download",
-                      androidErrorMessage: "error in download",
+                      errorMessage: errorMessage,
                       downloadListener: DownloadListener(
                           onProgress: (String url, int progress) {
-                        print(
-                            "downloadListener onProgress url=$url and progress = $progress");
-                        this.progress = progress;
-                        this.message = "downloading";
-                        setState(() {});
-                      }, onComplete: (String url) {
-                        print("downloadListener onComplete url=$url");
-                        this.progress = 100;
-                        this.message = "complete";
-                        setState(() {});
-                      }, onError: (String url) {
-                        print("downloadListener onError url=$url");
-                        this.progress = 0;
-                        this.message = "error";
-                        setState(() {});
-                      }));
+                            print(
+                                "downloadListener onProgress url=$url and progress = $progress");
+                            this.progress = progress;
+                            this.message = "downloading";
+                            setState(() {});
+                          },
+                          onComplete: (String url) {
+                            print("downloadListener onComplete url=$url");
+                            this.progress = 100;
+                            this.message = "complete";
+                            setState(() {});
+                          },
+                          onError: (String url) {
+                            print("downloadListener onError url=$url");
+                            this.progress = 0;
+                            this.message = "error";
+                            setState(() {});
+                          },
+                          iosErrorMessage: errorMessage));
                   DownloaderPlugin.addDownloadListener(
                       url,
                       DownloadListener(onProgress: (String url, int progress) {
@@ -92,7 +98,7 @@ class _MyAppState extends State<MyApp> {
                         this.progress = 0;
                         this.message = "error";
                         setState(() {});
-                      }));
+                      }, iosErrorMessage: errorMessage));
                 },
               ),
             ),
