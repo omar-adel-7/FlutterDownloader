@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.ResultReceiver
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.file.downloader.R
 import com.file.downloader.download.IDownload.getDownloads
@@ -23,7 +22,116 @@ abstract class IDownloadService : Service() {
     var resultReceiver:ResultReceiver?=null
     var lastProgressTime: Long = 0
 
-     fun startDownload(downloadModel: DownloadModel) {
+    fun getNotificationOfDownload(downloadModel: DownloadModel): Notification {
+        return getNotificationBuilderOfDownload(downloadModel).build()
+    }
+
+    protected abstract fun getNotificationBuilderOfDownload(downloadModel: DownloadModel): NotificationCompat.Builder
+    protected open fun getNotificationBuilderOfCompleteDownload(downloadModel: DownloadModel): NotificationCompat.Builder? {
+        return null
+    }
+
+    protected abstract fun onStartCommandCustom(intent: Intent?)
+    protected abstract fun notifyProgress(notification: Notification?)
+    protected abstract fun notifySuccess(url: String?, notification: Notification?)
+    abstract fun callback_before_error( downloadErrorMessage:String,
+                                        downloadModelErrorMessage:String?)
+    abstract fun sendEvent(message: Bundle)
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        onStartCommandCustom(intent)
+        if (intent != null) {
+            val srcUrl = intent.getStringExtra(IDownload.SRC_URL_KEY)
+            val action = intent.action
+            if (action != null) {
+                if (action == resources.getString(
+                        R.string.download_ACTION_CANCEL_ALL
+                    )
+                ) {
+                    removeAll()
+                } else if (action == resources.getString(
+                        R.string.download_ACTION_CANCEL_ITEM
+                    )
+                ) {
+                    removeDownload(
+                        srcUrl, false,
+                        true, false
+                    )
+                } else if (action == resources.getString(
+                        R.string.download_ACTION_DOWNLOAD_ITEM
+                    )
+                ) {
+                    val destDirPath = intent.getStringExtra(IDownload.SRC_DEST_DIR_PATH_KEY)
+                    val fileNameWithoutExtension =
+                        intent.getStringExtra(IDownload.SRC_FILE_NAME_WITHOUT_EXTENSION_KEY)
+                    val extension = intent.getStringExtra(IDownload.SRC_FILE_EXTENSION_KEY)
+                    val notificationMessage =
+                        intent.getStringExtra(IDownload.SRC_NOTIFICATION_MESSAGE)
+                    val notificationProgressMessage =
+                        intent.getStringExtra(IDownload.SRC_NOTIFICATION_PROGRESS_MESSAGE)
+                    val notificationCompleteMessage =
+                        intent.getStringExtra(IDownload.SRC_NOTIFICATION_COMPLETE_MESSAGE)
+                    val errorMessage =
+                        intent.getStringExtra(IDownload.SRC_ERROR_MESSAGE)
+                    resultReceiver = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                        intent.getParcelableExtra(
+                            IDownload.ResultReceiver_Key,
+                            ResultReceiver::class.java
+                        )
+                    }else{
+                        intent.getParcelableExtra(IDownload.ResultReceiver_Key)
+                    }
+                    if (!isInDownloading(this, srcUrl)) {
+                        if (destDirPath != null
+                            && fileNameWithoutExtension != null
+                            && extension != null
+                            && notificationMessage != null
+                            && notificationProgressMessage != null
+                            && notificationCompleteMessage != null
+                            && errorMessage != null
+                        ) {
+                            val downloadModel = srcUrl?.let {
+                                DownloadModel(
+                                    it,
+                                    destDirPath,
+                                    fileNameWithoutExtension,
+                                    extension,
+                                    notificationMessage,
+                                    notificationProgressMessage,
+                                    notificationCompleteMessage,
+                                    errorMessage
+                                )
+                            }
+                            DownloadDbUtil.insertDownload(this, downloadModel)
+                            if (downloadModel != null) {
+                                sendAdded(downloadModel)
+                            }
+                            val downloadModels = getDownloads(this)
+                            if (downloadModels != null) {
+                                if (downloadModels.size == 1) {
+                                    if (isInDownloading(this, downloadModels[0].url)) {
+                                        try {
+                                            startForeground( /*FOREGROUND_ID*/downloadNotId,
+                                                getNotificationOfDownload(downloadModels[0])
+                                            )
+                                            startDownload(downloadModels[0])
+                                        }
+                                        catch (e:java.lang.Exception)
+                                        {
+                                            DownloadDbUtil.clearDownloads(this)
+                                            sendStartForegroundException(downloadModels[0])
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return START_REDELIVER_INTENT
+    }
+    fun startDownload(downloadModel: DownloadModel) {
          Thread(Runnable {
              var connection: HttpURLConnection? = null
              var input: InputStream? = null
@@ -106,7 +214,6 @@ abstract class IDownloadService : Service() {
          }).start()
     }
 
-
     private fun deleteDownloadFile(downloadModel: DownloadModel) {
             IDownload.DeleteRecursive(
                 this,
@@ -114,11 +221,9 @@ abstract class IDownloadService : Service() {
             )
     }
 
-
     fun sendProgress(downloadModel: DownloadModel, progress: Int, size: Double) {
         val message = Bundle()
         message.putString(IDownload.RESPONSE_URL_KEY, downloadModel.url)
-        message.putString(RESPONSE_SERVICE_TYPE, downloadModel.service_type)
         message.putInt(IDownload.RESPONSE_PROGRESS_KEY, progress)
         message.putDouble(IDownload.RESPONSE_SIZE_KEY, size)
         val time = Date().time
@@ -135,7 +240,6 @@ abstract class IDownloadService : Service() {
         val message = Bundle()
         message.putString(IDownload.RESPONSE_URL_KEY, downloadModel.url)
         message.putString(IDownload.RESPONSE_ADDED_KEY, IDownload.RESPONSE_ADDED_KEY)
-        message.putString(RESPONSE_SERVICE_TYPE, downloadModel.service_type)
         sendEvent(message)
     }
 
@@ -143,13 +247,11 @@ abstract class IDownloadService : Service() {
         val message = Bundle()
         message.putString(IDownload.RESPONSE_URL_KEY, downloadModel.url)
         message.putString(RESPONSE_REMOVED_KEY, RESPONSE_REMOVED_KEY)
-        message.putString(RESPONSE_SERVICE_TYPE, downloadModel.service_type)
         sendEvent(message)
     }
 
-    fun sendAllRemoved(service_type: String?) {
+    fun sendAllRemoved() {
         val message = Bundle()
-        message.putString(RESPONSE_SERVICE_TYPE, service_type)
         message.putString(RESPONSE_ALL_REMOVED_KEY, RESPONSE_ALL_REMOVED_KEY)
         sendEvent(message)
     }
@@ -159,7 +261,6 @@ abstract class IDownloadService : Service() {
         val message = Bundle()
         message.putString(IDownload.RESPONSE_URL_KEY, downloadModel.url)
         message.putString(RESPONSE_CANCEL_KEY, RESPONSE_CANCEL_KEY)
-        message.putString(RESPONSE_SERVICE_TYPE, downloadModel.service_type)
         sendEvent(message)
         removeDownload(
             downloadModel.url, false,
@@ -171,7 +272,6 @@ abstract class IDownloadService : Service() {
         val message = Bundle()
         message.putString(IDownload.RESPONSE_URL_KEY, downloadModel.url)
         message.putBoolean(IDownload.RESPONSE_SUCCESS_ERROR_KEY, success)
-        message.putString(RESPONSE_SERVICE_TYPE, downloadModel.service_type)
         if (!success) {
             message.putString(IDownload.RESPONSE_ERROR_MESSAGE_KEY, errorMessage)
             if (errorMessage != null) {
@@ -189,125 +289,13 @@ abstract class IDownloadService : Service() {
         val message = Bundle()
         message.putString(IDownload.RESPONSE_URL_KEY, downloadModel.url)
         message.putString(RESPONSE_FOREGROUND_EXCEPTION_KEY, RESPONSE_FOREGROUND_EXCEPTION_KEY)
-        message.putString(RESPONSE_SERVICE_TYPE, downloadModel.service_type)
         sendEvent(message)
-    }
-
-    fun getNotificationOfDownload(downloadModel: DownloadModel): Notification {
-        return getNotificationBuilderOfDownload(downloadModel).build()
-    }
-
-
-    protected abstract fun getNotificationBuilderOfDownload(downloadModel: DownloadModel): NotificationCompat.Builder
-    protected open fun getNotificationBuilderOfCompleteDownload(downloadModel: DownloadModel): NotificationCompat.Builder? {
-        return null
-    }
-
-    protected abstract fun onStartCommandCustom(intent: Intent?)
-    protected abstract fun notifyProgress(notification: Notification?)
-    protected abstract fun notifySuccess(url: String?, notification: Notification?)
-    abstract fun callback_before_error( downloadErrorMessage:String,
-                                        downloadModelErrorMessage:String?)
-    abstract fun sendEvent(message: Bundle)
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        onStartCommandCustom(intent)
-        if (intent != null) {
-            val srcUrl = intent.getStringExtra(IDownload.SRC_URL_KEY)
-            val action = intent.action
-            if (action != null) {
-                if (action == resources.getString(
-                        R.string.download_ACTION_CANCEL_ALL
-                    )
-                ) {
-                    removeAll(serviceType)
-                } else if (action == resources.getString(
-                        R.string.download_ACTION_CANCEL_ITEM
-                    )
-                ) {
-                    removeDownload(
-                        srcUrl, false,
-                        true, false
-                    )
-                } else if (action == resources.getString(
-                        R.string.download_ACTION_DOWNLOAD_ITEM
-                    )
-                ) {
-                    val destDirPath = intent.getStringExtra(IDownload.SRC_DEST_DIR_PATH_KEY)
-                    val fileNameWithoutExtension =
-                        intent.getStringExtra(IDownload.SRC_FILE_NAME_WITHOUT_EXTENSION_KEY)
-                    val extension = intent.getStringExtra(IDownload.SRC_FILE_EXTENSION_KEY)
-                    val notificationMessage =
-                        intent.getStringExtra(IDownload.SRC_NOTIFICATION_MESSAGE)
-                    val notificationProgressMessage =
-                        intent.getStringExtra(IDownload.SRC_NOTIFICATION_PROGRESS_MESSAGE)
-                    val notificationCompleteMessage =
-                        intent.getStringExtra(IDownload.SRC_NOTIFICATION_COMPLETE_MESSAGE)
-                    val errorMessage =
-                        intent.getStringExtra(IDownload.SRC_ERROR_MESSAGE)
-                    resultReceiver = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                        intent.getParcelableExtra(
-                            IDownload.ResultReceiver_Key,
-                            ResultReceiver::class.java
-                        )
-                    }else{
-                        intent.getParcelableExtra(IDownload.ResultReceiver_Key)
-                    }
-                    if (!isInDownloading(this, srcUrl)) {
-                        if (destDirPath != null
-                            && fileNameWithoutExtension != null
-                            && extension != null
-                            && serviceType != null
-                        ) {
-                            val downloadModel = srcUrl?.let {
-                                DownloadModel(
-                                    it,
-                                    destDirPath,
-                                    fileNameWithoutExtension,
-                                    extension,
-                                    serviceType!!,
-                                    notificationMessage,
-                                    notificationProgressMessage,
-                                    notificationCompleteMessage,
-                                    errorMessage
-                                )
-                            }
-                            DownloadDbUtil.insertDownload(this, downloadModel)
-                            if (downloadModel != null) {
-                                sendAdded(downloadModel)
-                            }
-                            val downloadModels = getDownloads(
-                                this, serviceType
-                            )
-                            if (downloadModels != null) {
-                                if (downloadModels.size == 1) {
-                                    if (isInDownloading(this, downloadModels[0].url)) {
-                                        try {
-                                            startForeground( /*FOREGROUND_ID*/downloadNotId,
-                                                getNotificationOfDownload(downloadModels[0])
-                                            )
-                                            startDownload(downloadModels[0])
-                                        }
-                                        catch (e:java.lang.Exception)
-                                        {
-                                            DownloadDbUtil.clearDownloads(this, serviceType)
-                                            sendStartForegroundException(downloadModels[0])
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return START_REDELIVER_INTENT
     }
 
     fun removeDownload(
         url: String?, isSuccess: Boolean, cancelledByAction: Boolean, checkToNext: Boolean
     ) {
-        val downloads = getDownloads(this, serviceType)
+        val downloads = getDownloads(this)
         if (downloads != null) {
             for (i in downloads.indices.reversed()) {
                 if (downloads.size > i) {
@@ -336,14 +324,14 @@ abstract class IDownloadService : Service() {
         }
     }
 
-    fun removeAll(service_type: String?) {
-        DownloadDbUtil.clearDownloads(this, service_type)
-        sendAllRemoved(service_type)
+    fun removeAll() {
+        DownloadDbUtil.clearDownloads(this)
+        sendAllRemoved()
         stopThisServiceOrNot()
     }
 
     fun checkToNextDownload() {
-        val downloads = getDownloads(this, serviceType)
+        val downloads = getDownloads(this)
         if (downloads.isNullOrEmpty()) {
             stopThisServiceOrNot()
         } else {
@@ -352,7 +340,7 @@ abstract class IDownloadService : Service() {
     }
 
     fun stopThisServiceOrNot() {
-        val downloads = getDownloads(this, serviceType)
+        val downloads = getDownloads(this)
         if (downloads.isNullOrEmpty()) {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             {
@@ -366,12 +354,10 @@ abstract class IDownloadService : Service() {
         }
     }
 
-    abstract val serviceType: String?
     abstract val downloadNotId: Int
 
     companion object {
         const val RESPONSE_ALL_REMOVED_KEY = "response_all_removed"
-        const val RESPONSE_SERVICE_TYPE = "response_service_type"
         const val RESPONSE_REMOVED_KEY = "response_removed"
         const val RESPONSE_CANCEL_KEY = "response_cancel"
         const val RESPONSE_FOREGROUND_EXCEPTION_KEY = "response_foreground_exception_key"

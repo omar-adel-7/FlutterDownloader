@@ -53,15 +53,15 @@ class AndroidDownloadMethodChannel {
   }
 
   downloadFile(
-  {required String url,
-  required String destinationDirPath,
-  required String fileNameWithoutExtension,
-  required String extension,
-  required String notificationMessage,
-  String? notificationProgressMessage,
-  String? notificationCompleteMessage,
-  String? errorMessage,
-  DownloadListener? downloadListener}) {
+      {required String url,
+      required String destinationDirPath,
+      required String fileNameWithoutExtension,
+      required String extension,
+      required String notificationMessage,
+      required String notificationProgressMessage,
+      required String notificationCompleteMessage,
+      required String errorMessage,
+      DownloadListener? downloadListener}) {
     addDownloadListener(url, downloadListener);
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
@@ -79,10 +79,9 @@ class AndroidDownloadMethodChannel {
 
   void addDownloadListener(String url, DownloadListener? downloadListener) {
     if (downloadListener != null) {
-      if(downloadListeners[url]==null)
-        {
-          downloadListeners[url] = [];
-        }
+      if (downloadListeners[url] == null) {
+        downloadListeners[url] = [];
+      }
       downloadListeners[url]?.add(downloadListener);
     }
   }

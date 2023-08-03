@@ -6,8 +6,8 @@ import com.file.downloader.download.model_download.entity.DownloadModel
 
 
 object DownloadDbUtil {
-    fun getDownloads(context: Context?, service_type: String?): List<DownloadModel>? {
-        return DownloadDb.getDataBase(context)?.myDao()?.getDownloads(service_type)
+    fun getDownloads(context: Context?): List<DownloadModel>? {
+        return DownloadDb.getDataBase(context)?.myDao()?.getDownloads()
     }
 
     fun insertDownload(context: Context?, downloadModel: DownloadModel?) {
@@ -18,8 +18,8 @@ object DownloadDbUtil {
         DownloadDb.getDataBase(context)?.myDao()?.removeDownload(url)
     }
 
-    fun clearDownloads(context: Context?, service_type: String?) {
-        DownloadDb.getDataBase(context)?.myDao()?.clearDownloads(service_type)
+    fun clearDownloads(context: Context?) {
+        DownloadDb.getDataBase(context)?.myDao()?.clearDownloads()
     }
 
     fun isInDownloads(context: Context?, url: String?): Boolean {

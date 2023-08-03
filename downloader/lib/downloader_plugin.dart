@@ -16,10 +16,11 @@ class DownloaderPlugin {
       required String fileNameWithoutExtension,
       required String extension,
       required String notificationMessage,
-      String? androidNotificationProgressMessage,
-      String? androidNotificationCompleteMessage,
-      String? errorMessage,
+      required String androidNotificationProgressMessage,
+      required String androidNotificationCompleteMessage,
+      required String errorMessage,
       DownloadListener? downloadListener}) async {
+    downloadListener?.iosErrorMessage=errorMessage;
     if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance.downloadFile(
           url: url,

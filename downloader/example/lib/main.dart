@@ -78,8 +78,7 @@ class _MyAppState extends State<MyApp> {
                             this.progress = 0;
                             this.message = "error";
                             setState(() {});
-                          },
-                          iosErrorMessage: errorMessage));
+                          }));
                   DownloaderPlugin.addDownloadListener(
                       url,
                       DownloadListener(onProgress: (String url, int progress) {
@@ -98,7 +97,7 @@ class _MyAppState extends State<MyApp> {
                         this.progress = 0;
                         this.message = "error";
                         setState(() {});
-                      }, iosErrorMessage: errorMessage));
+                      }));
                 },
               ),
             ),
@@ -131,7 +130,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<String> getAppInternalFolderPath() async {
     Directory appDocumentsDirectory =
-        await getApplicationDocumentsDirectory(); // 1
-    return appDocumentsDirectory.path; // 2
+        await getApplicationDocumentsDirectory();
+    return appDocumentsDirectory.path;
   }
 }

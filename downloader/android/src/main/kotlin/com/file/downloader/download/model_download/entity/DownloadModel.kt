@@ -14,11 +14,10 @@ class DownloadModel
     val dest_dir_path: String,
     val file_name_without_extension: String,
     val extension : String,
-    val service_type: String,
-    val notification_message: String? = null,
-    val notification_progress_message: String? = null,
-    val notification_complete_message: String? = null,
-    val error_message: String? = null,
+    val notification_message: String,
+    val notification_progress_message: String,
+    val notification_complete_message: String,
+    val error_message: String,
 
     ): Parcelable {
     val dest_file_full_path: String

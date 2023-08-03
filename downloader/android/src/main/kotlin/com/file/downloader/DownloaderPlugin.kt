@@ -34,14 +34,14 @@ class DownloaderPlugin: FlutterPlugin, MethodCallHandler  {
   override fun onMethodCall(call: MethodCall, @NonNull result: Result) {
     if (call.method.equals(CHANNEL_DOWNLOAD_START)) {
       val argsMap = call.arguments as HashMap<*, *>
-      val url = argsMap["url"] as String?
-      val destinationDirPath = argsMap["destinationDirPath"]as String?
-      val fileNameWithoutExtension = argsMap["fileNameWithoutExtension"]as String?
-      val extension = argsMap["extension"]as String?
-      val notificationMessage = argsMap["notificationMessage"]as String?
-      val notificationProgressMessage = argsMap["notificationProgressMessage"]as String?
-      val notificationCompleteMessage = argsMap["notificationCompleteMessage"]as String?
-      val errorMessage = argsMap["errorMessage"]as String?
+      val url = argsMap["url"] as String
+      val destinationDirPath = argsMap["destinationDirPath"]as String
+      val fileNameWithoutExtension = argsMap["fileNameWithoutExtension"]as String
+      val extension = argsMap["extension"]as String
+      val notificationMessage = argsMap["notificationMessage"]as String
+      val notificationProgressMessage = argsMap["notificationProgressMessage"]as String
+      val notificationCompleteMessage = argsMap["notificationCompleteMessage"]as String
+      val errorMessage = argsMap["errorMessage"]as String
 
       context?.let {
         val intent = Intent(it, DownloadService::class.java)

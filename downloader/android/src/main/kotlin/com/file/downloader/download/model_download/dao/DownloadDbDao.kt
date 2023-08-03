@@ -7,17 +7,17 @@ import com.file.downloader.download.model_download.entity.DownloadModel
 
 @Dao
 interface DownloadDbDao {
-    @Query("SELECT * FROM DownloadModel where service_type=:service_type  ")
-    fun getDownloads(service_type: String?): List<DownloadModel>
+    @Query("SELECT * FROM DownloadModel")
+    fun getDownloads(): List<DownloadModel>
 
     @Insert
     fun insertDownload(downloadModel: DownloadModel?)
 
-    @Query("DELETE FROM DownloadModel  where  url=:url")
+    @Query("DELETE FROM DownloadModel  where url=:url")
     fun removeDownload(url: String?)
 
-    @Query("DELETE FROM DownloadModel where service_type=:service_type")
-    fun clearDownloads(service_type: String?)
+    @Query("DELETE FROM DownloadModel")
+    fun clearDownloads()
 
     @Query("SELECT * FROM DownloadModel where  url=:url  ")
     fun isInDownloads(url: String?): DownloadModel?

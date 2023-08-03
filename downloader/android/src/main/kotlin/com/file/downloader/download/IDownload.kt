@@ -32,8 +32,8 @@ object IDownload {
     const val ResultReceiver_Key = "result_receiver"
     const val ResultReceiver_Status = "result_receiver_status"
 
-    fun getDownloads(context: Context?, service_type: String?): List<DownloadModel>? {
-        return DownloadDbUtil.getDownloads(context, service_type)
+    fun getDownloads(context: Context?): List<DownloadModel>? {
+        return DownloadDbUtil.getDownloads(context)
     }
 
     fun getDownloadEvent(context: Context?, extras: Bundle): DownloadEvent {

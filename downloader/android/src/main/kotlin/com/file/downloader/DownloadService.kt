@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.file.downloader.download.IDownload
@@ -42,7 +41,7 @@ class DownloadService : IDownloadService() {
     override fun callback_before_error(downloadErrorMessage:String,
                                        downloadModelErrorMessage:String?) {
         displayToast(downloadModelErrorMessage)
-//        displayToast(downloadErrorMessage)
+//      displayToast(downloadErrorMessage)
     }
 
     fun displayToast(message: String?) {
@@ -75,11 +74,8 @@ class DownloadService : IDownloadService() {
         return notificationBuilder
     }
 
-    override val serviceType: String
-        get() = ""
     override val downloadNotId: Int
         get() = 1
-
 
     override fun sendEvent(message: Bundle) {
         val downloadEvent = IDownload.getDownloadEvent(this,message)
