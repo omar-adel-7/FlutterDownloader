@@ -28,7 +28,8 @@ class IOSDownloadMethodChannel {
     switch (call.method) {
       case _iOSDownloadProgress:
         DownloadEvent downloadEvent = DownloadEvent(
-            url: methodData['url'], status: STATUS_DOWNLOAD_PROGRESS,
+            url: methodData['url'],
+            status: STATUS_DOWNLOAD_PROGRESS,
             progress: methodData['progress']);
         publishDownloadResult(downloadEvent);
         break;
@@ -76,9 +77,7 @@ class IOSDownloadMethodChannel {
   void addDownloadListener(
       {required String url, DownloadListener? downloadListener}) {
     if (downloadListener != null) {
-      if (downloadListeners[url] == null) {
-        downloadListeners[url] = [];
-      }
+      downloadListeners[url] = [];
       downloadListeners[url]?.add(downloadListener);
     }
   }

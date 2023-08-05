@@ -25,8 +25,9 @@ class AndroidDownloadMethodChannel {
     final Map methodData = call.arguments;
     switch (call.method) {
       case _androidDownloadResult:
-        DownloadEvent downloadEvent =
-            DownloadEvent(url: methodData['url'], status: methodData['status'],
+        DownloadEvent downloadEvent = DownloadEvent(
+            url: methodData['url'],
+            status: methodData['status'],
             progress: methodData['progress']);
         publishDownloadResult(downloadEvent);
         break;
@@ -63,16 +64,14 @@ class AndroidDownloadMethodChannel {
       'notificationMessage': notificationMessage,
       'notificationProgressMessage': notificationProgressMessage,
       'notificationCompleteMessage': notificationCompleteMessage,
-     });
+    });
     _channelMethod?.invokeMethod(_androidStartDownload, argsMap);
   }
 
   void addDownloadListener(
       {required String url, DownloadListener? downloadListener}) {
     if (downloadListener != null) {
-      if (downloadListeners[url] == null) {
-        downloadListeners[url] = [];
-      }
+      downloadListeners[url] = [];
       downloadListeners[url]?.add(downloadListener);
     }
   }
