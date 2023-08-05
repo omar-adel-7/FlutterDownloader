@@ -13,7 +13,8 @@ class IOSDownloadMethodChannel {
   MethodChannel? _channelMethod;
   final Map<String, List<DownloadListener>> downloadListeners = {};
 
-  static final IOSDownloadMethodChannel instance = IOSDownloadMethodChannel._init();
+  static final IOSDownloadMethodChannel instance =
+      IOSDownloadMethodChannel._init();
 
   IOSDownloadMethodChannel._init();
 
@@ -27,54 +28,55 @@ class IOSDownloadMethodChannel {
     switch (call.method) {
       case _iOSDownloadProgress:
         DownloadEvent downloadEvent = DownloadEvent(
-            url: methodData['url'],
-            progress: methodData['progress']
-        );
+            url: methodData['url'], status: STATUS_DOWNLOAD_PROGRESS,
+            progress: methodData['progress']);
         publishDownloadResult(downloadEvent);
-          break;
+        break;
       case _iOSDownloadCompleted:
         DownloadEvent downloadEvent = DownloadEvent(
-            url: methodData['url'],
-            status: STATUS_DOWNLOAD_COMPLETED
-        );
+            url: methodData['url'], status: STATUS_DOWNLOAD_COMPLETED);
         publishDownloadResult(downloadEvent);
-         break;
+        break;
       case _iOSDownloadError:
         DownloadEvent downloadEvent = DownloadEvent(
             url: methodData['url'],
             status: STATUS_DOWNLOAD_ERROR,
-            error: methodData['error']
-        );
+            error: methodData['error']);
         publishDownloadResult(downloadEvent);
-         break;
+        break;
       default:
         break;
     }
   }
 
-  publishDownloadResult(DownloadEvent downloadEvent)  {
-    if(downloadListeners[downloadEvent.url]!=null)
-    {
+  publishDownloadResult(DownloadEvent downloadEvent) {
+    if (downloadListeners[downloadEvent.url] != null) {
       for (int i = 0; i < downloadListeners[downloadEvent.url]!.length; i++) {
-        downloadListeners[downloadEvent.url]?[i].publishDownloadResult(downloadEvent);
+        downloadListeners[downloadEvent.url]?[i]
+            .publishDownloadResult(downloadEvent);
       }
     }
   }
-  downloadFile({required String url,
-  required String destinationDirPath,
-  required String fileName,
-  DownloadListener? downloadListener}) {
-    addDownloadListener(url, downloadListener);
+
+  downloadFile(
+      {required String url,
+      required String destinationDirPath,
+      required String fileName,
+      DownloadListener? downloadListener}) {
+    addDownloadListener(url: url, downloadListener: downloadListener);
     Map argsMap = <dynamic, dynamic>{};
-    argsMap.addAll(
-        {'url': url,'destinationPath': destinationDirPath,'fileName': fileName});
+    argsMap.addAll({
+      'url': url,
+      'destinationPath': destinationDirPath,
+      'fileName': fileName
+    });
     _channelMethod?.invokeMethod(_iOSStartDownload, argsMap);
   }
 
-  void addDownloadListener(String url, DownloadListener? downloadListener) {
+  void addDownloadListener(
+      {required String url, DownloadListener? downloadListener}) {
     if (downloadListener != null) {
-      if(downloadListeners[url]==null)
-      {
+      if (downloadListeners[url] == null) {
         downloadListeners[url] = [];
       }
       downloadListeners[url]?.add(downloadListener);

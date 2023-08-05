@@ -41,7 +41,6 @@ class DownloaderPlugin: FlutterPlugin, MethodCallHandler  {
       val notificationMessage = argsMap["notificationMessage"]as String
       val notificationProgressMessage = argsMap["notificationProgressMessage"]as String
       val notificationCompleteMessage = argsMap["notificationCompleteMessage"]as String
-      val errorMessage = argsMap["errorMessage"]as String
 
       context?.let {
         val intent = Intent(it, DownloadService::class.java)
@@ -55,15 +54,16 @@ class DownloaderPlugin: FlutterPlugin, MethodCallHandler  {
         intent.putExtra(IDownload.SRC_NOTIFICATION_MESSAGE, notificationMessage)
         intent.putExtra(IDownload.SRC_NOTIFICATION_PROGRESS_MESSAGE, notificationProgressMessage)
         intent.putExtra(IDownload.SRC_NOTIFICATION_COMPLETE_MESSAGE, notificationCompleteMessage)
-        intent.putExtra(IDownload.SRC_ERROR_MESSAGE, errorMessage)
         intent.putExtra(IDownload.ResultReceiver_Key, object : ResultReceiver(Handler(Looper.getMainLooper())) {
           override fun onReceiveResult(resultCode: Int, resultData: Bundle) {
             super.onReceiveResult(resultCode, resultData)
               val status = resultData.getString(IDownload.ResultReceiver_Status)
+              val progress = resultData.getInt(IDownload.ResultReceiver_Progress)
               methodChannelDownload?.invokeMethod(
                 CHANNEL_DOWNLOAD_RESULT, hashMapOf(
                   "url" to url,
                   "status" to status,
+                  "progress" to progress,
                 )
               )
           }

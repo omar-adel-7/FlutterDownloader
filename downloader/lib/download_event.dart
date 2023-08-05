@@ -1,17 +1,15 @@
-import 'download_status_constants.dart';
-
 class DownloadEvent {
 
   DownloadEvent(
       {
-        this.url,
-        this.status = STATUS_NOT_DOWNLOADED,
-        this.progress=0,
-        this.error
+        required this.url,
+        required this.status,
+        this.progress,
+        this.error,
       });
 
-  String? url;
-  String? status ;
-  int progress;
+  String url;
+  String status ;
+  int? progress;
   String? error ;
 }

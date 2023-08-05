@@ -15,22 +15,19 @@ class DownloaderPlugin {
       required String destinationDirPath,
       required String fileNameWithoutExtension,
       required String extension,
-      required String notificationMessage,
+      required String androidNotificationMessage,
       required String androidNotificationProgressMessage,
       required String androidNotificationCompleteMessage,
-      required String errorMessage,
       DownloadListener? downloadListener}) async {
-    downloadListener?.iosErrorMessage=errorMessage;
     if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance.downloadFile(
           url: url,
           destinationDirPath: destinationDirPath,
           fileNameWithoutExtension: fileNameWithoutExtension,
           extension: extension,
-          notificationMessage: notificationMessage,
+          notificationMessage: androidNotificationMessage,
           notificationProgressMessage: androidNotificationProgressMessage,
           notificationCompleteMessage: androidNotificationCompleteMessage,
-          errorMessage: errorMessage,
           downloadListener: downloadListener);
     } else if (isPlatformIos()) {
       String fileName = fileNameWithoutExtension + extension;
@@ -52,13 +49,15 @@ class DownloaderPlugin {
         fileName: fileNameWithoutExtension + extension);
   }
 
-  static addDownloadListener(String url, DownloadListener downloadListener) {
+  static addDownloadListener(
+      {required String url,
+      required DownloadListener downloadListener}) {
     if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance
-          .addDownloadListener(url, downloadListener);
+          .addDownloadListener(url: url, downloadListener: downloadListener);
     } else if (isPlatformIos()) {
       IOSDownloadMethodChannel.instance
-          .addDownloadListener(url, downloadListener);
+          .addDownloadListener(url: url, downloadListener: downloadListener);
     }
   }
 }

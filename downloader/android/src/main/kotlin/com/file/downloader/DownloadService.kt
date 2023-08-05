@@ -1,6 +1,5 @@
 package com.file.downloader
 
-import android.app.Activity
 import android.app.Notification
 import android.content.Context
 import android.content.Intent
@@ -10,6 +9,7 @@ import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.file.downloader.download.IDownload
+import com.file.downloader.download.IDownload.ResultReceiver_Progress
 import com.file.downloader.download.IDownload.ResultReceiver_Status
 import com.file.downloader.download.IDownload.SRC_URL_KEY
 import com.file.downloader.download.IDownloadService
@@ -38,10 +38,8 @@ class DownloadService : IDownloadService() {
         return null
     }
 
-    override fun callback_before_error(downloadErrorMessage:String,
-                                       downloadModelErrorMessage:String?) {
-        displayToast(downloadModelErrorMessage)
-//      displayToast(downloadErrorMessage)
+    override fun callback_before_error(downloadErrorMessage:String) {
+         // displayToast(downloadErrorMessage)
     }
 
     fun displayToast(message: String?) {
@@ -83,7 +81,8 @@ class DownloadService : IDownloadService() {
         mHandler.post {
             val bundle = Bundle()
             bundle.putString(ResultReceiver_Status, downloadEvent.status)
-            resultReceiver?.send(Activity.RESULT_OK, bundle)
+            downloadEvent.progress?.let { bundle.putInt(ResultReceiver_Progress, it) }
+            resultReceiver?.send(0, bundle)
         }
     }
 

@@ -17,7 +17,6 @@ class DownloadModel
     val notification_message: String,
     val notification_progress_message: String,
     val notification_complete_message: String,
-    val error_message: String,
 
     ): Parcelable {
     val dest_file_full_path: String

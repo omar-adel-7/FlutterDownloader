@@ -26,16 +26,8 @@ class AndroidDownloadMethodChannel {
     switch (call.method) {
       case _androidDownloadResult:
         DownloadEvent downloadEvent =
-            DownloadEvent(url: methodData['url'], status: methodData['status']);
-        int progress = 0;
-        if (isNumber(downloadEvent.status)) {
-          progress = int.parse(downloadEvent.status!);
-        }
-        downloadEvent = DownloadEvent(
-            url: downloadEvent.url,
-            status: downloadEvent.status,
-            progress: progress,
-            error: downloadEvent.error);
+            DownloadEvent(url: methodData['url'], status: methodData['status'],
+            progress: methodData['progress']);
         publishDownloadResult(downloadEvent);
         break;
       default:
@@ -60,9 +52,8 @@ class AndroidDownloadMethodChannel {
       required String notificationMessage,
       required String notificationProgressMessage,
       required String notificationCompleteMessage,
-      required String errorMessage,
       DownloadListener? downloadListener}) {
-    addDownloadListener(url, downloadListener);
+    addDownloadListener(url: url, downloadListener: downloadListener);
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
       'url': url,
@@ -72,12 +63,12 @@ class AndroidDownloadMethodChannel {
       'notificationMessage': notificationMessage,
       'notificationProgressMessage': notificationProgressMessage,
       'notificationCompleteMessage': notificationCompleteMessage,
-      'errorMessage': errorMessage,
-    });
+     });
     _channelMethod?.invokeMethod(_androidStartDownload, argsMap);
   }
 
-  void addDownloadListener(String url, DownloadListener? downloadListener) {
+  void addDownloadListener(
+      {required String url, DownloadListener? downloadListener}) {
     if (downloadListener != null) {
       if (downloadListeners[url] == null) {
         downloadListeners[url] = [];

@@ -34,8 +34,7 @@ abstract class IDownloadService : Service() {
     protected abstract fun onStartCommandCustom(intent: Intent?)
     protected abstract fun notifyProgress(notification: Notification?)
     protected abstract fun notifySuccess(url: String?, notification: Notification?)
-    abstract fun callback_before_error( downloadErrorMessage:String,
-                                        downloadModelErrorMessage:String?)
+    abstract fun callback_before_error( downloadErrorMessage:String)
     abstract fun sendEvent(message: Bundle)
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -71,8 +70,6 @@ abstract class IDownloadService : Service() {
                         intent.getStringExtra(IDownload.SRC_NOTIFICATION_PROGRESS_MESSAGE)
                     val notificationCompleteMessage =
                         intent.getStringExtra(IDownload.SRC_NOTIFICATION_COMPLETE_MESSAGE)
-                    val errorMessage =
-                        intent.getStringExtra(IDownload.SRC_ERROR_MESSAGE)
                     resultReceiver = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
                         intent.getParcelableExtra(
                             IDownload.ResultReceiver_Key,
@@ -88,7 +85,6 @@ abstract class IDownloadService : Service() {
                             && notificationMessage != null
                             && notificationProgressMessage != null
                             && notificationCompleteMessage != null
-                            && errorMessage != null
                         ) {
                             val downloadModel = srcUrl?.let {
                                 DownloadModel(
@@ -99,7 +95,6 @@ abstract class IDownloadService : Service() {
                                     notificationMessage,
                                     notificationProgressMessage,
                                     notificationCompleteMessage,
-                                    errorMessage
                                 )
                             }
                             DownloadDbUtil.insertDownload(this, downloadModel)
@@ -275,7 +270,7 @@ abstract class IDownloadService : Service() {
         if (!success) {
             message.putString(IDownload.RESPONSE_ERROR_MESSAGE_KEY, errorMessage)
             if (errorMessage != null) {
-                callback_before_error(errorMessage,downloadModel.error_message)
+                callback_before_error(errorMessage)
             }
         }
         removeDownload(
@@ -362,13 +357,14 @@ abstract class IDownloadService : Service() {
         const val RESPONSE_CANCEL_KEY = "response_cancel"
         const val RESPONSE_FOREGROUND_EXCEPTION_KEY = "response_foreground_exception_key"
         var STATUS_DOWNLOAD_ADDED = "STATUS_DOWNLOAD_ADDED"
+        var STATUS_DOWNLOAD_QUEUED = "STATUS_DOWNLOAD_QUEUED"
+        var STATUS_DOWNLOAD_PROGRESS = "STATUS_DOWNLOAD_PROGRESS"
+        var STATUS_DOWNLOAD_COMPLETED = "STATUS_DOWNLOAD_COMPLETED"
+        var STATUS_DOWNLOAD_ERROR = "STATUS_DOWNLOAD_ERROR"
+        var STATUS_DOWNLOAD_FOREGROUND_EXCEPTION = "STATUS_DOWNLOAD_FOREGROUND_EXCEPTION"
         var STATUS_DOWNLOAD_REMOVED = "STATUS_DOWNLOAD_REMOVED"
         var STATUS_DOWNLOAD_ALL_REMOVED = "STATUS_DOWNLOAD_ALL_REMOVED"
-        var STATUS_DOWNLOAD_QUEUED = "STATUS_DOWNLOAD_QUEUED"
         var STATUS_DOWNLOAD_CANCELLED = "STATUS_DOWNLOAD_CANCELLED"
-        var STATUS_DOWNLOAD_ERROR = "STATUS_DOWNLOAD_ERROR"
-        var STATUS_DOWNLOAD_COMPLETED = "STATUS_DOWNLOAD_COMPLETED"
-        var STATUS_DOWNLOAD_FOREGROUND_EXCEPTION = "STATUS_DOWNLOAD_FOREGROUND_EXCEPTION"
         var STATUS_NOT_DOWNLOADED = "STATUS_NOT_DOWNLOADED"
     }
 

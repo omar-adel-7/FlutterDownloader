@@ -55,10 +55,9 @@ class _MyAppState extends State<MyApp> {
                       fileNameWithoutExtension:
                           "test File Name'with'apostrophe ' and comma, , 12",
                       extension: ".db",
-                      notificationMessage: "test notification message",
+                      androidNotificationMessage: "test notification message",
                       androidNotificationProgressMessage: "downloading",
                       androidNotificationCompleteMessage: "complete download",
-                      errorMessage: errorMessage,
                       downloadListener: DownloadListener(
                           onProgress: (String url, int progress) {
                             print(
@@ -78,26 +77,32 @@ class _MyAppState extends State<MyApp> {
                             this.progress = 0;
                             this.message = "error";
                             setState(() {});
-                          }));
+                          },
+                          errorMessage: errorMessage));
                   DownloaderPlugin.addDownloadListener(
-                      url,
-                      DownloadListener(onProgress: (String url, int progress) {
-                        print(
-                            "static downloadListener onProgress url=$url and progress = $progress");
-                        this.progress = progress;
-                        this.message = "downloading";
-                        setState(() {});
-                      }, onComplete: (String url) {
-                        print("static downloadListener onComplete url=$url");
-                        this.progress = 100;
-                        this.message = "complete";
-                        setState(() {});
-                      }, onError: (String url) {
-                        print("static downloadListener onError url=$url");
-                        this.progress = 0;
-                        this.message = "error";
-                        setState(() {});
-                      }));
+                      url: url,
+                      downloadListener: DownloadListener(
+                          onProgress: (String url, int progress) {
+                            print(
+                                "static downloadListener onProgress url=$url and progress = $progress");
+                            this.progress = progress;
+                            this.message = "downloading";
+                            setState(() {});
+                          },
+                          onComplete: (String url) {
+                            print(
+                                "static downloadListener onComplete url=$url");
+                            this.progress = 100;
+                            this.message = "complete";
+                            setState(() {});
+                          },
+                          onError: (String url) {
+                            print("static downloadListener onError url=$url");
+                            this.progress = 0;
+                            this.message = "error";
+                            setState(() {});
+                          },
+                          errorMessage: errorMessage));
                 },
               ),
             ),
@@ -129,8 +134,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<String> getAppInternalFolderPath() async {
-    Directory appDocumentsDirectory =
-        await getApplicationDocumentsDirectory();
+    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
     return appDocumentsDirectory.path;
   }
 }
