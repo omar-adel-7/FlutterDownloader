@@ -9,7 +9,7 @@ class AndroidDownloadMethodChannel {
   static const _androidDownloadResult = 'downloadResult';
 
   MethodChannel? _channelMethod;
-  final Map<String, List<DownloadListener>> downloadListeners = {};
+  final Map<String, DownloadListener> downloadListeners = {};
 
   static final AndroidDownloadMethodChannel instance =
       AndroidDownloadMethodChannel._init();
@@ -38,10 +38,8 @@ class AndroidDownloadMethodChannel {
 
   publishDownloadResult(DownloadEvent downloadEvent) {
     if (downloadListeners[downloadEvent.url] != null) {
-      for (int i = 0; i < downloadListeners[downloadEvent.url]!.length; i++) {
-        downloadListeners[downloadEvent.url]?[i]
-            .publishDownloadResult(downloadEvent);
-      }
+      downloadListeners[downloadEvent.url]
+          ?.publishDownloadResult(downloadEvent);
     }
   }
 
@@ -71,8 +69,7 @@ class AndroidDownloadMethodChannel {
   void addDownloadListener(
       {required String url, DownloadListener? downloadListener}) {
     if (downloadListener != null) {
-      downloadListeners[url] = [];
-      downloadListeners[url]?.add(downloadListener);
+      downloadListeners[url] = downloadListener;
     }
   }
 }

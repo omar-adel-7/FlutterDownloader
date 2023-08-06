@@ -79,6 +79,7 @@ class _MyAppState extends State<MyApp> {
                             setState(() {});
                           },
                           errorMessage: errorMessage));
+                  //or add downloadListener separately
                   DownloaderPlugin.addDownloadListener(
                       url: url,
                       downloadListener: DownloadListener(

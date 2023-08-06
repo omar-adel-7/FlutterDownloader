@@ -11,7 +11,7 @@ class IOSDownloadMethodChannel {
   static const _iOSDownloadError = 'iOSDownloadError';
 
   MethodChannel? _channelMethod;
-  final Map<String, List<DownloadListener>> downloadListeners = {};
+  final Map<String, DownloadListener> downloadListeners = {};
 
   static final IOSDownloadMethodChannel instance =
       IOSDownloadMethodChannel._init();
@@ -52,10 +52,8 @@ class IOSDownloadMethodChannel {
 
   publishDownloadResult(DownloadEvent downloadEvent) {
     if (downloadListeners[downloadEvent.url] != null) {
-      for (int i = 0; i < downloadListeners[downloadEvent.url]!.length; i++) {
-        downloadListeners[downloadEvent.url]?[i]
-            .publishDownloadResult(downloadEvent);
-      }
+      downloadListeners[downloadEvent.url]
+          ?.publishDownloadResult(downloadEvent);
     }
   }
 
@@ -77,8 +75,7 @@ class IOSDownloadMethodChannel {
   void addDownloadListener(
       {required String url, DownloadListener? downloadListener}) {
     if (downloadListener != null) {
-      downloadListeners[url] = [];
-      downloadListeners[url]?.add(downloadListener);
+      downloadListeners[url] = downloadListener;
     }
   }
 }
