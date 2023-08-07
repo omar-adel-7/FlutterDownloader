@@ -19,10 +19,10 @@ class DownloadListener {
       required this.errorMessage});
 
   publishDownloadResult(DownloadEvent downloadEvent) {
-    if (downloadEvent.status == STATUS_DOWNLOAD_COMPLETED) {
-      onComplete(downloadEvent.url);
-    } else if (downloadEvent.status == STATUS_DOWNLOAD_PROGRESS) {
+    if (downloadEvent.status == STATUS_DOWNLOAD_PROGRESS) {
       onProgress(downloadEvent.url, downloadEvent.progress!);
+    } else if (downloadEvent.status == STATUS_DOWNLOAD_COMPLETED) {
+      onComplete(downloadEvent.url);
     } else if (downloadEvent.status == STATUS_DOWNLOAD_ERROR) {
       Fluttertoast.showToast(
           msg: errorMessage,

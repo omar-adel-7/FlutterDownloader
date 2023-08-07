@@ -85,20 +85,20 @@ class _MyAppState extends State<MyApp> {
                       downloadListener: DownloadListener(
                           onProgress: (String url, int progress) {
                             print(
-                                "static downloadListener onProgress url=$url and progress = $progress");
+                                "separate downloadListener onProgress url=$url and progress = $progress");
                             this.progress = progress;
                             this.message = "downloading";
                             setState(() {});
                           },
                           onComplete: (String url) {
                             print(
-                                "static downloadListener onComplete url=$url");
+                                "separate downloadListener onComplete url=$url");
                             this.progress = 100;
                             this.message = "complete";
                             setState(() {});
                           },
                           onError: (String url) {
-                            print("static downloadListener onError url=$url");
+                            print("separate downloadListener onError url=$url");
                             this.progress = 0;
                             this.message = "error";
                             setState(() {});
