@@ -41,7 +41,7 @@ abstract class DownloadDb : RoomDatabase() {
         }
 
         const val DownloadDatabaseName = "download_database"
-        const val DownloadDatabaseVersion = 2
+        const val DownloadDatabaseVersion = 3
         var SQLITE_DB_EXTENSION = ".db"
 
     }
