@@ -22,6 +22,7 @@ class DownloaderPlugin: FlutterPlugin, MethodCallHandler  {
   private val CHANNEL_DOWNLOAD_START = "startDownload"
   private val CHANNEL_DOWNLOAD_RESULT = "downloadResult"
   private val CHANNEL_DOWNLOAD_CANCEL = "cancelDownload"
+  private val CHANNEL_DOWNLOAD_CLEAR = "clearDownloads"
   private var methodChannelDownload : MethodChannel? = null
   private var context: Context? = null
 
@@ -73,7 +74,11 @@ class DownloaderPlugin: FlutterPlugin, MethodCallHandler  {
     } else if (call.method.equals(CHANNEL_DOWNLOAD_CANCEL)) {
         context?.let { DownloadService.sendCancelAll(it) }
       }
-     else {
+    else if (call.method.equals(CHANNEL_DOWNLOAD_CLEAR)) {
+      context?.let { DownloadService.clearDownloads(it) }
+    }
+
+    else {
       result.notImplemented()
     }
   }

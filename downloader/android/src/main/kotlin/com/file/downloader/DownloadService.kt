@@ -13,6 +13,7 @@ import com.file.downloader.download.IDownload.ResultReceiver_Progress
 import com.file.downloader.download.IDownload.ResultReceiver_Status
 import com.file.downloader.download.IDownload.SRC_URL_KEY
 import com.file.downloader.download.IDownloadService
+import com.file.downloader.download.model_download.dao.DownloadDbUtil
 import com.file.downloader.download.model_download.entity.DownloadModel
 import com.file.downloader.utils.NotificationUtils
 
@@ -103,6 +104,10 @@ class DownloadService : IDownloadService() {
                 R.string.download_ACTION_CANCEL_ALL
             )
             context.startService(intent)
+        }
+
+        fun clearDownloads(context: Context) {
+            DownloadDbUtil.clearDownloads(context)
         }
     }
 }

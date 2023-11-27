@@ -60,4 +60,10 @@ class DownloaderPlugin {
           .addDownloadListener(url: url, downloadListener: downloadListener);
     }
   }
+
+  static clearAndroidDownloads() async {
+    if (isPlatformAndroid()) {
+      AndroidDownloadMethodChannel.instance.clearDownloads();
+    }
+  }
 }
