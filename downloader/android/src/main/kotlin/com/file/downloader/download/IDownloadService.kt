@@ -44,7 +44,7 @@ abstract class IDownloadService : Service() {
             val action = intent.action
             if (action != null) {
                 if (action == resources.getString(
-                        R.string.download_ACTION_CANCEL_ALL
+                        R.string.download_ACTION_CANCEL_AND_CLEAR_ALL
                     )
                 ) {
                     removeAll()

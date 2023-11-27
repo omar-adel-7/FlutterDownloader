@@ -98,16 +98,12 @@ class DownloadService : IDownloadService() {
             context.startService(intent)
         }
 
-        fun sendCancelAll(context: Context) {
+        fun cancelAndClearAll(context: Context) {
             val intent = Intent(context, DownloadService::class.java)
             intent.action = context.getString(
-                R.string.download_ACTION_CANCEL_ALL
+                R.string.download_ACTION_CANCEL_AND_CLEAR_ALL
             )
             context.startService(intent)
-        }
-
-        fun clearDownloads(context: Context) {
-            DownloadDbUtil.clearDownloads(context)
         }
     }
 }

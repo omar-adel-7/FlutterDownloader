@@ -7,7 +7,7 @@ class AndroidDownloadMethodChannel {
   static const _androidDownloadChannelName = 'download';
   static const _androidStartDownload = 'startDownload';
   static const _androidDownloadResult = 'downloadResult';
-  static const _androidClearDownloads = 'clearDownloads';
+  static const _androidCancelAndClearDownloads = 'cancelAndClearDownloads';
 
   MethodChannel? _channelMethod;
   final Map<String, DownloadListener> downloadListeners = {};
@@ -74,7 +74,7 @@ class AndroidDownloadMethodChannel {
     }
   }
 
-  clearDownloads() {
-    _channelMethod?.invokeMethod(_androidClearDownloads);
+  cancelAndClearDownloads() {
+    _channelMethod?.invokeMethod(_androidCancelAndClearDownloads);
   }
 }

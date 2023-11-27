@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
                       "https://books9.arabia-it-key.com/storage/app/public/bfdf117a-7885-41ba-8cab-6357150ffb05/4a2a98e9-997f-43b6-83a7-12d30f9ef2ca.db";
                   String destinationDirPath = await getDestination();
                   String errorMessage = "error in download";
-                  //DownloaderPlugin.clearAndroidDownloads();to handle force stop in case of downloading one file
+                  //DownloaderPlugin.cancelAndClearAndroidDownloads();//to handle force stop in case of downloading one file
                   DownloaderPlugin.downloadFile(
                       url: url,
                       destinationDirPath: destinationDirPath,

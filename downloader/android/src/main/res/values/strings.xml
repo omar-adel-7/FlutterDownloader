@@ -2,7 +2,7 @@
 
     <string name="download_ACTION_STOP_SERVICE">download.ACTION_STOP_SERVICE</string>
     <string name="download_ACTION_DOWNLOAD_ITEM">download.ACTION_DOWNLOAD_ITEM</string>
-    <string name="download_ACTION_CANCEL_ALL">download.ACTION_CANCEL_ALL</string>
     <string name="download_ACTION_CANCEL_ITEM">download.ACTION_CANCEL_ITEM</string>
+    <string name="download_ACTION_CANCEL_AND_CLEAR_ALL">download.ACTION_CANCEL_AND_CLEAR_ALL</string>
 
 </resources>

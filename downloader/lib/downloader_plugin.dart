@@ -61,9 +61,9 @@ class DownloaderPlugin {
     }
   }
 
-  static clearAndroidDownloads() async {
+  static cancelAndClearAndroidDownloads() async {
     if (isPlatformAndroid()) {
-      AndroidDownloadMethodChannel.instance.clearDownloads();
+      AndroidDownloadMethodChannel.instance.cancelAndClearDownloads();
     }
   }
 }
