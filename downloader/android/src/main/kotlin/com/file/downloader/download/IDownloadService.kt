@@ -97,8 +97,8 @@ abstract class IDownloadService : Service() {
                                     notificationCompleteMessage,
                                 )
                             }
-                            DownloadDbUtil.insertDownload(this, downloadModel)
                             if (downloadModel != null) {
+                                DownloadDbUtil.insertDownload(this, downloadModel)
                                 sendAdded(downloadModel)
                             }
                             val downloadModels = getDownloads(this)

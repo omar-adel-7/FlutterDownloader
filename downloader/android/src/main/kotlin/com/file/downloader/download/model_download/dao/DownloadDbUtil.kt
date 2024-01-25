@@ -10,7 +10,7 @@ object DownloadDbUtil {
         return DownloadDb.getDataBase(context)?.myDao()?.getDownloads()
     }
 
-    fun insertDownload(context: Context?, downloadModel: DownloadModel?) {
+    fun insertDownload(context: Context?, downloadModel: DownloadModel) {
         DownloadDb.getDataBase(context)?.myDao()?.insertDownload(downloadModel)
     }
 

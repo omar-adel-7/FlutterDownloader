@@ -11,7 +11,7 @@ interface DownloadDbDao {
     fun getDownloads(): List<DownloadModel>
 
     @Insert
-    fun insertDownload(downloadModel: DownloadModel?)
+    fun insertDownload(downloadModel: DownloadModel)
 
     @Query("DELETE FROM DownloadModel  where url=:url")
     fun removeDownload(url: String?)
