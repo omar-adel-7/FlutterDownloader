@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:downloader/download_listener.dart';
 import 'package:downloader/downloader_plugin.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -60,51 +61,59 @@ class _MyAppState extends State<MyApp> {
                       androidNotificationProgressMessage: "downloading",
                       androidNotificationCompleteMessage: "complete download",
                       downloadListener: DownloadListener(
-                          onProgress: (String url, int progress) {
-                            print(
-                                "downloadListener onProgress url=$url and progress = $progress");
-                            this.progress = progress;
-                            this.message = "downloading";
-                            setState(() {});
-                          },
-                          onComplete: (String url) {
-                            print("downloadListener onComplete url=$url");
-                            this.progress = 100;
-                            this.message = "complete";
-                            setState(() {});
-                          },
-                          onError: (String url) {
-                            print("downloadListener onError url=$url");
-                            this.progress = 0;
-                            this.message = "error";
-                            setState(() {});
-                          },
-                          errorMessage: errorMessage));
+                        onProgress: (String url, int progress) {
+                          print(
+                              "downloadListener onProgress url=$url and progress = $progress");
+                          this.progress = progress;
+                          this.message = "downloading";
+                          setState(() {});
+                        },
+                        onComplete: (String url) {
+                          print("downloadListener onComplete url=$url");
+                          this.progress = 100;
+                          this.message = "complete";
+                          setState(() {});
+                        },
+                        onError: (String url) {
+                          print("downloadListener onError url=$url");
+                          this.progress = 0;
+                          this.message = "error";
+                          Fluttertoast.showToast(
+                              msg: errorMessage,
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              fontSize: 16.0);
+                          setState(() {});
+                        },
+                      ));
                   //or add downloadListener separately
                   DownloaderPlugin.addDownloadListener(
                       url: url,
                       downloadListener: DownloadListener(
                           onProgress: (String url, int progress) {
-                            print(
-                                "separate downloadListener onProgress url=$url and progress = $progress");
-                            this.progress = progress;
-                            this.message = "downloading";
-                            setState(() {});
-                          },
-                          onComplete: (String url) {
-                            print(
-                                "separate downloadListener onComplete url=$url");
-                            this.progress = 100;
-                            this.message = "complete";
-                            setState(() {});
-                          },
-                          onError: (String url) {
-                            print("separate downloadListener onError url=$url");
-                            this.progress = 0;
-                            this.message = "error";
-                            setState(() {});
-                          },
-                          errorMessage: errorMessage));
+                        print(
+                            "separate downloadListener onProgress url=$url and progress = $progress");
+                        this.progress = progress;
+                        this.message = "downloading";
+                        setState(() {});
+                      }, onComplete: (String url) {
+                        print("separate downloadListener onComplete url=$url");
+                        this.progress = 100;
+                        this.message = "complete";
+                        setState(() {});
+                      }, onError: (String url) {
+                        print("separate downloadListener onError url=$url");
+                        this.progress = 0;
+                        this.message = "error";
+                        Fluttertoast.showToast(
+                            msg: errorMessage,
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            fontSize: 16.0);
+                        setState(() {});
+                      }));
                 },
               ),
             ),
