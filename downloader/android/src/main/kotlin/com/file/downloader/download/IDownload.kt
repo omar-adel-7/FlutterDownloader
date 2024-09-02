@@ -3,7 +3,7 @@ package com.file.downloader.download
 import android.content.Context
 import android.os.Bundle
 import android.os.StatFs
-import com.file.downloader.download.model_download.dao.DownloadDbUtil
+import com.file.downloader.download.model_download.DownloadDbUtil
 import com.file.downloader.download.model_download.entity.DownloadModel
 import java.io.File
 

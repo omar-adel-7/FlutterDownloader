@@ -1,4 +1,4 @@
-package com.file.downloader.download.model_download.dao
+package com.file.downloader.download.model_download
 
 import android.content.Context
 import com.file.downloader.download.model_download.database.DownloadDb

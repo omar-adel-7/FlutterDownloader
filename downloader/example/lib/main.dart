@@ -84,20 +84,20 @@ class _MyAppState extends State<MyApp> {
                         },
                       ));
                   //or add downloadListener separately
-                  DownloaderPlugin.addDownloadListener(
-                      url: url,
-                      downloadListener: DownloadListener(
-                          onProgress: (String url, int progress) {
-                        print(
-                            "separate downloadListener onProgress url=$url and progress = $progress");
-                        onProgress(url,progress);
-                      }, onComplete: (String url) {
-                        print("separate downloadListener onComplete url=$url");
-                        onComplete(url);
-                      }, onError: (String url) {
-                        print("separate downloadListener onError url=$url");
-                        onError(url);
-                      }));
+                  // DownloaderPlugin.addDownloadListener(
+                  //     url: url,
+                  //     downloadListener: DownloadListener(
+                  //         onProgress: (String url, int progress) {
+                  //       print(
+                  //           "separate downloadListener onProgress url=$url and progress = $progress");
+                  //       onProgress(url,progress);
+                  //     }, onComplete: (String url) {
+                  //       print("separate downloadListener onComplete url=$url");
+                  //       onComplete(url);
+                  //     }, onError: (String url) {
+                  //       print("separate downloadListener onError url=$url");
+                  //       onError(url);
+                  //     }));
                 },
               ),
             ),

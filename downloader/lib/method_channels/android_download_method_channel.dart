@@ -7,6 +7,7 @@ class AndroidDownloadMethodChannel {
   static const _androidDownloadChannelName = 'download';
   static const _androidStartDownload = 'startDownload';
   static const _androidDownloadResult = 'downloadResult';
+  static const _androidIsFileDownloading = 'isDownloading';
   static const _androidCancelAndClearDownloads = 'cancelAndClearDownloads';
 
   MethodChannel? _channelMethod;
@@ -73,6 +74,15 @@ class AndroidDownloadMethodChannel {
       downloadListeners[url] = downloadListener;
     }
   }
+
+  Future<bool> isFileDownloading(String url) async {
+    Map argsMap = <dynamic, dynamic>{};
+    argsMap.addAll({
+      'url': url
+    });
+    return await _channelMethod?.invokeMethod(_androidIsFileDownloading, argsMap);
+  }
+
 
   cancelAndClearDownloads() {
     _channelMethod?.invokeMethod(_androidCancelAndClearDownloads);

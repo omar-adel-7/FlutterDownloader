@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 import com.file.downloader.R
 import com.file.downloader.download.IDownload.getDownloads
 import com.file.downloader.download.IDownload.isInDownloading
-import com.file.downloader.download.model_download.dao.DownloadDbUtil
+import com.file.downloader.download.model_download.DownloadDbUtil
 import com.file.downloader.download.model_download.entity.DownloadModel
 import java.io.*
 import java.net.HttpURLConnection

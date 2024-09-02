@@ -20,14 +20,12 @@ class DownloaderPlugin {
       required String androidNotificationMessage,
       required String androidNotificationProgressMessage,
       required String androidNotificationCompleteMessage,
-      DownloadListener? downloadListener}) async {
-    print("downloadFile destinationDirPath1=$destinationDirPath");
+        DownloadListener? downloadListener}) async {
     String pathSeparator = Platform.pathSeparator ;
     if(!destinationDirPath.endsWith(pathSeparator))
       {
         destinationDirPath=destinationDirPath+pathSeparator;
       }
-    print("downloadFile destinationDirPath2=$destinationDirPath");
     extension=extensionDot+extension;
     if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance.downloadFile(
@@ -61,7 +59,14 @@ class DownloaderPlugin {
     }
   }
 
-  static bool getFileDownloadStatus({
+  static Future<bool> isFileDownloading(String url) async {
+    if (isPlatformAndroid()) {
+      return await AndroidDownloadMethodChannel.instance.isFileDownloading(url);
+    }
+    return false ;
+  }
+
+  static bool isFileDownloaded({
     required String destinationDirPath,
     required String fileNameWithoutExtension,
     required String extension,
@@ -71,6 +76,7 @@ class DownloaderPlugin {
         destinationDirPath: destinationDirPath,
         fileName: fileNameWithoutExtension + extension);
   }
+
 
   static cancelAndClearAndroidDownloads() {
     if (isPlatformAndroid()) {
