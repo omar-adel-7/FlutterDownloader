@@ -49,17 +49,6 @@ class DownloaderPlugin {
     }
   }
 
-  static bool getFileDownloadStatus({
-    required String destinationDirPath,
-    required String fileNameWithoutExtension,
-    required String extension,
-  }) {
-    extension=extensionDot+extension;
-    return isFileExist(
-        destinationDirPath: destinationDirPath,
-        fileName: fileNameWithoutExtension + extension);
-  }
-
   static addDownloadListener(
       {required String url,
       required DownloadListener downloadListener}) {
@@ -70,6 +59,17 @@ class DownloaderPlugin {
       IOSDownloadMethodChannel.instance
           .addDownloadListener(url: url, downloadListener: downloadListener);
     }
+  }
+
+  static bool getFileDownloadStatus({
+    required String destinationDirPath,
+    required String fileNameWithoutExtension,
+    required String extension,
+  }) {
+    extension=extensionDot+extension;
+    return isFileExist(
+        destinationDirPath: destinationDirPath,
+        fileName: fileNameWithoutExtension + extension);
   }
 
   static cancelAndClearAndroidDownloads() {

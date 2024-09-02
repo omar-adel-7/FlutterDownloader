@@ -3,4 +3,5 @@ package com.file.downloader_example
 import io.flutter.embedding.android.FlutterActivity
 
 class MainActivity: FlutterActivity() {
+
 }

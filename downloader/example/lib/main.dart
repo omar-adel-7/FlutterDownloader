@@ -4,6 +4,7 @@ import 'package:downloader/downloader_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +26,15 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    requestNotificationPermission();
+   }
+
+  Future<void> requestNotificationPermission() async {
+    PermissionStatus status = await Permission.notification.status;
+    if (!status.isGranted) {
+   // The permission is not granted, request it.
+      status = await Permission.notification.request();
+    }
   }
 
   @override
@@ -149,7 +159,6 @@ class _MyAppState extends State<MyApp> {
         fontSize: 16.0);
     setState(() {});
   }
-
 }
 
 
