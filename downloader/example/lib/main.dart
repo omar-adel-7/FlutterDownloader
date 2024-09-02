@@ -3,7 +3,6 @@ import 'package:downloader/download_listener.dart';
 import 'package:downloader/downloader_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() {
@@ -56,7 +55,7 @@ class _MyAppState extends State<MyApp> {
                       destinationDirPath: destinationDirPath,
                       fileNameWithoutExtension:
                           "test File Name'with'apostrophe ' and comma, , 12",
-                      extension: ".db",
+                      extension: "db",
                       androidNotificationMessage: "test notification message",
                       androidNotificationProgressMessage: "downloading",
                       androidNotificationCompleteMessage: "complete download",
@@ -140,8 +139,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<String> getDestination() async {
-    var databasesPath = await getAppInternalFolderPath();
-    return join(databasesPath) + Platform.pathSeparator;
+    return await getAppInternalFolderPath()
+        //+Platform.pathSeparator // it is the same if with this line
+    // or without it as it is handled internally in the plugin
+    ;
   }
 
   Future<String> getAppInternalFolderPath() async {

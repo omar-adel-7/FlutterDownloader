@@ -1,3 +1,4 @@
+import 'dart:io';
 import '../method_channels/android_download_method_channel.dart';
 import '../method_channels/ios_download_method_channel.dart';
 import 'download_file_util.dart';
@@ -19,6 +20,13 @@ class DownloaderPlugin {
       required String androidNotificationProgressMessage,
       required String androidNotificationCompleteMessage,
       DownloadListener? downloadListener}) async {
+    print("downloadFile destinationDirPath1=$destinationDirPath");
+    String pathSeparator = Platform.pathSeparator ;
+    if(!destinationDirPath.endsWith(pathSeparator))
+      {
+        destinationDirPath=destinationDirPath+pathSeparator;
+      }
+    print("downloadFile destinationDirPath2=$destinationDirPath");
     if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance.downloadFile(
           url: url,
