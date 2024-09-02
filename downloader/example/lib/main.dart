@@ -48,7 +48,6 @@ class _MyAppState extends State<MyApp> {
                   String url =
                       "https://books9.arabia-it-key.com/storage/app/public/bfdf117a-7885-41ba-8cab-6357150ffb05/4a2a98e9-997f-43b6-83a7-12d30f9ef2ca.db";
                   String destinationDirPath = await getDestination();
-                  String errorMessage = "error in download";
                   //DownloaderPlugin.cancelAndClearAndroidDownloads();//to handle force stop in case of downloading one file
                   DownloaderPlugin.downloadFile(
                       url: url,
@@ -63,27 +62,15 @@ class _MyAppState extends State<MyApp> {
                         onProgress: (String url, int progress) {
                           print(
                               "downloadListener onProgress url=$url and progress = $progress");
-                          this.progress = progress;
-                          this.message = "downloading";
-                          setState(() {});
+                          onProgress(url,progress);
                         },
                         onComplete: (String url) {
                           print("downloadListener onComplete url=$url");
-                          this.progress = 100;
-                          this.message = "complete";
-                          setState(() {});
+                          onComplete(url);
                         },
                         onError: (String url) {
                           print("downloadListener onError url=$url");
-                          this.progress = 0;
-                          this.message = "error";
-                          Fluttertoast.showToast(
-                              msg: errorMessage,
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              fontSize: 16.0);
-                          setState(() {});
+                          onError(url);
                         },
                       ));
                   //or add downloadListener separately
@@ -93,25 +80,13 @@ class _MyAppState extends State<MyApp> {
                           onProgress: (String url, int progress) {
                         print(
                             "separate downloadListener onProgress url=$url and progress = $progress");
-                        this.progress = progress;
-                        this.message = "downloading";
-                        setState(() {});
+                        onProgress(url,progress);
                       }, onComplete: (String url) {
                         print("separate downloadListener onComplete url=$url");
-                        this.progress = 100;
-                        this.message = "complete";
-                        setState(() {});
+                        onComplete(url);
                       }, onError: (String url) {
                         print("separate downloadListener onError url=$url");
-                        this.progress = 0;
-                        this.message = "error";
-                        Fluttertoast.showToast(
-                            msg: errorMessage,
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 1,
-                            fontSize: 16.0);
-                        setState(() {});
+                        onError(url);
                       }));
                 },
               ),
@@ -149,4 +124,32 @@ class _MyAppState extends State<MyApp> {
     Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
     return appDocumentsDirectory.path;
   }
+
+  void onProgress(String url, int progress) {
+    this.progress = progress;
+    this.message = "downloading";
+    setState(() {});
+  }
+
+  void onComplete(String url) {
+    this.progress = 100;
+    this.message = "complete";
+    setState(() {});
+  }
+
+  void onError(String url) {
+    this.progress = 0;
+    this.message = "error";
+    String errorMessage = "error in download";
+    Fluttertoast.showToast(
+        msg: errorMessage,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        fontSize: 16.0);
+    setState(() {});
+  }
+
 }
+
+

@@ -6,6 +6,7 @@ import 'download_listener.dart';
 import 'download_util.dart';
 
 class DownloaderPlugin {
+  static String extensionDot=".";
   static init() async {
     AndroidDownloadMethodChannel.instance.init();
     IOSDownloadMethodChannel.instance.init();
@@ -27,6 +28,7 @@ class DownloaderPlugin {
         destinationDirPath=destinationDirPath+pathSeparator;
       }
     print("downloadFile destinationDirPath2=$destinationDirPath");
+    extension=extensionDot+extension;
     if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance.downloadFile(
           url: url,
@@ -52,6 +54,7 @@ class DownloaderPlugin {
     required String fileNameWithoutExtension,
     required String extension,
   }) {
+    extension=extensionDot+extension;
     return isFileExist(
         destinationDirPath: destinationDirPath,
         fileName: fileNameWithoutExtension + extension);

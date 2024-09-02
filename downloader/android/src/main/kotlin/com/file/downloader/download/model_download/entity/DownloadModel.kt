@@ -21,11 +21,8 @@ class DownloadModel
     ): Parcelable {
     val dest_file_full_path: String
         get(
-        ) = dest_dir_path + file_name_without_extension + extensionWithDot
+        ) = dest_dir_path + file_name_without_extension + extension
     val temp_dest_file_full_path: String
         get(
-        ) = "$dest_dir_path$file_name_without_extension-temp$extensionWithDot"
-
-    private val extensionWithDot get() = ".$extension"
-
+        ) = "$dest_dir_path$file_name_without_extension-temp$extension"
 }
