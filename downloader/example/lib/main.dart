@@ -142,22 +142,33 @@ class _MyAppState extends State<MyApp> {
             Container(
               height: 100,
               color: Colors.yellow,
-              child: BlocBuilder<DownloadResultCubit, DownloadResultStates>(
-                builder: (context, downloadState) {
+              child: BlocConsumer<DownloadResultCubit, DownloadResultStates>(
+                listener: (context, downloadState) {
                   if (downloadState is DownloadProgressState) {
                     print(
                         "BlocBuilder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
                     onProgress(downloadState.url,downloadState.progress);
-                   }
-                  else if (downloadState is DownloadCompletedState) {
+                  }
+                  if (downloadState is DownloadCompletedState) {
                     print("BlocBuilder onComplete url=${downloadState.url}");
                     onComplete(downloadState.url);
                   }
-                  else if (downloadState is DownloadErrorState) {
+                  if (downloadState is DownloadErrorState) {
                     print(
                         "downloadListener onError url=${downloadState.url} , error=${downloadState.error}");
                     onError(downloadState.url, downloadState.error);
                   }
+                },
+                builder: (context, downloadState) {
+                  // if (downloadState is DownloadProgressState) {
+                  //
+                  //  }
+                  // else if (downloadState is DownloadCompletedState) {
+                  //
+                  // }
+                  // else if (downloadState is DownloadErrorState) {
+                  //
+                  // }
                   return Column(
                     children: [
                       Text("message = $message"),
