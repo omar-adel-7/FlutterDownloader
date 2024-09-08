@@ -203,12 +203,16 @@ class _MyAppState extends State<MyApp> {
   void onProgress(String url, int progress) {
     this.progress = progress;
     message = "downloading";
-  }
+    // //in case of not using bloc
+    // setState(() {});
+    }
 
   void onComplete(String url) {
     progress = 100;
     message = "complete";
-  }
+    // //in case of not using bloc
+    // setState(() {});
+    }
 
   void onError(String url, String? error) {
     progress = 0;
@@ -220,6 +224,8 @@ class _MyAppState extends State<MyApp> {
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
         fontSize: 16.0);
+    // //in case of not using bloc
+    // setState(() {});
   }
 }
 
