@@ -58,6 +58,7 @@ class DownloadCubit extends Cubit<DownloadStates> {
           },
           onError: (String url,{String? error}) {
             print("downloadListener onError url=$url");
+            _getFile();
           }
       ),
     );
