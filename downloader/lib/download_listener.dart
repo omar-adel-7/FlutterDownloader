@@ -6,7 +6,7 @@ class DownloadListener {
 
   final Function(String url) onComplete;
 
-  final Function(String url) onError;
+  final Function(String url,{String? error}) onError;
 
   DownloadListener(
       {required this.onProgress,
@@ -20,7 +20,7 @@ class DownloadListener {
     } else if (downloadEvent.status == STATUS_DOWNLOAD_COMPLETED) {
       onComplete(downloadEvent.url);
     } else if (downloadEvent.status == STATUS_DOWNLOAD_ERROR) {
-      onError(downloadEvent.url);
+      onError(downloadEvent.url,error: downloadEvent.error);
     } else if (downloadEvent.status == STATUS_DOWNLOAD_FOREGROUND_EXCEPTION) {
       onError(downloadEvent.url);
     }

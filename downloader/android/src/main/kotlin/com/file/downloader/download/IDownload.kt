@@ -27,6 +27,7 @@ object IDownload {
     const val ResultReceiver_Key = "result_receiver"
     const val ResultReceiver_Status = "result_receiver_status"
     const val ResultReceiver_Progress = "result_receiver_progress"
+    const val ResultReceiver_Error = "result_receiver_error"
 
     fun getDownloads(context: Context?): List<DownloadModel>? {
         return DownloadDbUtil.getDownloads(context)
@@ -52,8 +53,12 @@ object IDownload {
                 } else {
                     downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_ERROR
                 }
+                if (extras.containsKey(RESPONSE_ERROR_MESSAGE_KEY)) {
+                    downloadEvent.error=extras.getString(RESPONSE_ERROR_MESSAGE_KEY)
+                }
             } else if (extras.containsKey(IDownloadService.RESPONSE_FOREGROUND_EXCEPTION_KEY)) {
-                downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_FOREGROUND_EXCEPTION
+                downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_ERROR
+                downloadEvent.error = IDownloadService.STATUS_DOWNLOAD_FOREGROUND_EXCEPTION
             } else if (isInDownloading(context, downloadEvent.url)) {
                 downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_QUEUED
             }
@@ -105,16 +110,18 @@ object IDownload {
 
     class DownloadEvent {
         var url: String? = null
-        var status: String? = IDownloadService.STATUS_NOT_DOWNLOADED
+        var status: String? = null
         var progress: Int? = null
+        var error: String? = null
 
         constructor() {
         }
 
-        constructor(url: String?, status: String?, progress: Int?) {
+        constructor(url: String?, status: String?, progress: Int?, error:String?) {
             this.url = url
             this.status = status
             this.progress = progress
+            this.error=error
         }
     }
 }

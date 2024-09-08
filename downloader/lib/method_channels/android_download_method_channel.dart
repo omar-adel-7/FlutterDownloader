@@ -1,12 +1,16 @@
 import 'package:flutter/services.dart';
+import '../cubit/download_result_cubit.dart';
 import '../download_event.dart';
 import '../download_listener.dart';
-import '../download_util.dart';
+import '../download_status_constants.dart';
 
 class AndroidDownloadMethodChannel {
   static const _androidDownloadChannelName = 'download';
   static const _androidStartDownload = 'startDownload';
-  static const _androidDownloadResult = 'downloadResult';
+  static const _androidDownloadResultProgress = 'downloadResultProgress';
+  static const _androidDownloadResultCompleted = 'downloadResultCompleted';
+  static const _androidDownloadResultError = 'downloadResultError';
+
   static const _androidIsFileDownloading = 'isDownloading';
   static const _androidCancelAndClearDownloads = 'cancelAndClearDownloads';
 
@@ -18,20 +22,48 @@ class AndroidDownloadMethodChannel {
 
   AndroidDownloadMethodChannel._init();
 
-  init() {
+  DownloadResultCubit? downloadResultCubit ;
+  init(DownloadResultCubit? downloadResultCubit) {
     _channelMethod = const MethodChannel(_androidDownloadChannelName);
     _channelMethod?.setMethodCallHandler(methodHandler);
+    this.downloadResultCubit=downloadResultCubit;
   }
 
   Future<void> methodHandler(MethodCall call) async {
     final Map methodData = call.arguments;
     switch (call.method) {
-      case _androidDownloadResult:
+      case _androidDownloadResultProgress:
+        String url = methodData['url'];
+        int progress = methodData['progress'];
         DownloadEvent downloadEvent = DownloadEvent(
             url: methodData['url'],
-            status: methodData['status'],
-            progress: methodData['progress']);
+            status: STATUS_DOWNLOAD_PROGRESS,
+            progress: progress);
         publishDownloadResult(downloadEvent);
+        if (downloadResultCubit != null) {
+          downloadResultCubit?.publishProgress(url:url, progress: progress);
+        }
+        break;
+      case _androidDownloadResultCompleted:
+        String url = methodData['url'];
+        DownloadEvent downloadEvent = DownloadEvent(
+            url: url, status: STATUS_DOWNLOAD_COMPLETED);
+        publishDownloadResult(downloadEvent);
+        if (downloadResultCubit != null) {
+          downloadResultCubit?.publishCompleted(url:url);
+        }
+        break;
+      case _androidDownloadResultError:
+        String url = methodData['url'];
+        String? error = methodData['error'];
+        DownloadEvent downloadEvent = DownloadEvent(
+            url: url,
+            status: STATUS_DOWNLOAD_ERROR,
+            error: error);
+        publishDownloadResult(downloadEvent);
+        if (downloadResultCubit != null) {
+          downloadResultCubit?.publishError(url:url,error: error);
+        }
         break;
       default:
         break;

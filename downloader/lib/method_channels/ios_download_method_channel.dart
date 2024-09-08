@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import '../cubit/download_result_cubit.dart';
 import '../download_event.dart';
 import '../download_listener.dart';
 import '../download_status_constants.dart';
@@ -18,32 +19,48 @@ class IOSDownloadMethodChannel {
 
   IOSDownloadMethodChannel._init();
 
-  init() {
+  DownloadResultCubit? downloadResultCubit ;
+  init(DownloadResultCubit? downloadResultCubit) {
     _channelMethod = const MethodChannel(_iOSDownloadChannelName);
     _channelMethod?.setMethodCallHandler(methodHandler);
+    this.downloadResultCubit=downloadResultCubit;
   }
 
   Future<void> methodHandler(MethodCall call) async {
     final Map methodData = call.arguments;
     switch (call.method) {
       case _iOSDownloadProgress:
+        String url = methodData['url'];
+        int progress = methodData['progress'];
         DownloadEvent downloadEvent = DownloadEvent(
             url: methodData['url'],
             status: STATUS_DOWNLOAD_PROGRESS,
-            progress: methodData['progress']);
+            progress: progress);
         publishDownloadResult(downloadEvent);
+        if (downloadResultCubit != null) {
+          downloadResultCubit?.publishProgress(url:url, progress: progress);
+        }
         break;
       case _iOSDownloadCompleted:
+        String url = methodData['url'];
         DownloadEvent downloadEvent = DownloadEvent(
-            url: methodData['url'], status: STATUS_DOWNLOAD_COMPLETED);
+            url: url, status: STATUS_DOWNLOAD_COMPLETED);
         publishDownloadResult(downloadEvent);
+        if (downloadResultCubit != null) {
+          downloadResultCubit?.publishCompleted(url:url);
+        }
         break;
       case _iOSDownloadError:
+        String url = methodData['url'];
+        String? error = methodData['error'];
         DownloadEvent downloadEvent = DownloadEvent(
-            url: methodData['url'],
+            url: url,
             status: STATUS_DOWNLOAD_ERROR,
-            error: methodData['error']);
+            error: error);
         publishDownloadResult(downloadEvent);
+        if (downloadResultCubit != null) {
+          downloadResultCubit?.publishError(url:url,error: error);
+        }
         break;
       default:
         break;

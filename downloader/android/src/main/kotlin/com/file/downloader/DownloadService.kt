@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.file.downloader.download.IDownload
+import com.file.downloader.download.IDownload.ResultReceiver_Error
 import com.file.downloader.download.IDownload.ResultReceiver_Progress
 import com.file.downloader.download.IDownload.ResultReceiver_Status
 import com.file.downloader.download.IDownload.SRC_URL_KEY
@@ -82,6 +83,7 @@ class DownloadService : IDownloadService() {
             val bundle = Bundle()
             bundle.putString(ResultReceiver_Status, downloadEvent.status)
             downloadEvent.progress?.let { bundle.putInt(ResultReceiver_Progress, it) }
+            downloadEvent.error?.let { bundle.putString(ResultReceiver_Error, it) }
             resultReceiver?.send(0, bundle)
         }
     }

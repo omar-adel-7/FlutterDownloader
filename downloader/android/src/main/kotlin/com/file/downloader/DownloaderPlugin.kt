@@ -9,6 +9,10 @@ import android.os.ResultReceiver
 import androidx.annotation.NonNull
 import com.file.downloader.download.IDownload
 import com.file.downloader.download.IDownload.isInDownloading
+import com.file.downloader.download.IDownloadService.Companion.STATUS_DOWNLOAD_COMPLETED
+import com.file.downloader.download.IDownloadService.Companion.STATUS_DOWNLOAD_ERROR
+import com.file.downloader.download.IDownloadService.Companion.STATUS_DOWNLOAD_FOREGROUND_EXCEPTION
+import com.file.downloader.download.IDownloadService.Companion.STATUS_DOWNLOAD_PROGRESS
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -21,7 +25,10 @@ class DownloaderPlugin: FlutterPlugin, MethodCallHandler  {
 
   val CHANNEL_DOWNLOAD = "download"
   private val CHANNEL_DOWNLOAD_START = "startDownload"
-  private val CHANNEL_DOWNLOAD_RESULT = "downloadResult"
+  private val CHANNEL_DOWNLOAD_RESULT_PROGRESS = "downloadResultProgress"
+  private val CHANNEL_DOWNLOAD_RESULT_COMPLETED = "downloadResultCompleted"
+  private val CHANNEL_DOWNLOAD_RESULT_ERROR = "downloadResultError"
+
   private val CHANNEL_DOWNLOAD_IS_DOWNLOADING = "isDownloading"
   private val CHANNEL_DOWNLOAD_CANCEL_CLEAR_ALL = "cancelAndClearDownloads"
   private var methodChannelDownload : MethodChannel? = null
@@ -60,13 +67,36 @@ class DownloaderPlugin: FlutterPlugin, MethodCallHandler  {
             super.onReceiveResult(resultCode, resultData)
               val status = resultData.getString(IDownload.ResultReceiver_Status)
               val progress = resultData.getInt(IDownload.ResultReceiver_Progress)
+              val error = resultData.getString(IDownload.ResultReceiver_Error)
+
+            if (status == STATUS_DOWNLOAD_PROGRESS) {
               methodChannelDownload?.invokeMethod(
-                CHANNEL_DOWNLOAD_RESULT, hashMapOf(
+                CHANNEL_DOWNLOAD_RESULT_PROGRESS, hashMapOf(
                   "url" to url,
-                  "status" to status,
                   "progress" to progress,
                 )
               )
+            } else if (status == STATUS_DOWNLOAD_COMPLETED) {
+              methodChannelDownload?.invokeMethod(
+                CHANNEL_DOWNLOAD_RESULT_COMPLETED, hashMapOf(
+                  "url" to url
+                )
+              )
+            } else if (status == STATUS_DOWNLOAD_ERROR) {
+              methodChannelDownload?.invokeMethod(
+                CHANNEL_DOWNLOAD_RESULT_ERROR, hashMapOf(
+                  "url" to url,
+                  "error" to error,
+                )
+              )
+            } else if (status == STATUS_DOWNLOAD_FOREGROUND_EXCEPTION) {
+              methodChannelDownload?.invokeMethod(
+                CHANNEL_DOWNLOAD_RESULT_ERROR, hashMapOf(
+                  "url" to url,
+                  "error" to error,
+                )
+              )
+            }
           }
         })
         context.startService(intent)
