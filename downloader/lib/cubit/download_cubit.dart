@@ -15,10 +15,10 @@ class DownloadCubit extends Cubit<DownloadStates> {
   File? _file;
   final DownloadArgs args;
   DownloadCubit(this.args) : super(InitialState()) {
-    _getFile();
+    getFile();
   }
 
-  void _getFile() async {
+  void getFile() async {
     final isDownloaded = DownloaderPlugin.isFileDownloaded(
       destinationDirPath: args.destinationDirPath,
       fileNameWithoutExtension: args.fileNameWithoutExtension,
@@ -50,7 +50,7 @@ class DownloadCubit extends Cubit<DownloadStates> {
       downloadListener: DownloadListener(
           onComplete: (String url) {
             print("downloadListener onComplete url=$url");
-            _getFile();
+            getFile();
           },
           onProgress: (String url, int progress) {
             print(
@@ -58,7 +58,7 @@ class DownloadCubit extends Cubit<DownloadStates> {
           },
           onError: (String url,{String? error}) {
             print("downloadListener onError url=$url");
-            _getFile();
+            getFile();
           }
       ),
     );
@@ -66,6 +66,6 @@ class DownloadCubit extends Cubit<DownloadStates> {
 
   void deleteFile() {
     _file?.deleteSync();
-    _getFile();
+    getFile();
   }
 }
