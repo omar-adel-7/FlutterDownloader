@@ -1,7 +1,6 @@
 import 'dart:io';
-import 'package:downloader/cubit/download_result_cubit.dart';
-import 'package:downloader/cubit/download_result_state.dart';
-import 'package:downloader/download_listener.dart';
+import 'package:downloader/cubit/result/download_result_cubit.dart';
+import 'package:downloader/cubit/result/download_result_state.dart';
 import 'package:downloader/downloader_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';

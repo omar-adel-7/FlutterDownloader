@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import '../cubit/download_result_cubit.dart';
+import '../cubit/result/download_result_cubit.dart';
 import '../download_event.dart';
 import '../download_listener.dart';
 import '../download_status_constants.dart';

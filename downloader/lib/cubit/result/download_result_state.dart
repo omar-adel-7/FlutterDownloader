@@ -1,4 +1,6 @@
-abstract class DownloadResultStates {}
+abstract class DownloadResultStates {
+  const DownloadResultStates();
+}
 
 class DownloadInitialState extends DownloadResultStates {}
 
@@ -20,3 +22,5 @@ class DownloadErrorState extends DownloadResultStates {
 
   DownloadErrorState(this.url,this.error);
 }
+
+

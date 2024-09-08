@@ -1,8 +1,7 @@
 import 'dart:io';
-import 'package:downloader/cubit/download_result_cubit.dart';
-
 import '../method_channels/android_download_method_channel.dart';
 import '../method_channels/ios_download_method_channel.dart';
+import 'cubit/result/download_result_cubit.dart';
 import 'download_file_util.dart';
 import 'download_listener.dart';
 import 'download_util.dart';
