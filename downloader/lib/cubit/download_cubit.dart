@@ -24,9 +24,8 @@ class DownloadCubit extends Cubit<DownloadStates> {
       fileNameWithoutExtension: args.fileNameWithoutExtension,
       extension: args.extension,
     );
-    String destinationFilePath = "${join(args.destinationDirPath,args.fileNameWithoutExtension)}.${args.extension}";
     if (isDownloaded) {
-      _file = File(destinationFilePath);
+      _file = File(args.filePath);
       if (!isClosed) {
         emit(FileDownloadedState(_file!.path));
       }

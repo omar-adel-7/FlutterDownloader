@@ -1,4 +1,6 @@
 
+import 'package:path/path.dart';
+
 class DownloadArgs {
 
   final String downloadLink;
@@ -10,6 +12,7 @@ class DownloadArgs {
   final   String androidNotificationCompleteMessage;
   void Function(String)? onDownloaded;
   void Function()? onDeleted;
+  String get filePath => "${join(destinationDirPath,fileNameWithoutExtension)}.$extension";
 
   DownloadArgs({
     required this.downloadLink,
