@@ -146,16 +146,16 @@ class _MyAppState extends State<MyApp> {
                 listener: (context, downloadState) {
                   if (downloadState is DownloadProgressState) {
                     print(
-                        "BlocBuilder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
+                        "BlocConsumer onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
                     onProgress(downloadState.url,downloadState.progress);
                   }
                   if (downloadState is DownloadCompletedState) {
-                    print("BlocBuilder onComplete url=${downloadState.url}");
+                    print("BlocConsumer onComplete url=${downloadState.url}");
                     onComplete(downloadState.url);
                   }
                   if (downloadState is DownloadErrorState) {
                     print(
-                        "downloadListener onError url=${downloadState.url} , error=${downloadState.error}");
+                        "BlocConsumer onError url=${downloadState.url} , error=${downloadState.error}");
                     onError(downloadState.url, downloadState.error);
                   }
                 },
