@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:path/path.dart';
 
 import '../download_args.dart';
 import '../download_listener.dart';
