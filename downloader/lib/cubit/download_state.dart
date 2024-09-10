@@ -2,16 +2,25 @@ abstract class DownloadStates {
   const DownloadStates();
 }
 
-class InitialState extends DownloadStates {}
+class DownloadInitialState extends DownloadStates {}
 
-final class LoadingState extends DownloadStates {}
+class DownloadProgressState extends DownloadStates {
+  final String url;
+  final int progress;
 
-final class FileNotDownloadState extends DownloadStates {}
-
-final class FileDownloadedState extends DownloadStates {
-  final String path;
-  const FileDownloadedState(this.path);
+  DownloadProgressState(this.url,this.progress);
 }
 
+class DownloadCompletedState extends DownloadStates {
+  final String url;
+  DownloadCompletedState(this.url);
+}
+
+class DownloadErrorState extends DownloadStates {
+  final String url;
+  final String? error;
+
+  DownloadErrorState(this.url,this.error);
+}
 
 

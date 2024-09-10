@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import '../cubit/result/download_result_cubit.dart';
+import '../cubit/download_cubit.dart';
 import '../download_event.dart';
 import '../download_listener.dart';
 import '../download_status_constants.dart';
@@ -19,11 +19,11 @@ class IOSDownloadMethodChannel {
 
   IOSDownloadMethodChannel._init();
 
-  DownloadResultCubit? downloadResultCubit ;
-  init(DownloadResultCubit? downloadResultCubit) {
+  DownloadCubit? downloadCubit ;
+  init(DownloadCubit? downloadCubit) {
     _channelMethod = const MethodChannel(_iOSDownloadChannelName);
     _channelMethod?.setMethodCallHandler(methodHandler);
-    this.downloadResultCubit=downloadResultCubit;
+    this.downloadCubit=downloadCubit;
   }
 
   Future<void> methodHandler(MethodCall call) async {
@@ -37,8 +37,8 @@ class IOSDownloadMethodChannel {
             status: STATUS_DOWNLOAD_PROGRESS,
             progress: progress);
         publishDownloadResult(downloadEvent);
-        if (downloadResultCubit != null) {
-          downloadResultCubit?.publishProgress(url:url, progress: progress);
+        if (downloadCubit != null) {
+          downloadCubit?.publishProgress(url:url, progress: progress);
         }
         break;
       case _iOSDownloadCompleted:
@@ -46,8 +46,8 @@ class IOSDownloadMethodChannel {
         DownloadEvent downloadEvent = DownloadEvent(
             url: url, status: STATUS_DOWNLOAD_COMPLETED);
         publishDownloadResult(downloadEvent);
-        if (downloadResultCubit != null) {
-          downloadResultCubit?.publishCompleted(url:url);
+        if (downloadCubit != null) {
+          downloadCubit?.publishCompleted(url:url);
         }
         break;
       case _iOSDownloadError:
@@ -58,8 +58,8 @@ class IOSDownloadMethodChannel {
             status: STATUS_DOWNLOAD_ERROR,
             error: error);
         publishDownloadResult(downloadEvent);
-        if (downloadResultCubit != null) {
-          downloadResultCubit?.publishError(url:url,error: error);
+        if (downloadCubit != null) {
+          downloadCubit?.publishError(url:url,error: error);
         }
         break;
       default:

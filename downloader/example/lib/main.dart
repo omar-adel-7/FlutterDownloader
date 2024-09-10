@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:downloader/cubit/result/download_result_cubit.dart';
-import 'package:downloader/cubit/result/download_result_state.dart';
+import 'package:downloader/cubit/download_cubit.dart';
+import 'package:downloader/cubit/download_state.dart';
 import 'package:downloader/downloader_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -10,14 +10,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  DownloadResultCubit downloadResultCubit = DownloadResultCubit();
-  DownloaderPlugin.init(downloadResultCubit: downloadResultCubit);
-  runApp(MyApp(downloadResultCubit: downloadResultCubit));
+  DownloadCubit downloadCubit = DownloadCubit();
+  DownloaderPlugin.init(downloadCubit: downloadCubit);
+  runApp(MyApp(downloadResultCubit: downloadCubit));
 }
 
 class MyApp extends StatefulWidget {
    const MyApp({super.key,  required this .downloadResultCubit});
-   final DownloadResultCubit downloadResultCubit;
+   final DownloadCubit downloadResultCubit;
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -72,7 +72,7 @@ class _MyAppState extends State<MyApp> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
-                      color: Colors.cyan, child: Text('Download now')),
+                      color: Colors.cyan, child: const Text('Download now')),
                 ),
                 onTap: () async {
                   String url =
@@ -141,7 +141,7 @@ class _MyAppState extends State<MyApp> {
             Container(
               height: 100,
               color: Colors.yellow,
-              child: BlocConsumer<DownloadResultCubit, DownloadResultStates>(
+              child: BlocConsumer<DownloadCubit, DownloadStates>(
                 listener: (context, downloadState) {
                   if (downloadState is DownloadProgressState) {
                     print(
