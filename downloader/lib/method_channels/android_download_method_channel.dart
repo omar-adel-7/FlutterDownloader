@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import '../cubit/download_cubit.dart';
+import '../download_listener.dart';
 
 class AndroidDownloadMethodChannel {
   static const _androidDownloadChannelName = 'download';
@@ -13,13 +14,14 @@ class AndroidDownloadMethodChannel {
 
   MethodChannel? _channelMethod;
 
+  final Map<String, DownloadListener> downloadListeners = {};
   static final AndroidDownloadMethodChannel instance =
       AndroidDownloadMethodChannel._init();
 
   AndroidDownloadMethodChannel._init();
 
-  DownloadCubit? downloadCubit ;
-  init(DownloadCubit? downloadCubit) {
+  late DownloadCubit downloadCubit ;
+  init(DownloadCubit downloadCubit) {
     _channelMethod = const MethodChannel(_androidDownloadChannelName);
     _channelMethod?.setMethodCallHandler(methodHandler);
     this.downloadCubit=downloadCubit;
@@ -31,26 +33,25 @@ class AndroidDownloadMethodChannel {
       case _androidDownloadResultProgress:
         String url = methodData['url'];
         int progress = methodData['progress'];
-        if (downloadCubit != null) {
-          downloadCubit?.publishProgress(url:url, progress: progress);
-        }
+          downloadCubit.publishProgress(url:url, progress: progress,downloadListener: getUrlDownloadListener(url));
         break;
       case _androidDownloadResultCompleted:
         String url = methodData['url'];
-        if (downloadCubit != null) {
-          downloadCubit?.publishCompleted(url:url);
-        }
+          downloadCubit.publishCompleted(url:url,downloadListener: getUrlDownloadListener(url));
         break;
       case _androidDownloadResultError:
         String url = methodData['url'];
         String? error = methodData['error'];
-        if (downloadCubit != null) {
-          downloadCubit?.publishError(url:url,error: error);
-        }
+          downloadCubit.publishError(url:url,error: error,downloadListener: getUrlDownloadListener(url));
         break;
       default:
         break;
     }
+  }
+
+
+  DownloadListener? getUrlDownloadListener(String url) {
+    return downloadListeners[url];
   }
 
   downloadFile(
@@ -61,7 +62,9 @@ class AndroidDownloadMethodChannel {
       required String notificationMessage,
       required String notificationProgressMessage,
       required String notificationCompleteMessage,
+        DownloadListener? downloadListener
       }) {
+    addDownloadListener(url: url, downloadListener: downloadListener);
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
       'url': url,
@@ -73,6 +76,14 @@ class AndroidDownloadMethodChannel {
       'notificationCompleteMessage': notificationCompleteMessage,
     });
     _channelMethod?.invokeMethod(_androidStartDownload, argsMap);
+  }
+
+
+  void addDownloadListener(
+      {required String url, DownloadListener? downloadListener}) {
+    if (downloadListener != null) {
+      downloadListeners[url] = downloadListener;
+    }
   }
 
   Future<bool> isFileDownloading(String url) async {

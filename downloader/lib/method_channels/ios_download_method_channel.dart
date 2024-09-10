@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import '../cubit/download_cubit.dart';
-import '../download_status_constants.dart';
+import '../download_listener.dart';
 
 class IOSDownloadMethodChannel {
   static const _iOSDownloadChannelName = 'iOSDownloadChannelName';
@@ -10,14 +10,15 @@ class IOSDownloadMethodChannel {
   static const _iOSDownloadError = 'iOSDownloadError';
 
   MethodChannel? _channelMethod;
+  final Map<String, DownloadListener> downloadListeners = {};
 
   static final IOSDownloadMethodChannel instance =
       IOSDownloadMethodChannel._init();
 
   IOSDownloadMethodChannel._init();
 
-  DownloadCubit? downloadCubit ;
-  init(DownloadCubit? downloadCubit) {
+  late DownloadCubit downloadCubit ;
+  init(DownloadCubit downloadCubit) {
     _channelMethod = const MethodChannel(_iOSDownloadChannelName);
     _channelMethod?.setMethodCallHandler(methodHandler);
     this.downloadCubit=downloadCubit;
@@ -29,32 +30,32 @@ class IOSDownloadMethodChannel {
       case _iOSDownloadProgress:
         String url = methodData['url'];
         int progress = methodData['progress'];
-        if (downloadCubit != null) {
-          downloadCubit?.publishProgress(url:url, progress: progress);
-        }
+          downloadCubit.publishProgress(url:url, progress: progress,downloadListener: getUrlDownloadListener(url));
         break;
       case _iOSDownloadCompleted:
         String url = methodData['url'];
-        if (downloadCubit != null) {
-          downloadCubit?.publishCompleted(url:url);
-        }
+          downloadCubit.publishCompleted(url:url,downloadListener: getUrlDownloadListener(url));
         break;
       case _iOSDownloadError:
         String url = methodData['url'];
         String? error = methodData['error'];
-        if (downloadCubit != null) {
-          downloadCubit?.publishError(url:url,error: error);
-        }
+          downloadCubit.publishError(url:url,error: error,downloadListener: getUrlDownloadListener(url));
         break;
       default:
         break;
     }
   }
 
+  DownloadListener? getUrlDownloadListener(String url) {
+    return downloadListeners[url];
+  }
+
   downloadFile(
       {required String url,
       required String destinationDirPath,
-      required String fileName}) {
+      required String fileName,
+        DownloadListener? downloadListener}) {
+    addDownloadListener(url: url, downloadListener: downloadListener);
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
       'url': url,
@@ -64,4 +65,11 @@ class IOSDownloadMethodChannel {
     _channelMethod?.invokeMethod(_iOSStartDownload, argsMap);
   }
 
+
+  void addDownloadListener(
+      {required String url, DownloadListener? downloadListener}) {
+    if (downloadListener != null) {
+      downloadListeners[url] = downloadListener;
+    }
+  }
 }

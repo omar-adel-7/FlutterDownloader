@@ -4,10 +4,12 @@ import '../method_channels/ios_download_method_channel.dart';
 import 'cubit/download_cubit.dart';
 import 'download_args.dart';
 import 'download_file_util.dart';
+import 'download_listener.dart';
 
 class DownloaderPlugin {
-  static String extensionDot=".";
-  static init({DownloadCubit? downloadCubit}) async {
+  static String extensionDot = ".";
+
+  static init(DownloadCubit downloadCubit) async {
     AndroidDownloadMethodChannel.instance.init(downloadCubit);
     IOSDownloadMethodChannel.instance.init(downloadCubit);
   }
@@ -19,13 +21,13 @@ class DownloaderPlugin {
       required String extension,
       required String androidNotificationMessage,
       required String androidNotificationProgressMessage,
-      required String androidNotificationCompleteMessage}) async {
-    String pathSeparator = Platform.pathSeparator ;
-    if(!destinationDirPath.endsWith(pathSeparator))
-      {
-        destinationDirPath=destinationDirPath+pathSeparator;
-      }
-    extension=extensionDot+extension;
+      required String androidNotificationCompleteMessage,
+      DownloadListener? downloadListener}) async {
+    String pathSeparator = Platform.pathSeparator;
+    if (!destinationDirPath.endsWith(pathSeparator)) {
+      destinationDirPath = destinationDirPath + pathSeparator;
+    }
+    extension = extensionDot + extension;
     if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance.downloadFile(
           url: url,
@@ -34,35 +36,50 @@ class DownloaderPlugin {
           extension: extension,
           notificationMessage: androidNotificationMessage,
           notificationProgressMessage: androidNotificationProgressMessage,
-          notificationCompleteMessage: androidNotificationCompleteMessage);
+          notificationCompleteMessage: androidNotificationCompleteMessage,
+          downloadListener: downloadListener);
     } else if (isPlatformIos()) {
       String fileName = fileNameWithoutExtension + extension;
       IOSDownloadMethodChannel.instance.downloadFile(
           url: url,
           destinationDirPath: destinationDirPath,
-          fileName: fileName);
+          fileName: fileName,
+          downloadListener: downloadListener);
     }
   }
 
-  static void downloadFileByArgs(DownloadArgs downloadArgs) async {
+  static void downloadFileByArgs(
+      {required DownloadArgs downloadArgs,
+      DownloadListener? downloadListener}) async {
     downloadFile(
-      url: downloadArgs.downloadLink,
-      destinationDirPath: downloadArgs.destinationDirPath,
-      extension: downloadArgs.extension,
-      fileNameWithoutExtension: downloadArgs.fileNameWithoutExtension,
-      androidNotificationMessage: downloadArgs.androidNotificationTitle,
-      androidNotificationProgressMessage:
-      downloadArgs.androidNotificationProgressMessage,
-      androidNotificationCompleteMessage:
-      downloadArgs.androidNotificationCompleteMessage,
-    );
+        url: downloadArgs.downloadLink,
+        destinationDirPath: downloadArgs.destinationDirPath,
+        extension: downloadArgs.extension,
+        fileNameWithoutExtension: downloadArgs.fileNameWithoutExtension,
+        androidNotificationMessage: downloadArgs.androidNotificationTitle,
+        androidNotificationProgressMessage:
+            downloadArgs.androidNotificationProgressMessage,
+        androidNotificationCompleteMessage:
+            downloadArgs.androidNotificationCompleteMessage,
+        downloadListener: downloadListener);
+  }
+
+  static addDownloadListener(
+      {required String url, required DownloadListener downloadListener}) {
+    if (isPlatformAndroid()) {
+      AndroidDownloadMethodChannel.instance
+          .addDownloadListener(url: url, downloadListener: downloadListener);
+    } else if (isPlatformIos()) {
+      IOSDownloadMethodChannel.instance
+          .addDownloadListener(url: url, downloadListener: downloadListener);
+    }
   }
 
   static Future<bool> isFileDownloading(String url) async {
     if (isPlatformAndroid()) {
       return await AndroidDownloadMethodChannel.instance.isFileDownloading(url);
     }
-    return false ;
+    return false;
   }
 
   static bool isFileDownloaded({
@@ -70,7 +87,7 @@ class DownloaderPlugin {
     required String fileNameWithoutExtension,
     required String extension,
   }) {
-    extension=extensionDot+extension;
+    extension = extensionDot + extension;
     return isFileExist(
         destinationDirPath: destinationDirPath,
         fileName: fileNameWithoutExtension + extension);
@@ -94,12 +111,11 @@ class DownloaderPlugin {
     }
   }
 
-  static bool isPlatformAndroid()  {
+  static bool isPlatformAndroid() {
     return Platform.isAndroid;
   }
 
-  static bool isPlatformIos()  {
+  static bool isPlatformIos() {
     return Platform.isIOS;
   }
-
 }
