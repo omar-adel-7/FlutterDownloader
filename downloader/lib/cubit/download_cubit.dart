@@ -47,16 +47,16 @@ class DownloadCubit extends Cubit<DownloadStates> {
       androidNotificationProgressMessage: args.androidNotificationProgressMessage,
       androidNotificationCompleteMessage: args.androidNotificationCompleteMessage,
       downloadListener: DownloadListener(
-          onComplete: (String url) {
-            print("downloadListener onComplete url=$url");
-            getFile();
-          },
           onProgress: (String url, int progress) {
             print(
-                "downloadListener onProgress url=$url and progress = $progress");
+                "plugin DownloadCubit downloadListener onProgress url=$url and progress = $progress");
+          },
+          onComplete: (String url) {
+            print("plugin DownloadCubit downloadListener onComplete url=$url");
+            getFile();
           },
           onError: (String url,{String? error}) {
-            print("downloadListener onError url=$url");
+            print("plugin DownloadCubit downloadListener onError url=$url");
             getFile();
           }
       ),
