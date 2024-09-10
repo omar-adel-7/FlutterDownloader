@@ -150,29 +150,33 @@ class _MyAppState extends State<MyApp> {
                 listener: (context, downloadState) {
                   if (downloadState is DownloadProgressState) {
                     print(
-                        "BlocConsumer onProgress id=${downloadState.id} and url=${downloadState.url} and progress = ${downloadState.progress}");
+                        "BlocConsumer listener onProgress id=${downloadState.id} and url=${downloadState.url} and progress = ${downloadState.progress}");
                     onProgress(downloadState.url,downloadState.progress);
                   }
                   if (downloadState is DownloadCompletedState) {
-                    print("BlocConsumer onComplete id=${downloadState.id} and url=${downloadState.url}");
+                    print("BlocConsumer listener onComplete id=${downloadState.id} and url=${downloadState.url}");
                     onComplete(downloadState.url);
                   }
                   if (downloadState is DownloadErrorState) {
                     print(
-                        "BlocConsumer onError id=${downloadState.id} and url=${downloadState.url} , error=${downloadState.error}");
+                        "BlocConsumer listener onError id=${downloadState.id} and url=${downloadState.url} , error=${downloadState.error}");
                     onError(downloadState.url, downloadState.error);
                   }
                 },
                 builder: (context, downloadState) {
-                  // if (downloadState is DownloadProgressState) {
-                  //
-                  //  }
-                  // else if (downloadState is DownloadCompletedState) {
-                  //
-                  // }
-                  // else if (downloadState is DownloadErrorState) {
-                  //
-                  // }
+                  if (downloadState is DownloadProgressState) {
+                    print(
+                        "BlocConsumer builder onProgress id=${downloadState.id} and url=${downloadState.url} and progress = ${downloadState.progress}");
+
+                  }
+                  else if (downloadState is DownloadCompletedState) {
+                    print("BlocConsumer builder onComplete id=${downloadState.id} and url=${downloadState.url}");
+
+                  }
+                  else if (downloadState is DownloadErrorState) {
+                    print(
+                        "BlocConsumer builder onError id=${downloadState.id} and url=${downloadState.url} , error=${downloadState.error}");
+                  }
                   return Column(
                     children: [
                       Text("message = $message"),
