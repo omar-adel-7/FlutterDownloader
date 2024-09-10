@@ -35,6 +35,8 @@ class AndroidDownloadMethodChannel {
       case _androidDownloadResultProgress:
         String url = methodData['url'];
         int progress = methodData['progress'];
+        print(
+            "plugin methodHandler progress url=$url and progress = $progress");
         DownloadEvent downloadEvent = DownloadEvent(
             url: methodData['url'],
             status: STATUS_DOWNLOAD_PROGRESS,
