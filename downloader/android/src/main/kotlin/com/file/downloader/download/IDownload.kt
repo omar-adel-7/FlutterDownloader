@@ -25,6 +25,7 @@ object IDownload {
     const val RESPONSE_CONNECTION_ERROR_MESSAGE = "response_connection_error"
     const val RESPONSE_CREATE_FOLDER_ERROR_MESSAGE = "response_create_folder_error"
     const val ResultReceiver_Key = "result_receiver"
+    const val ResultReceiver_Url = "result_receiver_url"
     const val ResultReceiver_Status = "result_receiver_status"
     const val ResultReceiver_Progress = "result_receiver_progress"
     const val ResultReceiver_Error = "result_receiver_error"

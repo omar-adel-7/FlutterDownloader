@@ -12,6 +12,7 @@ import com.file.downloader.download.IDownload
 import com.file.downloader.download.IDownload.ResultReceiver_Error
 import com.file.downloader.download.IDownload.ResultReceiver_Progress
 import com.file.downloader.download.IDownload.ResultReceiver_Status
+import com.file.downloader.download.IDownload.ResultReceiver_Url
 import com.file.downloader.download.IDownload.SRC_URL_KEY
 import com.file.downloader.download.IDownloadService
 import com.file.downloader.download.model_download.entity.DownloadModel
@@ -81,6 +82,7 @@ class DownloadService : IDownloadService() {
         val mHandler = Handler(mainLooper)
         mHandler.post {
             val bundle = Bundle()
+            bundle.putString(ResultReceiver_Url, downloadEvent.url)
             bundle.putString(ResultReceiver_Status, downloadEvent.status)
             downloadEvent.progress?.let { bundle.putInt(ResultReceiver_Progress, it) }
             downloadEvent.error?.let { bundle.putString(ResultReceiver_Error, it) }
