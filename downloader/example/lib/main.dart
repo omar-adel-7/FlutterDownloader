@@ -91,47 +91,6 @@ class _MyAppState extends State<MyApp> {
                     androidNotificationProgressMessage: "downloading",
                     androidNotificationCompleteMessage: "complete download",
                   );
-                  // or with downloadListener
-                  // DownloaderPlugin.downloadFile(
-                  //     url: url,
-                  //     destinationDirPath: destinationDirPath,
-                  //     fileNameWithoutExtension: fileNameWithoutExtension,
-                  //     extension: extension,
-                  //     androidNotificationMessage: "test notification message",
-                  //     androidNotificationProgressMessage: "downloading",
-                  //     androidNotificationCompleteMessage: "complete download",
-                  //     downloadListener: DownloadListener(
-                  //       onProgress: (String url, int progress) {
-                  //         print(
-                  //             "downloadListener onProgress url=$url and progress = $progress");
-                  //         onProgress(url, progress);
-                  //       },
-                  //       onComplete: (String url) {
-                  //         print("downloadListener onComplete url=$url");
-                  //         onComplete(url);
-                  //       },
-                  //       onError: (String url, {String? error}) {
-                  //         print(
-                  //             "downloadListener onError url=$url , error=$error");
-                  //         onError(url, error);
-                  //       },
-                  //     ));
-                  //or add downloadListener separately
-                  // DownloaderPlugin.addDownloadListener(
-                  //     url: url,
-                  //     downloadListener: DownloadListener(
-                  //         onProgress: (String url, int progress) {
-                  //       print(
-                  //           "separate downloadListener onProgress url=$url and progress = $progress");
-                  //       onProgress(url, progress);
-                  //     }, onComplete: (String url) {
-                  //       print("separate downloadListener onComplete url=$url");
-                  //       onComplete(url);
-                  //     }, onError: (String url, {String? error}) {
-                  //       print(
-                  //           "separate downloadListener onError url=$url , error=$error");
-                  //       onError(url, error);
-                  //     }));
                 },
               ),
             ),
@@ -202,15 +161,11 @@ class _MyAppState extends State<MyApp> {
   void onProgress(String url, int progress) {
     this.progress = progress;
     message = "downloading";
-    // //in case of not using bloc
-    // setState(() {});
     }
 
   void onComplete(String url) {
     progress = 100;
     message = "complete";
-    // //in case of not using bloc
-    // setState(() {});
     }
 
   void onError(String url, String? error) {
@@ -223,8 +178,6 @@ class _MyAppState extends State<MyApp> {
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
         fontSize: 16.0);
-    // //in case of not using bloc
-    // setState(() {});
   }
 }
 

@@ -1,8 +1,5 @@
 import 'package:flutter/services.dart';
 import '../cubit/download_cubit.dart';
-import '../download_event.dart';
-import '../download_listener.dart';
-import '../download_status_constants.dart';
 
 class AndroidDownloadMethodChannel {
   static const _androidDownloadChannelName = 'download';
@@ -15,7 +12,6 @@ class AndroidDownloadMethodChannel {
   static const _androidCancelAndClearDownloads = 'cancelAndClearDownloads';
 
   MethodChannel? _channelMethod;
-  final Map<String, DownloadListener> downloadListeners = {};
 
   static final AndroidDownloadMethodChannel instance =
       AndroidDownloadMethodChannel._init();
@@ -35,20 +31,12 @@ class AndroidDownloadMethodChannel {
       case _androidDownloadResultProgress:
         String url = methodData['url'];
         int progress = methodData['progress'];
-        DownloadEvent downloadEvent = DownloadEvent(
-            url: methodData['url'],
-            status: STATUS_DOWNLOAD_PROGRESS,
-            progress: progress);
-        publishDownloadResult(downloadEvent);
         if (downloadCubit != null) {
           downloadCubit?.publishProgress(url:url, progress: progress);
         }
         break;
       case _androidDownloadResultCompleted:
         String url = methodData['url'];
-        DownloadEvent downloadEvent = DownloadEvent(
-            url: url, status: STATUS_DOWNLOAD_COMPLETED);
-        publishDownloadResult(downloadEvent);
         if (downloadCubit != null) {
           downloadCubit?.publishCompleted(url:url);
         }
@@ -56,24 +44,12 @@ class AndroidDownloadMethodChannel {
       case _androidDownloadResultError:
         String url = methodData['url'];
         String? error = methodData['error'];
-        DownloadEvent downloadEvent = DownloadEvent(
-            url: url,
-            status: STATUS_DOWNLOAD_ERROR,
-            error: error);
-        publishDownloadResult(downloadEvent);
         if (downloadCubit != null) {
           downloadCubit?.publishError(url:url,error: error);
         }
         break;
       default:
         break;
-    }
-  }
-
-  publishDownloadResult(DownloadEvent downloadEvent) {
-    if (downloadListeners[downloadEvent.url] != null) {
-      downloadListeners[downloadEvent.url]
-          ?.publishDownloadResult(downloadEvent);
     }
   }
 
@@ -85,8 +61,7 @@ class AndroidDownloadMethodChannel {
       required String notificationMessage,
       required String notificationProgressMessage,
       required String notificationCompleteMessage,
-      DownloadListener? downloadListener}) {
-    addDownloadListener(url: url, downloadListener: downloadListener);
+      }) {
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
       'url': url,
@@ -98,13 +73,6 @@ class AndroidDownloadMethodChannel {
       'notificationCompleteMessage': notificationCompleteMessage,
     });
     _channelMethod?.invokeMethod(_androidStartDownload, argsMap);
-  }
-
-  void addDownloadListener(
-      {required String url, DownloadListener? downloadListener}) {
-    if (downloadListener != null) {
-      downloadListeners[url] = downloadListener;
-    }
   }
 
   Future<bool> isFileDownloading(String url) async {

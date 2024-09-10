@@ -2,9 +2,8 @@ import 'dart:io';
 import '../method_channels/android_download_method_channel.dart';
 import '../method_channels/ios_download_method_channel.dart';
 import 'cubit/download_cubit.dart';
+import 'download_args.dart';
 import 'download_file_util.dart';
-import 'download_listener.dart';
-import 'download_util.dart';
 
 class DownloaderPlugin {
   static String extensionDot=".";
@@ -20,15 +19,14 @@ class DownloaderPlugin {
       required String extension,
       required String androidNotificationMessage,
       required String androidNotificationProgressMessage,
-      required String androidNotificationCompleteMessage,
-        DownloadListener? downloadListener}) async {
+      required String androidNotificationCompleteMessage}) async {
     String pathSeparator = Platform.pathSeparator ;
     if(!destinationDirPath.endsWith(pathSeparator))
       {
         destinationDirPath=destinationDirPath+pathSeparator;
       }
     extension=extensionDot+extension;
-    if (DownloadUtil.isPlatformAndroid()) {
+    if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance.downloadFile(
           url: url,
           destinationDirPath: destinationDirPath,
@@ -36,32 +34,32 @@ class DownloaderPlugin {
           extension: extension,
           notificationMessage: androidNotificationMessage,
           notificationProgressMessage: androidNotificationProgressMessage,
-          notificationCompleteMessage: androidNotificationCompleteMessage,
-          downloadListener: downloadListener);
-    } else if (DownloadUtil.isPlatformIos()) {
+          notificationCompleteMessage: androidNotificationCompleteMessage);
+    } else if (isPlatformIos()) {
       String fileName = fileNameWithoutExtension + extension;
       IOSDownloadMethodChannel.instance.downloadFile(
           url: url,
           destinationDirPath: destinationDirPath,
-          fileName: fileName,
-          downloadListener: downloadListener);
+          fileName: fileName);
     }
   }
 
-  static addDownloadListener(
-      {required String url,
-      required DownloadListener downloadListener}) {
-    if (DownloadUtil.isPlatformAndroid()) {
-      AndroidDownloadMethodChannel.instance
-          .addDownloadListener(url: url, downloadListener: downloadListener);
-    } else if (DownloadUtil.isPlatformIos()) {
-      IOSDownloadMethodChannel.instance
-          .addDownloadListener(url: url, downloadListener: downloadListener);
-    }
+  static void downloadFileByArgs(DownloadArgs downloadArgs) async {
+    downloadFile(
+      url: downloadArgs.downloadLink,
+      destinationDirPath: downloadArgs.destinationDirPath,
+      extension: downloadArgs.extension,
+      fileNameWithoutExtension: downloadArgs.fileNameWithoutExtension,
+      androidNotificationMessage: downloadArgs.androidNotificationTitle,
+      androidNotificationProgressMessage:
+      downloadArgs.androidNotificationProgressMessage,
+      androidNotificationCompleteMessage:
+      downloadArgs.androidNotificationCompleteMessage,
+    );
   }
 
   static Future<bool> isFileDownloading(String url) async {
-    if (DownloadUtil.isPlatformAndroid()) {
+    if (isPlatformAndroid()) {
       return await AndroidDownloadMethodChannel.instance.isFileDownloading(url);
     }
     return false ;
@@ -78,10 +76,30 @@ class DownloaderPlugin {
         fileName: fileNameWithoutExtension + extension);
   }
 
+  static bool isFileDownloadedByArgs(DownloadArgs downloadArgs) {
+    return isFileDownloaded(
+      destinationDirPath: downloadArgs.destinationDirPath,
+      fileNameWithoutExtension: downloadArgs.fileNameWithoutExtension,
+      extension: downloadArgs.extension,
+    );
+  }
+
+  static void deleteFile(DownloadArgs downloadArgs) {
+    File(downloadArgs.filePath).deleteSync();
+  }
 
   static cancelAndClearAndroidDownloads() {
-    if (DownloadUtil.isPlatformAndroid()) {
+    if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance.cancelAndClearDownloads();
     }
   }
+
+  static bool isPlatformAndroid()  {
+    return Platform.isAndroid;
+  }
+
+  static bool isPlatformIos()  {
+    return Platform.isIOS;
+  }
+
 }
