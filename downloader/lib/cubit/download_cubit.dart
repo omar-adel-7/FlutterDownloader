@@ -52,6 +52,8 @@ class DownloadCubit extends Cubit<DownloadStates> {
           args.androidNotificationCompleteMessage,
       downloadListener:
           DownloadListener(onProgress: (String url, int progress) {
+        print(
+            "plugin DownloadCubit downloadListener onProgress url=$url , progress=$progress");
         if (!isClosed) {
           emit(LoadingState());
         }
