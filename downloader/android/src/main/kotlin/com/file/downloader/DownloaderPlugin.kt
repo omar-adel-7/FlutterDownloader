@@ -7,18 +7,14 @@ import android.os.Handler
 import android.os.Looper
 import android.os.ResultReceiver
 import androidx.annotation.NonNull
-import com.file.downloader.download.IDownload
-import com.file.downloader.download.IDownload.isInDownloading
-import com.file.downloader.download.IDownloadService.Companion.STATUS_DOWNLOAD_COMPLETED
-import com.file.downloader.download.IDownloadService.Companion.STATUS_DOWNLOAD_ERROR
-import com.file.downloader.download.IDownloadService.Companion.STATUS_DOWNLOAD_FOREGROUND_EXCEPTION
-import com.file.downloader.download.IDownloadService.Companion.STATUS_DOWNLOAD_PROGRESS
+import com.file.downloader.IDownloadService.Companion.STATUS_DOWNLOAD_COMPLETED
+import com.file.downloader.IDownloadService.Companion.STATUS_DOWNLOAD_ERROR
+import com.file.downloader.IDownloadService.Companion.STATUS_DOWNLOAD_PROGRESS
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
 
 /** DownloaderPlugin */
 class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
@@ -29,8 +25,7 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
     private val CHANNEL_DOWNLOAD_RESULT_COMPLETED = "downloadResultCompleted"
     private val CHANNEL_DOWNLOAD_RESULT_ERROR = "downloadResultError"
 
-    private val CHANNEL_DOWNLOAD_IS_DOWNLOADING = "isDownloading"
-    private val CHANNEL_DOWNLOAD_CANCEL_CLEAR_ALL = "cancelAndClearDownloads"
+
     private var methodChannelDownload: MethodChannel? = null
     private var context: Context? = null
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -40,9 +35,10 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
         context = flutterPluginBinding.applicationContext
     }
 
-    override fun onMethodCall(call: MethodCall, @NonNull result: Result) {
+    override fun onMethodCall(call: MethodCall, @NonNull result: MethodChannel.Result) {
         if (call.method.equals(CHANNEL_DOWNLOAD_START)) {
             val argsMap = call.arguments as HashMap<*, *>
+            val id = argsMap["id"] as String
             val url = argsMap["url"] as String
             val destinationDirPath = argsMap["destinationDirPath"] as String
             val fileNameWithoutExtension = argsMap["fileNameWithoutExtension"] as String
@@ -56,6 +52,7 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
                 intent.action = context.getString(
                     R.string.download_ACTION_DOWNLOAD_ITEM
                 )
+                intent.putExtra(IDownload.SRC_ID_KEY, id)
                 intent.putExtra(IDownload.SRC_URL_KEY, url)
                 intent.putExtra(IDownload.SRC_DEST_DIR_PATH_KEY, destinationDirPath)
                 intent.putExtra(
@@ -77,6 +74,7 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
                     object : ResultReceiver(Handler(Looper.getMainLooper())) {
                         override fun onReceiveResult(resultCode: Int, resultData: Bundle) {
                             super.onReceiveResult(resultCode, resultData)
+                            val id = resultData.getString(IDownload.ResultReceiver_Id)
                             val url = resultData.getString(IDownload.ResultReceiver_Url)
                             val status = resultData.getString(IDownload.ResultReceiver_Status)
                             val progress = resultData.getInt(IDownload.ResultReceiver_Progress)
@@ -85,6 +83,7 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
                             if (status == STATUS_DOWNLOAD_PROGRESS) {
                                 methodChannelDownload?.invokeMethod(
                                     CHANNEL_DOWNLOAD_RESULT_PROGRESS, hashMapOf(
+                                        "id" to id,
                                         "url" to url,
                                         "progress" to progress,
                                     )
@@ -92,19 +91,14 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
                             } else if (status == STATUS_DOWNLOAD_COMPLETED) {
                                 methodChannelDownload?.invokeMethod(
                                     CHANNEL_DOWNLOAD_RESULT_COMPLETED, hashMapOf(
+                                        "id" to id,
                                         "url" to url
                                     )
                                 )
                             } else if (status == STATUS_DOWNLOAD_ERROR) {
                                 methodChannelDownload?.invokeMethod(
                                     CHANNEL_DOWNLOAD_RESULT_ERROR, hashMapOf(
-                                        "url" to url,
-                                        "error" to error,
-                                    )
-                                )
-                            } else if (status == STATUS_DOWNLOAD_FOREGROUND_EXCEPTION) {
-                                methodChannelDownload?.invokeMethod(
-                                    CHANNEL_DOWNLOAD_RESULT_ERROR, hashMapOf(
+                                        "id" to id,
                                         "url" to url,
                                         "error" to error,
                                     )
@@ -114,17 +108,8 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
                     })
                 context.startService(intent)
             }
-        } else
-            if (call.method.equals(CHANNEL_DOWNLOAD_IS_DOWNLOADING)) {
-                val argsMap = call.arguments as HashMap<*, *>
-                val url = argsMap["url"] as String
-                val isDownloading = isInDownloading(
-                    context, url,
-                )
-                result.success(isDownloading)
-            } else if (call.method.equals(CHANNEL_DOWNLOAD_CANCEL_CLEAR_ALL)) {
-                context?.let { context -> DownloadService.cancelAndClearAll(context) }
-            } else {
+        }
+        else {
                 result.notImplemented()
             }
     }

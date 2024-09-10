@@ -1,13 +1,12 @@
-package com.file.downloader.download
+package com.file.downloader
 
 import android.content.Context
 import android.os.Bundle
 import android.os.StatFs
-import com.file.downloader.download.model_download.DownloadDbUtil
-import com.file.downloader.download.model_download.entity.DownloadModel
 import java.io.File
 
 object IDownload {
+    const val SRC_ID_KEY = "src_id"
     const val SRC_URL_KEY = "src_url"
     const val SRC_DEST_DIR_PATH_KEY = "src_dest_dir_path"
     const val SRC_FILE_NAME_WITHOUT_EXTENSION_KEY = "src_file_name_without_extension"
@@ -16,35 +15,27 @@ object IDownload {
     const val SRC_NOTIFICATION_PROGRESS_MESSAGE = "src_notification_progress_message"
     const val SRC_NOTIFICATION_COMPLETE_MESSAGE = "src_notification_complete_message"
     const val RESPONSE_URL_KEY = "response_url"
+    const val RESPONSE_ID_KEY = "response_id"
     const val RESPONSE_PROGRESS_KEY = "response_progress"
     const val RESPONSE_SIZE_KEY = "response_size"
-    const val RESPONSE_ADDED_KEY = "response_added_key"
     const val RESPONSE_SUCCESS_ERROR_KEY = "response_success_error"
     const val RESPONSE_ERROR_MESSAGE_KEY = "response_error_message"
     const val RESPONSE_NO_FREE_SPACE_MESSAGE = "response_no_free_space"
     const val RESPONSE_CONNECTION_ERROR_MESSAGE = "response_connection_error"
     const val RESPONSE_CREATE_FOLDER_ERROR_MESSAGE = "response_create_folder_error"
     const val ResultReceiver_Key = "result_receiver"
+    const val ResultReceiver_Id = "result_receiver_id"
     const val ResultReceiver_Url = "result_receiver_url"
     const val ResultReceiver_Status = "result_receiver_status"
     const val ResultReceiver_Progress = "result_receiver_progress"
     const val ResultReceiver_Error = "result_receiver_error"
 
-    fun getDownloads(context: Context?): List<DownloadModel>? {
-        return DownloadDbUtil.getDownloads(context)
-    }
-
     fun getDownloadEvent(context: Context?, extras: Bundle): DownloadEvent {
         val downloadEvent = DownloadEvent()
         if (extras.containsKey(RESPONSE_URL_KEY)) {
+            downloadEvent.id = extras.getString(RESPONSE_ID_KEY)
             downloadEvent.url = extras.getString(RESPONSE_URL_KEY)
-            if (extras.containsKey(RESPONSE_ADDED_KEY)) {
-                downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_ADDED
-            } else if (extras.containsKey(IDownloadService.RESPONSE_REMOVED_KEY)) {
-                downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_REMOVED
-            } else if (extras.containsKey(IDownloadService.RESPONSE_CANCEL_KEY)) {
-                downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_CANCELLED
-            } else if (extras.containsKey(RESPONSE_PROGRESS_KEY)) {
+           if (extras.containsKey(RESPONSE_PROGRESS_KEY)) {
                 downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_PROGRESS
                 val progress = extras.getInt(RESPONSE_PROGRESS_KEY, 0)
                 downloadEvent.progress = progress
@@ -57,21 +48,11 @@ object IDownload {
                 if (extras.containsKey(RESPONSE_ERROR_MESSAGE_KEY)) {
                     downloadEvent.error=extras.getString(RESPONSE_ERROR_MESSAGE_KEY)
                 }
-            } else if (extras.containsKey(IDownloadService.RESPONSE_FOREGROUND_EXCEPTION_KEY)) {
-                downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_ERROR
-                downloadEvent.error = IDownloadService.STATUS_DOWNLOAD_FOREGROUND_EXCEPTION
-            } else if (isInDownloading(context, downloadEvent.url)) {
-                downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_QUEUED
             }
-        } else if (extras.containsKey(IDownloadService.RESPONSE_ALL_REMOVED_KEY)) {
-            downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_ALL_REMOVED
         }
         return downloadEvent
     }
 
-    fun isInDownloading(context: Context?, url: String?): Boolean {
-        return DownloadDbUtil.isInDownloads(context, url)
-    }
     fun DeleteRecursive(context: Context?, path: String?) {
         try {
             val fileOrDirectory = path?.let { File(it) }
@@ -110,6 +91,7 @@ object IDownload {
     }
 
     class DownloadEvent {
+        var id: String? = null
         var url: String? = null
         var status: String? = null
         var progress: Int? = null
@@ -118,7 +100,8 @@ object IDownload {
         constructor() {
         }
 
-        constructor(url: String?, status: String?, progress: Int?, error:String?) {
+        constructor(id: String?, url: String?, status: String?, progress: Int?, error:String?) {
+            this.id = id
             this.url = url
             this.status = status
             this.progress = progress

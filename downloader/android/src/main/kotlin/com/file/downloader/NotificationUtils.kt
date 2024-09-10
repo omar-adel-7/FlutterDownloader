@@ -1,4 +1,4 @@
-package com.file.downloader.utils
+package com.file.downloader
 
 import android.app.Notification
 import android.app.NotificationChannel

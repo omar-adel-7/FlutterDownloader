@@ -1,22 +1,17 @@
 package com.file.downloader
 
 import android.app.Notification
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import com.file.downloader.download.IDownload
-import com.file.downloader.download.IDownload.ResultReceiver_Error
-import com.file.downloader.download.IDownload.ResultReceiver_Progress
-import com.file.downloader.download.IDownload.ResultReceiver_Status
-import com.file.downloader.download.IDownload.ResultReceiver_Url
-import com.file.downloader.download.IDownload.SRC_URL_KEY
-import com.file.downloader.download.IDownloadService
-import com.file.downloader.download.model_download.entity.DownloadModel
-import com.file.downloader.utils.NotificationUtils
+import com.file.downloader.IDownload.ResultReceiver_Error
+import com.file.downloader.IDownload.ResultReceiver_Progress
+import com.file.downloader.IDownload.ResultReceiver_Status
+import com.file.downloader.IDownload.ResultReceiver_Id
+import com.file.downloader.IDownload.ResultReceiver_Url
 
 
 class DownloadService : IDownloadService() {
@@ -40,8 +35,8 @@ class DownloadService : IDownloadService() {
         return null
     }
 
-    override fun callback_before_error(downloadErrorMessage:String) {
-         // displayToast(downloadErrorMessage)
+    override fun callback_before_error(downloadErrorMessage: String) {
+        // displayToast(downloadErrorMessage)
     }
 
     fun displayToast(message: String?) {
@@ -50,27 +45,31 @@ class DownloadService : IDownloadService() {
     }
 
 
-    public override fun getNotificationBuilderOfDownload(downloadModel: DownloadModel): NotificationCompat.Builder {
+    public override fun getNotificationBuilderOfDownload(
+        notification_message: String,notification_progress_message: String
+    ): NotificationCompat.Builder {
         val notificationBuilder =
             NotificationCompat.Builder(this, NotificationUtils.ANDROID_CHANNEL_ID)
         notificationBuilder
-            .setContentText(downloadModel.notification_progress_message
-                    + " " + downloadModel.notification_message)
+            .setContentText(
+                "$notification_progress_message $notification_message"
+            )
+            .setTicker(
+                "$notification_progress_message $notification_message"
+            )
             .setSmallIcon(android.R.drawable.stat_sys_download)
-            .setTicker(downloadModel.notification_progress_message + " "
-                    + downloadModel.notification_message)
         return notificationBuilder
     }
 
-    override fun getNotificationBuilderOfCompleteDownload(downloadModel: DownloadModel): NotificationCompat.Builder? {
+    override fun getNotificationBuilderOfCompleteDownload(
+        notification_message: String,notification_complete_message: String
+    ): NotificationCompat.Builder {
         val notificationBuilder =
             NotificationCompat.Builder(this, NotificationUtils.ANDROID_CHANNEL_ID)
         notificationBuilder
-            .setContentText(downloadModel.notification_complete_message
-                    + " " + downloadModel.notification_message)
+            .setContentText("$notification_complete_message $notification_message")
+            .setTicker("$notification_complete_message $notification_message")
             .setSmallIcon(android.R.drawable.stat_sys_download_done)
-            .setTicker(downloadModel.notification_complete_message
-                    + " " + downloadModel.notification_message)
         return notificationBuilder
     }
 
@@ -78,35 +77,16 @@ class DownloadService : IDownloadService() {
         get() = 1
 
     override fun sendEvent(message: Bundle) {
-        val downloadEvent = IDownload.getDownloadEvent(this,message)
+        val downloadEvent = IDownload.getDownloadEvent(this, message)
         val mHandler = Handler(mainLooper)
         mHandler.post {
             val bundle = Bundle()
+            bundle.putString(ResultReceiver_Id, downloadEvent.id)
             bundle.putString(ResultReceiver_Url, downloadEvent.url)
             bundle.putString(ResultReceiver_Status, downloadEvent.status)
             downloadEvent.progress?.let { bundle.putInt(ResultReceiver_Progress, it) }
             downloadEvent.error?.let { bundle.putString(ResultReceiver_Error, it) }
             resultReceiver?.send(0, bundle)
-        }
-    }
-
-    companion object {
-
-        fun sendCancelItem(context: Context, srcUrl: String?) {
-            val intent = Intent(context, DownloadService::class.java)
-            intent.action = context.getString(
-                R.string.download_ACTION_CANCEL_ITEM
-            )
-            intent.putExtra(SRC_URL_KEY, srcUrl)
-            context.startService(intent)
-        }
-
-        fun cancelAndClearAll(context: Context) {
-            val intent = Intent(context, DownloadService::class.java)
-            intent.action = context.getString(
-                R.string.download_ACTION_CANCEL_AND_CLEAR_ALL
-            )
-            context.startService(intent)
         }
     }
 }

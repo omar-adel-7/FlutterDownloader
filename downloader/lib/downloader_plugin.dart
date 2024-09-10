@@ -15,8 +15,9 @@ class DownloaderPlugin {
   }
 
   static downloadFile(
-      {required String url,
-      required String destinationDirPath,
+      {String? id,
+      required String url,
+      required String destinationPath,
       required String fileNameWithoutExtension,
       required String extension,
       required String androidNotificationMessage,
@@ -24,14 +25,15 @@ class DownloaderPlugin {
       required String androidNotificationCompleteMessage,
       DownloadListener? downloadListener}) async {
     String pathSeparator = Platform.pathSeparator;
-    if (!destinationDirPath.endsWith(pathSeparator)) {
-      destinationDirPath = destinationDirPath + pathSeparator;
+    if (!destinationPath.endsWith(pathSeparator)) {
+      destinationPath = destinationPath + pathSeparator;
     }
     extension = extensionDot + extension;
     if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance.downloadFile(
+          id: id ?? url,
           url: url,
-          destinationDirPath: destinationDirPath,
+          destinationDirPath: destinationPath,
           fileNameWithoutExtension: fileNameWithoutExtension,
           extension: extension,
           notificationMessage: androidNotificationMessage,
@@ -41,8 +43,9 @@ class DownloaderPlugin {
     } else if (isPlatformIos()) {
       String fileName = fileNameWithoutExtension + extension;
       IOSDownloadMethodChannel.instance.downloadFile(
+          id: id ?? url,
           url: url,
-          destinationDirPath: destinationDirPath,
+          destinationDirPath: destinationPath,
           fileName: fileName,
           downloadListener: downloadListener);
     }
@@ -52,8 +55,9 @@ class DownloaderPlugin {
       {required DownloadArgs downloadArgs,
       DownloadListener? downloadListener}) async {
     downloadFile(
+        id: downloadArgs.id,
         url: downloadArgs.downloadLink,
-        destinationDirPath: downloadArgs.destinationDirPath,
+        destinationPath: downloadArgs.destinationDirPath,
         extension: downloadArgs.extension,
         fileNameWithoutExtension: downloadArgs.fileNameWithoutExtension,
         androidNotificationMessage: downloadArgs.androidNotificationTitle,
@@ -65,21 +69,14 @@ class DownloaderPlugin {
   }
 
   static addDownloadListener(
-      {required String url, required DownloadListener downloadListener}) {
+      {required String id, required DownloadListener downloadListener}) {
     if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance
-          .addDownloadListener(url: url, downloadListener: downloadListener);
+          .addDownloadListener(id: id, downloadListener: downloadListener);
     } else if (isPlatformIos()) {
       IOSDownloadMethodChannel.instance
-          .addDownloadListener(url: url, downloadListener: downloadListener);
+          .addDownloadListener(id: id, downloadListener: downloadListener);
     }
-  }
-
-  static Future<bool> isFileDownloading(String url) async {
-    if (isPlatformAndroid()) {
-      return await AndroidDownloadMethodChannel.instance.isFileDownloading(url);
-    }
-    return false;
   }
 
   static bool isFileDownloaded({
@@ -103,12 +100,6 @@ class DownloaderPlugin {
 
   static void deleteFile(DownloadArgs downloadArgs) {
     File(downloadArgs.filePath).deleteSync();
-  }
-
-  static cancelAndClearAndroidDownloads() {
-    if (isPlatformAndroid()) {
-      AndroidDownloadMethodChannel.instance.cancelAndClearDownloads();
-    }
   }
 
   static bool isPlatformAndroid() {

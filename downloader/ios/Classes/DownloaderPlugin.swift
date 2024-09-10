@@ -16,19 +16,20 @@ public class DownloaderPlugin: NSObject, FlutterPlugin {
      switch call.method {
     case "iOSStartDownload":
     let arguments = call.arguments as! [String: String]
+                       let id = arguments["id"]
                        let fileURL = arguments["url"]
                        let fileName = arguments["fileName"]
                        let destinationPath = arguments["destinationPath"]
 
                        DownloadServices.download(fileURLString: fileURL!, destinationPath: destinationPath!, fileName: fileName!) { destinationURL, fileURL, error, progress in
                            if let progress = progress {
-                               self.channel?.invokeMethod("iOSDownloadProgress", arguments: ["progress": progress, "url": fileURL!.absoluteString])
+                               self.channel?.invokeMethod("iOSDownloadProgress", arguments: ["progress": progress, "url": fileURL!.absoluteString , "id": id])
                              }
                            if let _ = destinationURL {
-                               self.channel?.invokeMethod("iOSDownloadCompleted", arguments: ["url": fileURL!.absoluteString])
+                               self.channel?.invokeMethod("iOSDownloadCompleted", arguments: ["url": fileURL!.absoluteString, "id": id])
                            }
                            if let error = error {
-                               self.channel?.invokeMethod("iOSDownloadError", arguments: ["error": error.localizedDescription, "url": fileURL!.absoluteString])
+                               self.channel?.invokeMethod("iOSDownloadError", arguments: ["error": error.localizedDescription, "url": fileURL!.absoluteString, "id": id])
                            }
                        }
     case "iOSCancelDownload":

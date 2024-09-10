@@ -6,18 +6,20 @@ class DownloadCubit extends Cubit<DownloadStates> {
   static DownloadCubit get(context) => BlocProvider.of(context);
 
   DownloadCubit() : super(DownloadInitialState()) {}
-  publishProgress({required String url,required int progress,DownloadListener? downloadListener}) {
-    emit(DownloadProgressState(url,progress));
-    downloadListener?.onProgress(url,progress);
+  publishProgress({String? id,required String url,required int progress,DownloadListener? downloadListener}) {
+    emit(DownloadProgressState(id,url,progress));
+    downloadListener?.onProgress(id:id,url:url,progress: progress);
   }
 
-  publishCompleted({required String url,DownloadListener? downloadListener}) {
-    emit(DownloadCompletedState(url));
-    downloadListener?.onComplete(url);
+  publishCompleted({String? id,required String url,DownloadListener? downloadListener}) async {
+    emit(DownloadCompletedState(id,url));
+    downloadListener?.onComplete(id:id,url:url);
   }
 
-  publishError({ required String url,String? error,DownloadListener? downloadListener}) {
-    emit(DownloadErrorState(url, error));
-    downloadListener?.onError(url,error: error);
+  publishError({String? id, required String url,String? error,DownloadListener? downloadListener}) async {
+    emit(DownloadErrorState(id,url, error));
+    downloadListener?.onError(id:id,url:url,error: error);
   }
 }
+
+

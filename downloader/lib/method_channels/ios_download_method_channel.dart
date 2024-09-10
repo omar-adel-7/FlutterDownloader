@@ -28,36 +28,40 @@ class IOSDownloadMethodChannel {
     final Map methodData = call.arguments;
     switch (call.method) {
       case _iOSDownloadProgress:
+        String id = methodData['id'];
         String url = methodData['url'];
         int progress = methodData['progress'];
-          downloadCubit.publishProgress(url:url, progress: progress,downloadListener: getUrlDownloadListener(url));
+          downloadCubit.publishProgress(id:id,url:url, progress: progress,downloadListener: getIdDownloadListener(id));
         break;
       case _iOSDownloadCompleted:
+        String id = methodData['id'];
         String url = methodData['url'];
-          downloadCubit.publishCompleted(url:url,downloadListener: getUrlDownloadListener(url));
+          downloadCubit.publishCompleted(id:id,url:url,downloadListener: getIdDownloadListener(id));
         break;
       case _iOSDownloadError:
+        String id = methodData['id'];
         String url = methodData['url'];
         String? error = methodData['error'];
-          downloadCubit.publishError(url:url,error: error,downloadListener: getUrlDownloadListener(url));
+          downloadCubit.publishError(id:id,url:url,error: error,downloadListener: getIdDownloadListener(id));
         break;
       default:
         break;
     }
   }
 
-  DownloadListener? getUrlDownloadListener(String url) {
-    return downloadListeners[url];
+  DownloadListener? getIdDownloadListener(String id) {
+    return downloadListeners[id];
   }
 
   downloadFile(
-      {required String url,
+      {required String id,required String url,
       required String destinationDirPath,
       required String fileName,
         DownloadListener? downloadListener}) {
-    addDownloadListener(url: url, downloadListener: downloadListener);
+    addDownloadListener(id: id, downloadListener: downloadListener);
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
+      'id': id,
       'url': url,
       'destinationPath': destinationDirPath,
       'fileName': fileName
@@ -67,9 +71,9 @@ class IOSDownloadMethodChannel {
 
 
   void addDownloadListener(
-      {required String url, DownloadListener? downloadListener}) {
+      {required String id, DownloadListener? downloadListener}) {
     if (downloadListener != null) {
-      downloadListeners[url] = downloadListener;
+      downloadListeners[id] = downloadListener;
     }
   }
 }

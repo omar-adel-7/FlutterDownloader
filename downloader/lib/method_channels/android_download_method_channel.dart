@@ -9,9 +9,6 @@ class AndroidDownloadMethodChannel {
   static const _androidDownloadResultCompleted = 'downloadResultCompleted';
   static const _androidDownloadResultError = 'downloadResultError';
 
-  static const _androidIsFileDownloading = 'isDownloading';
-  static const _androidCancelAndClearDownloads = 'cancelAndClearDownloads';
-
   MethodChannel? _channelMethod;
 
   final Map<String, DownloadListener> downloadListeners = {};
@@ -20,53 +17,66 @@ class AndroidDownloadMethodChannel {
 
   AndroidDownloadMethodChannel._init();
 
-  late DownloadCubit downloadCubit ;
+  late DownloadCubit downloadCubit;
+
   init(DownloadCubit downloadCubit) {
     _channelMethod = const MethodChannel(_androidDownloadChannelName);
     _channelMethod?.setMethodCallHandler(methodHandler);
-    this.downloadCubit=downloadCubit;
+    this.downloadCubit = downloadCubit;
   }
 
   Future<void> methodHandler(MethodCall call) async {
     final Map methodData = call.arguments;
     switch (call.method) {
       case _androidDownloadResultProgress:
+        String id = methodData['id'];
         String url = methodData['url'];
         int progress = methodData['progress'];
-          downloadCubit.publishProgress(url:url, progress: progress,downloadListener: getUrlDownloadListener(url));
+        downloadCubit.publishProgress(
+            id: id,
+            url: url,
+            progress: progress,
+            downloadListener: getIdDownloadListener(id));
         break;
       case _androidDownloadResultCompleted:
+        String id = methodData['id'];
         String url = methodData['url'];
-          downloadCubit.publishCompleted(url:url,downloadListener: getUrlDownloadListener(url));
+        downloadCubit.publishCompleted(
+            id: id, url: url, downloadListener: getIdDownloadListener(id));
         break;
       case _androidDownloadResultError:
+        String id = methodData['id'];
         String url = methodData['url'];
         String? error = methodData['error'];
-          downloadCubit.publishError(url:url,error: error,downloadListener: getUrlDownloadListener(url));
+        downloadCubit.publishError(
+            id: id,
+            url: url,
+            error: error,
+            downloadListener: getIdDownloadListener(id));
         break;
       default:
         break;
     }
   }
 
-
-  DownloadListener? getUrlDownloadListener(String url) {
-    return downloadListeners[url];
+  DownloadListener? getIdDownloadListener(String id) {
+    return downloadListeners[id];
   }
 
   downloadFile(
-      {required String url,
+      {required String id,
+      required String url,
       required String destinationDirPath,
       required String fileNameWithoutExtension,
       required String extension,
       required String notificationMessage,
       required String notificationProgressMessage,
       required String notificationCompleteMessage,
-        DownloadListener? downloadListener
-      }) {
-    addDownloadListener(url: url, downloadListener: downloadListener);
+      DownloadListener? downloadListener}) {
+    addDownloadListener(id: id, downloadListener: downloadListener);
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
+      'id': id,
       'url': url,
       'destinationDirPath': destinationDirPath,
       'fileNameWithoutExtension': fileNameWithoutExtension,
@@ -78,24 +88,10 @@ class AndroidDownloadMethodChannel {
     _channelMethod?.invokeMethod(_androidStartDownload, argsMap);
   }
 
-
   void addDownloadListener(
-      {required String url, DownloadListener? downloadListener}) {
+      {required String id, DownloadListener? downloadListener}) {
     if (downloadListener != null) {
-      downloadListeners[url] = downloadListener;
+      downloadListeners[id] = downloadListener;
     }
-  }
-
-  Future<bool> isFileDownloading(String url) async {
-    Map argsMap = <dynamic, dynamic>{};
-    argsMap.addAll({
-      'url': url
-    });
-    return await _channelMethod?.invokeMethod(_androidIsFileDownloading, argsMap);
-  }
-
-
-  cancelAndClearDownloads() {
-    _channelMethod?.invokeMethod(_androidCancelAndClearDownloads);
   }
 }

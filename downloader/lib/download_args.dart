@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 
 class DownloadArgs {
 
+  final String? id;
   final String downloadLink;
   final String destinationDirPath;
   final String fileNameWithoutExtension;
@@ -15,6 +16,7 @@ class DownloadArgs {
   String get filePath => "${join(destinationDirPath,fileNameWithoutExtension)}.$extension";
 
   DownloadArgs({
+    this.id,
     required this.downloadLink,
     required this.destinationDirPath,
     required this.fileNameWithoutExtension,

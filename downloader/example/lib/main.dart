@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:downloader/cubit/download_cubit.dart';
 import 'package:downloader/cubit/download_state.dart';
+import 'package:downloader/download_listener.dart';
 import 'package:downloader/downloader_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -80,58 +81,62 @@ class _MyAppState extends State<MyApp> {
                   String destinationDirPath = await getDestination();
                   String fileNameWithoutExtension = "test File Name'with'apostrophe ' and comma, , 12";
                   String extension = "db";
-                  //DownloaderPlugin.cancelAndClearAndroidDownloads();//to handle force stop in case of downloading one file
                   // without downloadListener
-                  DownloaderPlugin.downloadFile(
-                    url: url,
-                    destinationDirPath: destinationDirPath,
-                    fileNameWithoutExtension: fileNameWithoutExtension,
-                    extension: extension,
-                    androidNotificationMessage: "test notification message",
-                    androidNotificationProgressMessage: "downloading",
-                    androidNotificationCompleteMessage: "complete download",
-                  );
-                  // or with downloadListener
                   // DownloaderPlugin.downloadFile(
-                  //     url: url,
-                  //     destinationDirPath: destinationDirPath,
-                  //     fileNameWithoutExtension: fileNameWithoutExtension,
-                  //     extension: extension,
-                  //     androidNotificationMessage: "test notification message",
-                  //     androidNotificationProgressMessage: "downloading",
-                  //     androidNotificationCompleteMessage: "complete download",
-                  //     downloadListener: DownloadListener(
-                  //       onProgress: (String url, int progress) {
-                  //         print(
-                  //             "downloadListener onProgress url=$url and progress = $progress");
-                  //         onProgress(url, progress);
-                  //       },
-                  //       onComplete: (String url) {
-                  //         print("downloadListener onComplete url=$url");
-                  //         onComplete(url);
-                  //       },
-                  //       onError: (String url, {String? error}) {
-                  //         print(
-                  //             "downloadListener onError url=$url , error=$error");
-                  //         onError(url, error);
-                  //       },
-                  //     ));
+                  //   id: url,
+                  //   url: url,
+                  //   destinationPath: destinationDirPath,
+                  //   fileNameWithoutExtension: fileNameWithoutExtension,
+                  //   extension: extension,
+                  //   androidNotificationMessage: "test notification message",
+                  //   androidNotificationProgressMessage: "downloading",
+                  //   androidNotificationCompleteMessage: "complete download",
+                  // );
+                  // or with downloadListener
+                  DownloaderPlugin.downloadFile(
+                      id: url,
+                      url: url,
+                      destinationPath: destinationDirPath,
+                      fileNameWithoutExtension: fileNameWithoutExtension,
+                      extension: extension,
+                      androidNotificationMessage: "test notification message",
+                      androidNotificationProgressMessage: "downloading",
+                      androidNotificationCompleteMessage: "complete download",
+                      downloadListener: DownloadListener(
+                        onProgress: ({String? id,required String url,required int progress})
+                        {
+                            print(
+                                "downloadListener onProgress id=$id and url=$url and progress = $progress");
+                            onProgress(url, progress);
+                        },
+                        onComplete: ({String? id,required String url}) {
+                          print("downloadListener id=$id and onComplete url=$url");
+                          onComplete(url);
+                        },
+                        onError: ({String? id,required String url,String? error}) {
+                          print(
+                              "downloadListener onError id=$id and url=$url , error=$error");
+                          onError(url, error);
+                        },
+                      )
+                  );
                   //or add downloadListener separately
                   // DownloaderPlugin.addDownloadListener(
-                  //     url: url,
+                  //     id: url,
                   //     downloadListener: DownloadListener(
-                  //         onProgress: (String url, int progress) {
+                  //         onProgress: ({String? id,required String url,required int progress})
+                  //         {
                   //       print(
-                  //           "separate downloadListener onProgress url=$url and progress = $progress");
+                  //           "separate downloadListener onProgress id=$id and url=$url and progress = $progress");
                   //       onProgress(url, progress);
-                  //     }, onComplete: (String url) {
-                  //       print("separate downloadListener onComplete url=$url");
+                  //     }, onComplete: ({String? id,required String url}) {
+                  //       print("separate downloadListener onComplete id=$id and url=$url");
                   //       onComplete(url);
-                  //     }, onError: (String url, {String? error}) {
-                  //       print(
-                  //           "separate downloadListener onError url=$url , error=$error");
-                  //       onError(url, error);
-                  //     }));
+                  //     }, onError: ({String? id,required String url,String? error}) {
+                  //           print(
+                  //               "separate downloadListener onError id=$id and url=$url , error=$error");
+                  //           onError(url, error);
+                  //         }));
                 },
               ),
             ),
@@ -145,16 +150,16 @@ class _MyAppState extends State<MyApp> {
                 listener: (context, downloadState) {
                   if (downloadState is DownloadProgressState) {
                     print(
-                        "BlocConsumer onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
+                        "BlocConsumer onProgress id=${downloadState.id} and url=${downloadState.url} and progress = ${downloadState.progress}");
                     onProgress(downloadState.url,downloadState.progress);
                   }
                   if (downloadState is DownloadCompletedState) {
-                    print("BlocConsumer onComplete url=${downloadState.url}");
+                    print("BlocConsumer onComplete id=${downloadState.id} and url=${downloadState.url}");
                     onComplete(downloadState.url);
                   }
                   if (downloadState is DownloadErrorState) {
                     print(
-                        "BlocConsumer onError url=${downloadState.url} , error=${downloadState.error}");
+                        "BlocConsumer onError id=${downloadState.id} and url=${downloadState.url} , error=${downloadState.error}");
                     onError(downloadState.url, downloadState.error);
                   }
                 },
