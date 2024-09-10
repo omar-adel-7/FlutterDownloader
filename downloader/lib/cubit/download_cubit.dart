@@ -14,8 +14,6 @@ class DownloadCubit extends Cubit<DownloadStates> {
   final DownloadArgs args;
 
   DownloadCubit(this.args) : super(InitialState()) {
-    print(
-        "plugin DownloadCubit Initial getFile");
     getFile();
   }
 
@@ -53,18 +51,14 @@ class DownloadCubit extends Cubit<DownloadStates> {
           args.androidNotificationCompleteMessage,
       downloadListener:
           DownloadListener(onProgress: (String url, int progress) {
-        print(
-            "plugin DownloadCubit downloadListener onProgress url=$url and progress = $progress");
         if (!isClosed) {
           emit(LoadingState());
         }
       }, onComplete: (String url) {
         print("plugin DownloadCubit downloadListener onComplete url=$url");
-        print("plugin DownloadCubit downloadListener onComplete getFile");
         getFile();
       }, onError: (String url, {String? error}) {
         print("plugin DownloadCubit downloadListener onError url=$url");
-        print("plugin DownloadCubit downloadListener onError getFile");
         getFile();
       }),
     );
@@ -72,8 +66,6 @@ class DownloadCubit extends Cubit<DownloadStates> {
 
   void deleteFile() {
     _file?.deleteSync();
-    print(
-        "plugin DownloadCubit deleteFile getFile");
     getFile();
   }
 }
