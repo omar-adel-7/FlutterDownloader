@@ -7,12 +7,12 @@ import '../download_listener.dart';
 import '../downloader_plugin.dart';
 import 'download_state.dart';
 
-
 class DownloadCubit extends Cubit<DownloadStates> {
   static DownloadCubit get(context) => BlocProvider.of(context);
 
   File? _file;
   final DownloadArgs args;
+
   DownloadCubit(this.args) : super(InitialState()) {
     getFile();
   }
@@ -34,6 +34,7 @@ class DownloadCubit extends Cubit<DownloadStates> {
       }
     }
   }
+
   void downloadFile() async {
     if (!isClosed) {
       emit(LoadingState());
@@ -44,22 +45,24 @@ class DownloadCubit extends Cubit<DownloadStates> {
       extension: args.extension,
       fileNameWithoutExtension: args.fileNameWithoutExtension,
       androidNotificationMessage: args.androidNotificationTitle,
-      androidNotificationProgressMessage: args.androidNotificationProgressMessage,
-      androidNotificationCompleteMessage: args.androidNotificationCompleteMessage,
-      downloadListener: DownloadListener(
-          onProgress: (String url, int progress) {
-            print(
-                "plugin DownloadCubit downloadListener onProgress url=$url and progress = $progress");
-          },
-          onComplete: (String url) {
-            print("plugin DownloadCubit downloadListener onComplete url=$url");
-            getFile();
-          },
-          onError: (String url,{String? error}) {
-            print("plugin DownloadCubit downloadListener onError url=$url");
-            getFile();
-          }
-      ),
+      androidNotificationProgressMessage:
+          args.androidNotificationProgressMessage,
+      androidNotificationCompleteMessage:
+          args.androidNotificationCompleteMessage,
+      downloadListener:
+          DownloadListener(onProgress: (String url, int progress) {
+        print(
+            "plugin DownloadCubit downloadListener onProgress url=$url and progress = $progress");
+        if (!isClosed) {
+          emit(LoadingState());
+        }
+      }, onComplete: (String url) {
+        print("plugin DownloadCubit downloadListener onComplete url=$url");
+        getFile();
+      }, onError: (String url, {String? error}) {
+        print("plugin DownloadCubit downloadListener onError url=$url");
+        getFile();
+      }),
     );
   }
 
