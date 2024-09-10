@@ -13,6 +13,8 @@ class DownloadArgs {
   final   String androidNotificationCompleteMessage;
   void Function(String)? onDownloaded;
   void Function()? onDeleted;
+
+  String get idToUse => id??downloadLink;
   String get filePath => "${join(destinationDirPath,fileNameWithoutExtension)}.$extension";
 
   DownloadArgs({
