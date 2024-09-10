@@ -14,6 +14,7 @@ class DownloadCubit extends Cubit<DownloadStates> {
   final DownloadArgs args;
 
   DownloadCubit(this.args) : super(InitialState()) {
+    print("plugin DownloadCubit Initial getFile");
     getFile();
   }
 
