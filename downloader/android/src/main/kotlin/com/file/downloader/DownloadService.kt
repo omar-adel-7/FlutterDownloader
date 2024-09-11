@@ -25,11 +25,8 @@ class DownloadService : IDownloadService() {
         notificationUtils?.manager?.notify( /*FOREGROUND_ID*/downloadNotId, notification)
     }
 
-    override fun notifySuccess(url: String?, notification: Notification?) {
-        notificationUtils?.manager?.notify(
-            url, downloadNotId,
-            notification
-        )
+    override fun notifySuccess(notification: Notification?) {
+        notificationUtils?.manager?.notify(downloadNotId,notification)
     }
 
     override fun onBind(intent: Intent): IBinder? {
