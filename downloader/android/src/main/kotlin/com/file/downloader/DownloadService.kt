@@ -1,6 +1,7 @@
 package com.file.downloader
 
 import android.app.Notification
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -87,6 +88,16 @@ class DownloadService : IDownloadService() {
             downloadEvent.progress?.let { bundle.putInt(ResultReceiver_Progress, it) }
             downloadEvent.error?.let { bundle.putString(ResultReceiver_Error, it) }
             resultReceiver?.send(0, bundle)
+        }
+    }
+
+    companion object {
+        fun stopService(context: Context) {
+            val intent = Intent(context, DownloadService::class.java)
+            intent.action = context.getString(
+                R.string.download_ACTION_STOP_SERVICE
+            )
+            context.startService(intent)
         }
     }
 }

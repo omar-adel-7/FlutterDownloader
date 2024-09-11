@@ -9,6 +9,8 @@ class AndroidDownloadMethodChannel {
   static const _androidDownloadResultCompleted = 'downloadResultCompleted';
   static const _androidDownloadResultError = 'downloadResultError';
 
+  static const _androidStopDownloadService = 'stopDownloadService';
+
   MethodChannel? _channelMethod;
 
   final Map<String, DownloadListener> downloadListeners = {};
@@ -94,4 +96,9 @@ class AndroidDownloadMethodChannel {
       downloadListeners[id] = downloadListener;
     }
   }
+
+  stopService() {
+    _channelMethod?.invokeMethod(_androidStopDownloadService);
+  }
+
 }

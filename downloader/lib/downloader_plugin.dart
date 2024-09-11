@@ -102,6 +102,10 @@ class DownloaderPlugin {
     File(downloadArgs.filePath).deleteSync();
   }
 
+  static void stopAndroidService() {
+    AndroidDownloadMethodChannel.instance.stopService();
+  }
+
   static bool isPlatformAndroid() {
     return Platform.isAndroid;
   }
@@ -109,4 +113,6 @@ class DownloaderPlugin {
   static bool isPlatformIos() {
     return Platform.isIOS;
   }
+
+
 }
