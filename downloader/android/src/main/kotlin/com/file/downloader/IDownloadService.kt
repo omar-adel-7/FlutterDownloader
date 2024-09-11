@@ -91,7 +91,7 @@ abstract class IDownloadService : Service() {
                 }
             }
         }
-        return START_REDELIVER_INTENT
+        return START_STICKY
     }
 
     fun startDownload(
