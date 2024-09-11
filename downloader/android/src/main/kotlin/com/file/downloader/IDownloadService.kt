@@ -74,11 +74,11 @@ abstract class IDownloadService : Service() {
                         && notificationMessage != null
                         && notificationProgressMessage != null
                         && notificationCompleteMessage != null) {
-                        startForeground( /*FOREGROUND_ID*/downloadNotId,
-                            getNotificationBuilderOfDownload(
-                                notificationMessage, notificationProgressMessage
-                            ).build()
-                        )
+//                        startForeground( /*FOREGROUND_ID*/downloadNotId,
+//                            getNotificationBuilderOfDownload(
+//                                notificationMessage, notificationProgressMessage
+//                            ).build()
+//                        )
                                     startDownload(
                                         id,
                                         url,
