@@ -75,12 +75,6 @@ abstract class IDownloadService : Service() {
                         && notificationMessage != null
                         && notificationProgressMessage != null
                         && notificationCompleteMessage != null) {
-                        //foreground
-//                        startForeground( /*FOREGROUND_ID*/notificationId,
-//                            getNotificationBuilderOfDownload(
-//                                notificationMessage, notificationProgressMessage
-//                            ).build()
-//                        )
                                     startDownload(
                                         id,
                                         url,
@@ -265,13 +259,7 @@ abstract class IDownloadService : Service() {
     }
 
     fun stopThisService() {
-        //foreground
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                stopForeground(STOP_FOREGROUND_REMOVE)
-//            } else {
-//                stopForeground(true)
-//            }
-            stopSelf()
+        stopSelf()
     }
 
     abstract val notificationId: Int
