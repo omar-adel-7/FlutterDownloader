@@ -30,6 +30,7 @@ abstract class IDownloadService : Service() {
     protected abstract fun onStartCommandCustom(intent: Intent?)
     protected abstract fun notifyProgress(notification: Notification?)
     protected abstract fun notifySuccess(id:String,notification: Notification?)
+    protected abstract fun notifyError()
     abstract fun callback_before_error(downloadErrorMessage: String)
     abstract fun sendEvent(message: Bundle)
 
@@ -252,6 +253,7 @@ abstract class IDownloadService : Service() {
             if (errorMessage != null) {
                 callback_before_error(errorMessage)
             }
+            notifyError();
         }
         if (isSuccess) {
             val notificationBuilder = getNotificationBuilderOfCompleteDownload(

@@ -30,6 +30,9 @@ class DownloadService : IDownloadService() {
         notificationUtils?.manager?.notify(id,notificationId,notification)
     }
 
+    override fun notifyError() {
+        notificationUtils?.manager?.cancel(notificationId)
+    }
     override fun onBind(intent: Intent): IBinder? {
         return null
     }
