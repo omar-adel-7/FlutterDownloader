@@ -22,11 +22,12 @@ class DownloadService : IDownloadService() {
     }
 
     override fun notifyProgress(notification: Notification?) {
-        notificationUtils?.manager?.notify( /*FOREGROUND_ID*/downloadNotId, notification)
+        notificationUtils?.manager?.notify( /*FOREGROUND_ID*/notificationId, notification)
     }
 
-    override fun notifySuccess(notification: Notification?) {
-        notificationUtils?.manager?.notify(downloadNotId,notification)
+    override fun notifySuccess(id:String,notification: Notification?) {
+        notificationUtils?.manager?.cancel(notificationId)
+        notificationUtils?.manager?.notify(id,notificationId,notification)
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -71,7 +72,7 @@ class DownloadService : IDownloadService() {
         return notificationBuilder
     }
 
-    override val downloadNotId: Int
+    override val notificationId: Int
         get() = 1
 
     override fun sendEvent(message: Bundle) {

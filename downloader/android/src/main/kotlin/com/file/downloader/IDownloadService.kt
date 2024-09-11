@@ -29,7 +29,7 @@ abstract class IDownloadService : Service() {
 
     protected abstract fun onStartCommandCustom(intent: Intent?)
     protected abstract fun notifyProgress(notification: Notification?)
-    protected abstract fun notifySuccess(notification: Notification?)
+    protected abstract fun notifySuccess(id:String,notification: Notification?)
     abstract fun callback_before_error(downloadErrorMessage: String)
     abstract fun sendEvent(message: Bundle)
 
@@ -75,7 +75,7 @@ abstract class IDownloadService : Service() {
                         && notificationProgressMessage != null
                         && notificationCompleteMessage != null) {
                         //foreground
-//                        startForeground( /*FOREGROUND_ID*/downloadNotId,
+//                        startForeground( /*FOREGROUND_ID*/notificationId,
 //                            getNotificationBuilderOfDownload(
 //                                notificationMessage, notificationProgressMessage
 //                            ).build()
@@ -257,7 +257,7 @@ abstract class IDownloadService : Service() {
             val notificationBuilder = getNotificationBuilderOfCompleteDownload(
                 notification_message , notification_complete_message
             )
-            notifySuccess(notificationBuilder?.build())
+            notifySuccess(id,notificationBuilder?.build())
         }
         sendEvent(message)
     }
@@ -272,7 +272,7 @@ abstract class IDownloadService : Service() {
             stopSelf()
     }
 
-    abstract val downloadNotId: Int
+    abstract val notificationId: Int
 
     companion object {
         var STATUS_DOWNLOAD_PROGRESS = "STATUS_DOWNLOAD_PROGRESS"
