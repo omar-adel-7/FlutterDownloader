@@ -4,7 +4,6 @@ import '../method_channels/ios_download_method_channel.dart';
 import 'cubit/download_cubit.dart';
 import 'download_args.dart';
 import 'download_file_util.dart';
-import 'download_listener.dart';
 
 class DownloaderPlugin {
   static String extensionDot = ".";
@@ -22,8 +21,7 @@ class DownloaderPlugin {
       required String extension,
       required String androidNotificationMessage,
       required String androidNotificationProgressMessage,
-      required String androidNotificationCompleteMessage,
-      DownloadListener? downloadListener}) async {
+      required String androidNotificationCompleteMessage}) async {
     String pathSeparator = Platform.pathSeparator;
     if (!destinationPath.endsWith(pathSeparator)) {
       destinationPath = destinationPath + pathSeparator;
@@ -38,22 +36,19 @@ class DownloaderPlugin {
           extension: extension,
           notificationMessage: androidNotificationMessage,
           notificationProgressMessage: androidNotificationProgressMessage,
-          notificationCompleteMessage: androidNotificationCompleteMessage,
-          downloadListener: downloadListener);
+          notificationCompleteMessage: androidNotificationCompleteMessage);
     } else if (isPlatformIos()) {
       String fileName = fileNameWithoutExtension + extension;
       IOSDownloadMethodChannel.instance.downloadFile(
           id: id ?? url,
           url: url,
           destinationDirPath: destinationPath,
-          fileName: fileName,
-          downloadListener: downloadListener);
+          fileName: fileName);
     }
   }
 
   static void downloadFileByArgs(
-      {required DownloadArgs downloadArgs,
-      DownloadListener? downloadListener}) async {
+      {required DownloadArgs downloadArgs}) async {
     downloadFile(
         id: downloadArgs.id,
         url: downloadArgs.downloadLink,
@@ -64,19 +59,7 @@ class DownloaderPlugin {
         androidNotificationProgressMessage:
             downloadArgs.androidNotificationProgressMessage,
         androidNotificationCompleteMessage:
-            downloadArgs.androidNotificationCompleteMessage,
-        downloadListener: downloadListener);
-  }
-
-  static addDownloadListener(
-      {required String id, required DownloadListener downloadListener}) {
-    if (isPlatformAndroid()) {
-      AndroidDownloadMethodChannel.instance
-          .addDownloadListener(id: id, downloadListener: downloadListener);
-    } else if (isPlatformIos()) {
-      IOSDownloadMethodChannel.instance
-          .addDownloadListener(id: id, downloadListener: downloadListener);
-    }
+            downloadArgs.androidNotificationCompleteMessage);
   }
 
   static bool isFileDownloaded({
@@ -113,6 +96,5 @@ class DownloaderPlugin {
   static bool isPlatformIos() {
     return Platform.isIOS;
   }
-
 
 }

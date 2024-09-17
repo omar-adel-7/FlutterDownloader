@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import '../cubit/download_cubit.dart';
-import '../download_listener.dart';
 
 class AndroidDownloadMethodChannel {
   static const _androidDownloadChannelName = 'download';
@@ -13,7 +12,6 @@ class AndroidDownloadMethodChannel {
 
   MethodChannel? _channelMethod;
 
-  final Map<String, DownloadListener> downloadListeners = {};
   static final AndroidDownloadMethodChannel instance =
       AndroidDownloadMethodChannel._init();
 
@@ -37,14 +35,13 @@ class AndroidDownloadMethodChannel {
         downloadCubit.publishProgress(
             id: id,
             url: url,
-            progress: progress,
-            downloadListener: getIdDownloadListener(id));
+            progress: progress);
         break;
       case _androidDownloadResultCompleted:
         String id = methodData['id'];
         String url = methodData['url'];
         downloadCubit.publishCompleted(
-            id: id, url: url, downloadListener: getIdDownloadListener(id));
+            id: id, url: url);
         break;
       case _androidDownloadResultError:
         String id = methodData['id'];
@@ -53,16 +50,11 @@ class AndroidDownloadMethodChannel {
         downloadCubit.publishError(
             id: id,
             url: url,
-            error: error,
-            downloadListener: getIdDownloadListener(id));
+            error: error);
         break;
       default:
         break;
     }
-  }
-
-  DownloadListener? getIdDownloadListener(String id) {
-    return downloadListeners[id];
   }
 
   downloadFile(
@@ -74,8 +66,7 @@ class AndroidDownloadMethodChannel {
       required String notificationMessage,
       required String notificationProgressMessage,
       required String notificationCompleteMessage,
-      DownloadListener? downloadListener}) {
-    addDownloadListener(id: id, downloadListener: downloadListener);
+      }) {
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
       'id': id,
@@ -88,13 +79,6 @@ class AndroidDownloadMethodChannel {
       'notificationCompleteMessage': notificationCompleteMessage,
     });
     _channelMethod?.invokeMethod(_androidStartDownload, argsMap);
-  }
-
-  void addDownloadListener(
-      {required String id, DownloadListener? downloadListener}) {
-    if (downloadListener != null) {
-      downloadListeners[id] = downloadListener;
-    }
   }
 
   stopService() {
