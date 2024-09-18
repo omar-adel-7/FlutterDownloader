@@ -17,7 +17,6 @@ object IDownload {
     const val RESPONSE_URL_KEY = "response_url"
     const val RESPONSE_ID_KEY = "response_id"
     const val RESPONSE_PROGRESS_KEY = "response_progress"
-    const val RESPONSE_SIZE_KEY = "response_size"
     const val RESPONSE_SUCCESS_ERROR_KEY = "response_success_error"
     const val RESPONSE_ERROR_MESSAGE_KEY = "response_error_message"
     const val RESPONSE_NO_FREE_SPACE_MESSAGE = "response_no_free_space"
@@ -32,24 +31,22 @@ object IDownload {
 
     fun getDownloadEvent(context: Context?, extras: Bundle): DownloadEvent {
         val downloadEvent = DownloadEvent()
-        if (extras.containsKey(RESPONSE_URL_KEY)) {
             downloadEvent.id = extras.getString(RESPONSE_ID_KEY)
             downloadEvent.url = extras.getString(RESPONSE_URL_KEY)
            if (extras.containsKey(RESPONSE_PROGRESS_KEY)) {
                 downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_PROGRESS
-                val progress = extras.getInt(RESPONSE_PROGRESS_KEY, 0)
-                downloadEvent.progress = progress
+                downloadEvent.progress = extras.getInt(RESPONSE_PROGRESS_KEY, 0)
             } else if (extras.containsKey(RESPONSE_SUCCESS_ERROR_KEY)) {
                 if (extras.getBoolean(RESPONSE_SUCCESS_ERROR_KEY, false)) {
                     downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_COMPLETED
                 } else {
                     downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_ERROR
+                    if (extras.containsKey(RESPONSE_ERROR_MESSAGE_KEY)) {
+                        downloadEvent.error=extras.getString(RESPONSE_ERROR_MESSAGE_KEY)
+                    }
                 }
-                if (extras.containsKey(RESPONSE_ERROR_MESSAGE_KEY)) {
-                    downloadEvent.error=extras.getString(RESPONSE_ERROR_MESSAGE_KEY)
-                }
+
             }
-        }
         return downloadEvent
     }
 

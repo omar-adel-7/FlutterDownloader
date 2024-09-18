@@ -162,7 +162,7 @@ abstract class IDownloadService : Service() {
                         val progress = tmp / fileSizeInbytes
                         sendProgress(
                             id,
-                            link, progress.toInt(), fileSizeInbytes,
+                            link, progress.toInt(),
                             notification_message, notification_progress_message
                         )
                     }
@@ -212,14 +212,13 @@ abstract class IDownloadService : Service() {
 
     fun sendProgress(
         id:String,
-        url: String, progress: Int, size: Double,
+        url: String, progress: Int,
         notification_message: String, notification_progress_message: String
     ) {
         val message = Bundle()
         message.putString(IDownload.RESPONSE_ID_KEY, id)
         message.putString(IDownload.RESPONSE_URL_KEY, url)
         message.putInt(IDownload.RESPONSE_PROGRESS_KEY, progress)
-        message.putDouble(IDownload.RESPONSE_SIZE_KEY, size)
         val time = Date().time
         if (time - lastProgressTime >= 1200) {
             sendEvent(message)
