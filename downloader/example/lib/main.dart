@@ -78,14 +78,12 @@ class _MyAppState extends State<MyApp> {
                   String url =
                       "https://books9.arabia-it-key.com/storage/app/public/bfdf117a-7885-41ba-8cab-6357150ffb05/4a2a98e9-997f-43b6-83a7-12d30f9ef2ca.db";
                   String destinationDirPath = await getDestination();
-                  String fileNameWithoutExtension = "test File Name'with'apostrophe ' and comma, , 12";
-                  String extension = "db";
+                  String fileName = "test File Name'with'apostrophe ' and comma, , 12.db";
                   DownloaderPlugin.downloadFile(
                     id: url,
                     url: url,
                     destinationPath: destinationDirPath,
-                    fileNameWithoutExtension: fileNameWithoutExtension,
-                    extension: extension,
+                    fileName: fileName,
                     androidNotificationMessage: "test notification message",
                     androidNotificationProgressMessage: "downloading",
                     androidNotificationCompleteMessage: "complete download",

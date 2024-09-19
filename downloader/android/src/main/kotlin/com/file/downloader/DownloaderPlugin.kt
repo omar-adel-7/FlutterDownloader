@@ -42,8 +42,7 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
             val id = argsMap["id"] as String
             val url = argsMap["url"] as String
             val destinationDirPath = argsMap["destinationDirPath"] as String
-            val fileNameWithoutExtension = argsMap["fileNameWithoutExtension"] as String
-            val extension = argsMap["extension"] as String
+            val fileName = argsMap["fileName"] as String
             val notificationMessage = argsMap["notificationMessage"] as String
             val notificationProgressMessage = argsMap["notificationProgressMessage"] as String
             val notificationCompleteMessage = argsMap["notificationCompleteMessage"] as String
@@ -57,10 +56,9 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
                 intent.putExtra(IDownload.SRC_URL_KEY, url)
                 intent.putExtra(IDownload.SRC_DEST_DIR_PATH_KEY, destinationDirPath)
                 intent.putExtra(
-                    IDownload.SRC_FILE_NAME_WITHOUT_EXTENSION_KEY,
-                    fileNameWithoutExtension
+                    IDownload.SRC_FILE_NAME_KEY,
+                    fileName
                 )
-                intent.putExtra(IDownload.SRC_FILE_EXTENSION_KEY, extension)
                 intent.putExtra(IDownload.SRC_NOTIFICATION_MESSAGE, notificationMessage)
                 intent.putExtra(
                     IDownload.SRC_NOTIFICATION_PROGRESS_MESSAGE,

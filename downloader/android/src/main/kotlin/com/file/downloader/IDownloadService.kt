@@ -51,9 +51,8 @@ abstract class IDownloadService : Service() {
                     )
                 ) {
                     val destDirPath = intent.getStringExtra(IDownload.SRC_DEST_DIR_PATH_KEY)
-                    val fileNameWithoutExtension =
-                        intent.getStringExtra(IDownload.SRC_FILE_NAME_WITHOUT_EXTENSION_KEY)
-                    val extension = intent.getStringExtra(IDownload.SRC_FILE_EXTENSION_KEY)
+                    val fileName =
+                        intent.getStringExtra(IDownload.SRC_FILE_NAME_KEY)
                     val notificationMessage =
                         intent.getStringExtra(IDownload.SRC_NOTIFICATION_MESSAGE)
                     val notificationProgressMessage =
@@ -78,8 +77,7 @@ abstract class IDownloadService : Service() {
                                     startDownload(
                                         id,
                                         url,
-                                        destDirPath + fileNameWithoutExtension + extension,
-                                        "$destDirPath$fileNameWithoutExtension-temp$extension",
+                                        destDirPath + fileName,
                                         notificationMessage,
                                         notificationProgressMessage,
                                         notificationCompleteMessage)
@@ -93,14 +91,14 @@ abstract class IDownloadService : Service() {
     fun startDownload(
         id: String,
         link: String,
-        file_path: String,
-        temp_file_path: String,
-        notification_message: String,
-        notification_progress_message: String,
-        notification_complete_message:String
+        filePath: String,
+        notificationMessage: String,
+        notificationProgressMessage: String,
+        notificationCompleteMessage:String
 
     ) {
         Thread(Runnable {
+            val tempFilePath  = filePath+"temp"
             var connection: HttpURLConnection? = null
             var input: InputStream? = null
             var output: OutputStream? = null
@@ -111,7 +109,7 @@ abstract class IDownloadService : Service() {
                 connection.connect()
                 if (!IDownload.createFolderIfNotExists(
                         IDownload.getFolderPathOfFile(
-                            file_path
+                            filePath
                         )
                     )
                 ) {
@@ -120,8 +118,8 @@ abstract class IDownloadService : Service() {
                         link,
                         false,
                         IDownload.RESPONSE_CREATE_FOLDER_ERROR_MESSAGE,
-                        notification_message,
-                        notification_complete_message
+                        notificationMessage,
+                        notificationCompleteMessage
                     )
                     return@Runnable
                 }
@@ -133,7 +131,7 @@ abstract class IDownloadService : Service() {
                 if (IDownload.getAvailableStorageInBytes(
                         File(
                             IDownload.getFolderPathOfFile(
-                                file_path
+                                filePath
                             )
                         )
                     )
@@ -143,13 +141,13 @@ abstract class IDownloadService : Service() {
                         id,
                         link, false,
                         IDownload.RESPONSE_NO_FREE_SPACE_MESSAGE,
-                        notification_message,
-                        notification_complete_message)
+                        notificationMessage,
+                        notificationCompleteMessage)
                     return@Runnable
                 }
 
                 input = BufferedInputStream(url.openStream())
-                output = FileOutputStream(temp_file_path)
+                output = FileOutputStream(tempFilePath)
                 val data = ByteArray(4096)
                 var totalDownloaded = 0.0
                 var currentDownload: Int
@@ -163,28 +161,28 @@ abstract class IDownloadService : Service() {
                         sendProgress(
                             id,
                             link, progress.toInt(),
-                            notification_message, notification_progress_message
+                            notificationMessage, notificationProgressMessage
                         )
                     }
                     output.write(data, 0, currentDownload)
                 }
-                val tempFile = File(temp_file_path)
-                val targetFile = File(file_path)
+                val tempFile = File(tempFilePath)
+                val targetFile = File(filePath)
                 tempFile.renameTo(targetFile)
                 sendSuccessError(
                     id,
                     link, true, null,
-                    notification_message,
-                    notification_complete_message)
+                    notificationMessage,
+                    notificationCompleteMessage)
             } catch (e: Exception) {
                 e.printStackTrace()
-                deleteDownloadFile(temp_file_path)
+                deleteDownloadFile(tempFilePath)
                 sendSuccessError(
                     id,
                     link, false,
                     IDownload.RESPONSE_CONNECTION_ERROR_MESSAGE,
-                    notification_message,
-                    notification_complete_message)
+                    notificationMessage,
+                    notificationCompleteMessage)
             } finally {
                 try {
                     if (output != null) {
@@ -203,17 +201,17 @@ abstract class IDownloadService : Service() {
         }).start()
     }
 
-    private fun deleteDownloadFile(temp_file_path: String) {
+    private fun deleteDownloadFile(tempFilePath: String) {
         IDownload.DeleteRecursive(
             this,
-            temp_file_path
+            tempFilePath
         )
     }
 
     fun sendProgress(
         id:String,
         url: String, progress: Int,
-        notification_message: String, notification_progress_message: String
+        notificationMessage: String, notificationProgressMessage: String
     ) {
         val message = Bundle()
         message.putString(IDownload.RESPONSE_ID_KEY, id)
@@ -223,7 +221,7 @@ abstract class IDownloadService : Service() {
         if (time - lastProgressTime >= 1200) {
             sendEvent(message)
             val notificationBuilder = getNotificationBuilderOfDownload(
-                notification_message, notification_progress_message
+                notificationMessage, notificationProgressMessage
             )
             lastProgressTime = time
             notificationBuilder.setProgress(100, progress, false)
@@ -235,7 +233,7 @@ abstract class IDownloadService : Service() {
         id:String,
         url: String,
         isSuccess: Boolean, errorMessage: String?,
-        notification_message: String, notification_complete_message: String
+        notificationMessage: String, notificationCompleteMessage: String
     ) {
         val message = Bundle()
         message.putString(IDownload.RESPONSE_ID_KEY, id)
@@ -250,7 +248,7 @@ abstract class IDownloadService : Service() {
         }
         if (isSuccess) {
             val notificationBuilder = getNotificationBuilderOfCompleteDownload(
-                notification_message , notification_complete_message
+                notificationMessage , notificationCompleteMessage
             )
             notifySuccess(id,notificationBuilder?.build())
         }

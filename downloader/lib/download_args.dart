@@ -6,8 +6,7 @@ class DownloadArgs {
   final String? id;
   final String downloadLink;
   final String destinationDirPath;
-  final String fileNameWithoutExtension;
-  final  String extension;
+  final String fileName;
   final String androidNotificationTitle;
   final String androidNotificationProgressMessage;
   final   String androidNotificationCompleteMessage;
@@ -15,14 +14,13 @@ class DownloadArgs {
   void Function()? onDeleted;
 
   String get idToUse => id??downloadLink;
-  String get filePath => "${join(destinationDirPath,fileNameWithoutExtension)}.$extension";
+  String get filePath => join(destinationDirPath,fileName);
 
   DownloadArgs({
     this.id,
     required this.downloadLink,
     required this.destinationDirPath,
-    required this.fileNameWithoutExtension,
-    required this.extension,
+    required this.fileName,
     required this.androidNotificationTitle,
     required this.androidNotificationProgressMessage,
     required this.androidNotificationCompleteMessage,
