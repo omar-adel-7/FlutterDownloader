@@ -37,6 +37,7 @@ abstract class IDownloadService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         onStartCommandCustom(intent)
+        running = true
         if (intent != null) {
             val id = intent.getStringExtra(IDownload.SRC_ID_KEY)
             val url = intent.getStringExtra(IDownload.SRC_URL_KEY)
@@ -46,6 +47,7 @@ abstract class IDownloadService : Service() {
                         R.string.download_ACTION_STOP_SERVICE
                     )
                 ) {
+                    running = false
                     stopThisService()
                 } else if (action == resources.getString(
                         R.string.download_ACTION_DOWNLOAD_ITEM
@@ -151,8 +153,8 @@ abstract class IDownloadService : Service() {
                 output = FileOutputStream(tempFilePath)
                 val data = ByteArray(4096)
                 var totalDownloaded = 0.0
-                var currentDownload: Int
-                while (running && input.read(data).also { currentDownload = it } != -1) {
+                var currentDownload: Int = 0
+                while (running && (input.read(data).also { currentDownload = it }) != -1) {
                     totalDownloaded += currentDownload.toDouble()
                     tmp = totalDownloaded / 1024
                     tmp /= 1024
@@ -257,7 +259,6 @@ abstract class IDownloadService : Service() {
     }
 
     fun stopThisService() {
-        running = false
         stopSelf()
     }
 
