@@ -32,6 +32,7 @@ abstract class IDownloadService : Service() {
     protected abstract fun notifyProgress(notification: Notification?)
     protected abstract fun notifySuccess(id:String,notification: Notification?)
     protected abstract fun notifyError()
+    protected abstract fun notifyStoppedService()
     abstract fun callback_before_error(downloadErrorMessage: String)
     abstract fun sendEvent(message: Bundle)
 
@@ -179,6 +180,10 @@ abstract class IDownloadService : Service() {
                         link, true, null,
                         notificationMessage,
                         notificationCompleteMessage)
+                }
+                else
+                {
+                    notifyStoppedService();
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
