@@ -169,14 +169,17 @@ abstract class IDownloadService : Service() {
                     }
                     output.write(data, 0, currentDownload)
                 }
-                val tempFile = File(tempFilePath)
-                val targetFile = File(filePath)
-                tempFile.renameTo(targetFile)
-                sendSuccessError(
-                    id,
-                    link, true, null,
-                    notificationMessage,
-                    notificationCompleteMessage)
+                if(running)
+                {
+                    val tempFile = File(tempFilePath)
+                    val targetFile = File(filePath)
+                    tempFile.renameTo(targetFile)
+                    sendSuccessError(
+                        id,
+                        link, true, null,
+                        notificationMessage,
+                        notificationCompleteMessage)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 deleteDownloadFile(tempFilePath)
