@@ -18,6 +18,7 @@ import java.util.*
 abstract class IDownloadService : Service() {
     var resultReceiver: ResultReceiver? = null
     var lastProgressTime: Long = 0
+    var running = true
 
     protected abstract fun getNotificationBuilderOfDownload(
         notification_message: String, notification_progress_message: String
@@ -151,7 +152,7 @@ abstract class IDownloadService : Service() {
                 val data = ByteArray(4096)
                 var totalDownloaded = 0.0
                 var currentDownload: Int
-                while (input.read(data).also { currentDownload = it } != -1) {
+                while (running && input.read(data).also { currentDownload = it } != -1) {
                     totalDownloaded += currentDownload.toDouble()
                     tmp = totalDownloaded / 1024
                     tmp /= 1024
@@ -256,6 +257,7 @@ abstract class IDownloadService : Service() {
     }
 
     fun stopThisService() {
+        running = false
         stopSelf()
     }
 
