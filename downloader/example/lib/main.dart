@@ -104,11 +104,11 @@ class _MyAppState extends State<MyApp> {
                         "BlocConsumer listener onProgress id=${downloadState.id} and url=${downloadState.url} and progress = ${downloadState.progress}");
                     onProgress(downloadState.url,downloadState.progress);
                   }
-                  if (downloadState is DownloadCompletedState) {
+                  else if (downloadState is DownloadCompletedState) {
                     print("BlocConsumer listener onComplete id=${downloadState.id} and url=${downloadState.url}");
                     onComplete(downloadState.url);
                   }
-                  if (downloadState is DownloadErrorState) {
+                  else if (downloadState is DownloadErrorState) {
                     print(
                         "BlocConsumer listener onError id=${downloadState.id} and url=${downloadState.url} , error=${downloadState.error}");
                     onError(downloadState.url, downloadState.error);
@@ -159,6 +159,13 @@ class _MyAppState extends State<MyApp> {
     return appDocumentsDirectory.path;
   }
 
+  void onStarted(String url) {
+    progress = 0;
+    message = "started";
+    // //in case of not using bloc
+    // setState(() {});
+  }
+
   void onProgress(String url, int progress) {
     this.progress = progress;
     message = "downloading";
@@ -168,7 +175,7 @@ class _MyAppState extends State<MyApp> {
 
   void onComplete(String url) {
     progress = 100;
-    message = "complete";
+    message = "completed";
     // //in case of not using bloc
     // setState(() {});
   }
