@@ -76,9 +76,9 @@ class _MyAppState extends State<MyApp> {
                 ),
                 onTap: () async {
                   String url =
-                      "https://books9.arabia-it-key.com/storage/app/public/bfdf117a-7885-41ba-8cab-6357150ffb05/4a2a98e9-997f-43b6-83a7-12d30f9ef2ca.db";
+                      "https://server8.mp3quran.net/frs_a/014.mp3";
                   String destinationDirPath = await getDestination();
-                  String fileName = "test File Name'with'apostrophe ' and comma, , 12.db";
+                  String fileName = "test File Name'with'apostrophe ' and comma, ,.mp3";
                   DownloaderPlugin.downloadFile(
                     id: url,
                     url: url,
