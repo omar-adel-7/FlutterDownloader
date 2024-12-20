@@ -28,26 +28,20 @@ class AndroidDownloadMethodChannel {
     final Map methodData = call.arguments;
     switch (call.method) {
       case _androidDownloadResultProgress:
-        String id = methodData['id'];
         String url = methodData['url'];
         int progress = methodData['progress'];
         downloadCubit.publishProgress(
-            id: id,
             url: url,
             progress: progress);
         break;
       case _androidDownloadResultCompleted:
-        String id = methodData['id'];
         String url = methodData['url'];
-        downloadCubit.publishCompleted(
-            id: id, url: url);
+        downloadCubit.publishCompleted(url: url);
         break;
       case _androidDownloadResultError:
-        String id = methodData['id'];
         String url = methodData['url'];
         String? error = methodData['error'];
         downloadCubit.publishError(
-            id: id,
             url: url,
             error: error);
         break;
@@ -57,8 +51,7 @@ class AndroidDownloadMethodChannel {
   }
 
   downloadFile(
-      {required String id,
-      required String url,
+      {required String url,
       required String destinationDirPath,
       required String fileName,
       required String notificationMessage,
@@ -67,7 +60,6 @@ class AndroidDownloadMethodChannel {
       }) {
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
-      'id': id,
       'url': url,
       'destinationDirPath': destinationDirPath,
       'fileName': fileName,

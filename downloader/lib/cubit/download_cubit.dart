@@ -5,16 +5,16 @@ class DownloadCubit extends Cubit<DownloadStates> {
   static DownloadCubit get(context) => BlocProvider.of(context);
 
   DownloadCubit() : super(DownloadInitialState()) {}
-  publishProgress({String? id,required String url,required int progress}) {
-    emit(DownloadProgressState(id,url,progress));
+  publishProgress({required String url,required int progress}) {
+    emit(DownloadProgressState(url,progress));
   }
 
-  publishCompleted({String? id,required String url}) async {
-    emit(DownloadCompletedState(id,url));
+  publishCompleted({required String url}) async {
+    emit(DownloadCompletedState(url));
   }
 
-  publishError({String? id, required String url,String? error}) async {
-    emit(DownloadErrorState(id,url, error));
+  publishError({required String url,String? error}) async {
+    emit(DownloadErrorState(url, error));
   }
 }
 

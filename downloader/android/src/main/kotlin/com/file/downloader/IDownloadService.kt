@@ -30,7 +30,7 @@ abstract class IDownloadService : Service() {
 
     protected abstract fun onStartCommandCustom(intent: Intent?)
     protected abstract fun notifyProgress(notification: Notification?)
-    protected abstract fun notifySuccess(id:String,notification: Notification?)
+    protected abstract fun notifySuccess(url:String,notification: Notification?)
     protected abstract fun notifyError()
     protected abstract fun notifyStoppedService()
     abstract fun callback_before_error(downloadErrorMessage: String)
@@ -40,7 +40,6 @@ abstract class IDownloadService : Service() {
         onStartCommandCustom(intent)
         running = true
         if (intent != null) {
-            val id = intent.getStringExtra(IDownload.SRC_ID_KEY)
             val url = intent.getStringExtra(IDownload.SRC_URL_KEY)
             val action = intent.action
             if (action != null) {
@@ -73,13 +72,11 @@ abstract class IDownloadService : Service() {
                     }
 
                     if (
-                        id!=null &&
                         url != null
                         && notificationMessage != null
                         && notificationProgressMessage != null
                         && notificationCompleteMessage != null) {
                                     startDownload(
-                                        id,
                                         url,
                                         destDirPath + fileName,
                                         notificationMessage,
@@ -93,7 +90,6 @@ abstract class IDownloadService : Service() {
     }
 
     fun startDownload(
-        id: String,
         link: String,
         filePath: String,
         notificationMessage: String,
@@ -118,7 +114,6 @@ abstract class IDownloadService : Service() {
                     )
                 ) {
                     sendSuccessError(
-                        id,
                         link,
                         false,
                         IDownload.RESPONSE_CREATE_FOLDER_ERROR_MESSAGE,
@@ -142,7 +137,6 @@ abstract class IDownloadService : Service() {
                     < fileSizeInbytes
                 ) {
                     sendSuccessError(
-                        id,
                         link, false,
                         IDownload.RESPONSE_NO_FREE_SPACE_MESSAGE,
                         notificationMessage,
@@ -163,7 +157,6 @@ abstract class IDownloadService : Service() {
                     if (fileSizeInbytes > 0) {
                         val progress = tmp / fileSizeInbytes
                         sendProgress(
-                            id,
                             link, progress.toInt(),
                             notificationMessage, notificationProgressMessage
                         )
@@ -176,7 +169,6 @@ abstract class IDownloadService : Service() {
                     val targetFile = File(filePath)
                     tempFile.renameTo(targetFile)
                     sendSuccessError(
-                        id,
                         link, true, null,
                         notificationMessage,
                         notificationCompleteMessage)
@@ -189,7 +181,6 @@ abstract class IDownloadService : Service() {
                 e.printStackTrace()
                 deleteDownloadFile(tempFilePath)
                 sendSuccessError(
-                    id,
                     link, false,
                     IDownload.RESPONSE_CONNECTION_ERROR_MESSAGE,
                     notificationMessage,
@@ -220,12 +211,10 @@ abstract class IDownloadService : Service() {
     }
 
     fun sendProgress(
-        id:String,
         url: String, progress: Int,
         notificationMessage: String, notificationProgressMessage: String
     ) {
         val message = Bundle()
-        message.putString(IDownload.RESPONSE_ID_KEY, id)
         message.putString(IDownload.RESPONSE_URL_KEY, url)
         message.putInt(IDownload.RESPONSE_PROGRESS_KEY, progress)
         val time = Date().time
@@ -241,13 +230,11 @@ abstract class IDownloadService : Service() {
     }
 
     fun sendSuccessError(
-        id:String,
         url: String,
         isSuccess: Boolean, errorMessage: String?,
         notificationMessage: String, notificationCompleteMessage: String
     ) {
         val message = Bundle()
-        message.putString(IDownload.RESPONSE_ID_KEY, id)
         message.putString(IDownload.RESPONSE_URL_KEY, url)
         message.putBoolean(IDownload.RESPONSE_SUCCESS_ERROR_KEY, isSuccess)
         if (!isSuccess) {
@@ -261,7 +248,7 @@ abstract class IDownloadService : Service() {
             val notificationBuilder = getNotificationBuilderOfCompleteDownload(
                 notificationMessage , notificationCompleteMessage
             )
-            notifySuccess(id,notificationBuilder?.build())
+            notifySuccess(url,notificationBuilder?.build())
         }
         sendEvent(message)
     }

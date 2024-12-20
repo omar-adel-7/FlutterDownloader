@@ -26,21 +26,18 @@ class IOSDownloadMethodChannel {
     final Map methodData = call.arguments;
     switch (call.method) {
       case _iOSDownloadProgress:
-        String id = methodData['id'];
         String url = methodData['url'];
         int progress = methodData['progress'];
-          downloadCubit.publishProgress(id:id,url:url, progress: progress);
+          downloadCubit.publishProgress(url:url, progress: progress);
         break;
       case _iOSDownloadCompleted:
-        String id = methodData['id'];
         String url = methodData['url'];
-          downloadCubit.publishCompleted(id:id,url:url);
+          downloadCubit.publishCompleted(url:url);
         break;
       case _iOSDownloadError:
-        String id = methodData['id'];
         String url = methodData['url'];
         String? error = methodData['error'];
-          downloadCubit.publishError(id:id,url:url,error: error);
+          downloadCubit.publishError(url:url,error: error);
         break;
       default:
         break;
@@ -48,12 +45,11 @@ class IOSDownloadMethodChannel {
   }
 
   downloadFile(
-      {required String id,required String url,
+      {required String url,
       required String destinationDirPath,
       required String fileName}) {
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
-      'id': id,
       'url': url,
       'destinationPath': destinationDirPath,
       'fileName': fileName

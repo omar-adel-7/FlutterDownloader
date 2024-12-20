@@ -11,7 +11,6 @@ import androidx.core.app.NotificationCompat
 import com.file.downloader.IDownload.ResultReceiver_Error
 import com.file.downloader.IDownload.ResultReceiver_Progress
 import com.file.downloader.IDownload.ResultReceiver_Status
-import com.file.downloader.IDownload.ResultReceiver_Id
 import com.file.downloader.IDownload.ResultReceiver_Url
 
 
@@ -25,9 +24,9 @@ class DownloadService : IDownloadService() {
         notificationUtils?.manager?.notify( /*FOREGROUND_ID*/notificationId, notification)
     }
 
-    override fun notifySuccess(id:String,notification: Notification?) {
+    override fun notifySuccess(url:String,notification: Notification?) {
         notificationUtils?.manager?.cancel(notificationId)
-        notificationUtils?.manager?.notify(id,notificationId,notification)
+        notificationUtils?.manager?.notify(url,notificationId,notification)
     }
 
     override fun notifyError() {
@@ -88,7 +87,6 @@ class DownloadService : IDownloadService() {
         val mHandler = Handler(mainLooper)
         mHandler.post {
             val bundle = Bundle()
-            bundle.putString(ResultReceiver_Id, downloadEvent.id)
             bundle.putString(ResultReceiver_Url, downloadEvent.url)
             bundle.putString(ResultReceiver_Status, downloadEvent.status)
             downloadEvent.progress?.let { bundle.putInt(ResultReceiver_Progress, it) }

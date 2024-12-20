@@ -6,7 +6,6 @@ import android.os.StatFs
 import java.io.File
 
 object IDownload {
-    const val SRC_ID_KEY = "src_id"
     const val SRC_URL_KEY = "src_url"
     const val SRC_DEST_DIR_PATH_KEY = "src_dest_dir_path"
     const val SRC_FILE_NAME_KEY = "src_file_name"
@@ -14,7 +13,6 @@ object IDownload {
     const val SRC_NOTIFICATION_PROGRESS_MESSAGE = "src_notification_progress_message"
     const val SRC_NOTIFICATION_COMPLETE_MESSAGE = "src_notification_complete_message"
     const val RESPONSE_URL_KEY = "response_url"
-    const val RESPONSE_ID_KEY = "response_id"
     const val RESPONSE_PROGRESS_KEY = "response_progress"
     const val RESPONSE_SUCCESS_ERROR_KEY = "response_success_error"
     const val RESPONSE_ERROR_MESSAGE_KEY = "response_error_message"
@@ -22,7 +20,6 @@ object IDownload {
     const val RESPONSE_CONNECTION_ERROR_MESSAGE = "response_connection_error"
     const val RESPONSE_CREATE_FOLDER_ERROR_MESSAGE = "response_create_folder_error"
     const val ResultReceiver_Key = "result_receiver"
-    const val ResultReceiver_Id = "result_receiver_id"
     const val ResultReceiver_Url = "result_receiver_url"
     const val ResultReceiver_Status = "result_receiver_status"
     const val ResultReceiver_Progress = "result_receiver_progress"
@@ -30,7 +27,6 @@ object IDownload {
 
     fun getDownloadEvent(context: Context?, extras: Bundle): DownloadEvent {
         val downloadEvent = DownloadEvent()
-            downloadEvent.id = extras.getString(RESPONSE_ID_KEY)
             downloadEvent.url = extras.getString(RESPONSE_URL_KEY)
            if (extras.containsKey(RESPONSE_PROGRESS_KEY)) {
                 downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_PROGRESS
@@ -87,7 +83,6 @@ object IDownload {
     }
 
     class DownloadEvent {
-        var id: String? = null
         var url: String? = null
         var status: String? = null
         var progress: Int? = null
@@ -96,8 +91,7 @@ object IDownload {
         constructor() {
         }
 
-        constructor(id: String?, url: String?, status: String?, progress: Int?, error:String?) {
-            this.id = id
+        constructor(url: String?, status: String?, progress: Int?, error:String?) {
             this.url = url
             this.status = status
             this.progress = progress

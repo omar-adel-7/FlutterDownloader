@@ -13,8 +13,7 @@ class DownloaderPlugin {
   }
 
   static downloadFile(
-      {String? id,
-      required String url,
+      {required String url,
       required String destinationPath,
       required String fileName,
       required String androidNotificationMessage,
@@ -26,7 +25,6 @@ class DownloaderPlugin {
     }
     if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance.downloadFile(
-          id: id ?? url,
           url: url,
           destinationDirPath: destinationPath,
           fileName: fileName,
@@ -35,7 +33,6 @@ class DownloaderPlugin {
           notificationCompleteMessage: androidNotificationCompleteMessage);
     } else if (isPlatformIos()) {
       IOSDownloadMethodChannel.instance.downloadFile(
-          id: id ?? url,
           url: url,
           destinationDirPath: destinationPath,
           fileName: fileName);
@@ -45,7 +42,6 @@ class DownloaderPlugin {
   static void downloadFileByArgs(
       {required DownloadArgs downloadArgs}) async {
     downloadFile(
-        id: downloadArgs.id,
         url: downloadArgs.downloadLink,
         destinationPath: downloadArgs.destinationDirPath,
         fileName: downloadArgs.fileName,

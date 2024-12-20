@@ -80,7 +80,6 @@ class _MyAppState extends State<MyApp> {
                   String destinationDirPath = await getDestination();
                   String fileName = "test File Name'with'apostrophe ' and comma, ,.mp3";
                   DownloaderPlugin.downloadFile(
-                    id: url,
                     url: url,
                     destinationPath: destinationDirPath,
                     fileName: fileName,
@@ -101,32 +100,32 @@ class _MyAppState extends State<MyApp> {
                 listener: (context, downloadState) {
                   if (downloadState is DownloadProgressState) {
                     print(
-                        "BlocConsumer listener onProgress id=${downloadState.id} and url=${downloadState.url} and progress = ${downloadState.progress}");
+                        "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
                     onProgress(downloadState.url,downloadState.progress);
                   }
                   else if (downloadState is DownloadCompletedState) {
-                    print("BlocConsumer listener onComplete id=${downloadState.id} and url=${downloadState.url}");
+                    print("BlocConsumer listener onComplete url=${downloadState.url}");
                     onComplete(downloadState.url);
                   }
                   else if (downloadState is DownloadErrorState) {
                     print(
-                        "BlocConsumer listener onError id=${downloadState.id} and url=${downloadState.url} , error=${downloadState.error}");
+                        "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
                     onError(downloadState.url, downloadState.error);
                   }
                 },
                 builder: (context, downloadState) {
                   if (downloadState is DownloadProgressState) {
                     print(
-                        "BlocConsumer builder onProgress id=${downloadState.id} and url=${downloadState.url} and progress = ${downloadState.progress}");
+                        "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
 
                   }
                   else if (downloadState is DownloadCompletedState) {
-                    print("BlocConsumer builder onComplete id=${downloadState.id} and url=${downloadState.url}");
+                    print("BlocConsumer builder onComplete url=${downloadState.url}");
 
                   }
                   else if (downloadState is DownloadErrorState) {
                     print(
-                        "BlocConsumer builder onError id=${downloadState.id} and url=${downloadState.url} , error=${downloadState.error}");
+                        "BlocConsumer builder onError url=${downloadState.url} , error=${downloadState.error}");
                   }
                   return Column(
                     children: [
