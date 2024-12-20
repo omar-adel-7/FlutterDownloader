@@ -2,7 +2,7 @@ import Flutter
 import UIKit
 
 public class DownloaderPlugin: NSObject, FlutterPlugin {
-    
+
     private var channel: FlutterMethodChannel? = nil
 
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -31,7 +31,7 @@ public class DownloaderPlugin: NSObject, FlutterPlugin {
                                self.channel?.invokeMethod("iOSDownloadError", arguments: ["error": error.localizedDescription, "url": fileURL!.absoluteString])
                            }
                        }
-    case "iOSCancelDownload":
+    case "cancelDownloads":
       DownloadServices.cancelDownloading()
     default:
       result(FlutterMethodNotImplemented)

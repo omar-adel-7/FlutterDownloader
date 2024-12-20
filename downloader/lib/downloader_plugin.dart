@@ -72,8 +72,17 @@ class DownloaderPlugin {
     File(downloadArgs.filePath).deleteSync();
   }
 
+  static void cancelDownload() {
+    cancelAndroidCurrentDownload();
+    cancelIosDownloads();
+  }
+
   static void cancelAndroidCurrentDownload() {
     AndroidDownloadMethodChannel.instance.cancelCurrentDownload();
+  }
+
+  static void cancelIosDownloads() {
+    IOSDownloadMethodChannel.instance.cancelDownloads();
   }
 
   static bool isPlatformAndroid() {

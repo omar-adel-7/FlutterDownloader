@@ -21,10 +21,10 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
 
     val CHANNEL_DOWNLOAD = "download"
     private val CHANNEL_DOWNLOAD_START = "startDownload"
+    private val CHANNEL_DOWNLOAD_CANCEL_CURRENT_DOWNLOAD = "cancelCurrentDownload"
     private val CHANNEL_DOWNLOAD_RESULT_PROGRESS = "downloadResultProgress"
     private val CHANNEL_DOWNLOAD_RESULT_COMPLETED = "downloadResultCompleted"
     private val CHANNEL_DOWNLOAD_RESULT_ERROR = "downloadResultError"
-    private val CHANNEL_DOWNLOAD_CANCEL_CURRENT_DOWNLOAD = "cancelCurrentDownload"
 
 
     private var methodChannelDownload: MethodChannel? = null

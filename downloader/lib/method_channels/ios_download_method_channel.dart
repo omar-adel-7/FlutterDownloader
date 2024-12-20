@@ -4,9 +4,10 @@ import '../cubit/download_cubit.dart';
 class IOSDownloadMethodChannel {
   static const _iOSDownloadChannelName = 'iOSDownloadChannelName';
   static const _iOSStartDownload = 'iOSStartDownload';
-  static const _iOSDownloadProgress = 'iOSDownloadProgress';
-  static const _iOSDownloadCompleted = 'iOSDownloadCompleted';
-  static const _iOSDownloadError = 'iOSDownloadError';
+  static const _iosCancelDownloads = 'cancelDownloads';
+  static const _iOSDownloadResultProgress = 'iOSDownloadProgress';
+  static const _iOSDownloadResultCompleted = 'iOSDownloadCompleted';
+  static const _iOSDownloadResultError = 'iOSDownloadError';
 
   MethodChannel? _channelMethod;
 
@@ -25,16 +26,16 @@ class IOSDownloadMethodChannel {
   Future<void> methodHandler(MethodCall call) async {
     final Map methodData = call.arguments;
     switch (call.method) {
-      case _iOSDownloadProgress:
+      case _iOSDownloadResultProgress:
         String url = methodData['url'];
         int progress = methodData['progress'];
           downloadCubit.publishProgress(url:url, progress: progress);
         break;
-      case _iOSDownloadCompleted:
+      case _iOSDownloadResultCompleted:
         String url = methodData['url'];
           downloadCubit.publishCompleted(url:url);
         break;
-      case _iOSDownloadError:
+      case _iOSDownloadResultError:
         String url = methodData['url'];
         String? error = methodData['error'];
           downloadCubit.publishError(url:url,error: error);
@@ -55,6 +56,10 @@ class IOSDownloadMethodChannel {
       'fileName': fileName
     });
     _channelMethod?.invokeMethod(_iOSStartDownload, argsMap);
+  }
+
+  cancelDownloads() {
+    _channelMethod?.invokeMethod(_iosCancelDownloads);
   }
 
 }
