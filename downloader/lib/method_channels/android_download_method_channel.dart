@@ -4,11 +4,11 @@ import '../cubit/download_cubit.dart';
 class AndroidDownloadMethodChannel {
   static const _androidDownloadChannelName = 'download';
   static const _androidStartDownload = 'startDownload';
+  static const _androidCancelCurrentDownload = 'cancelCurrentDownload';
   static const _androidDownloadResultProgress = 'downloadResultProgress';
   static const _androidDownloadResultCompleted = 'downloadResultCompleted';
   static const _androidDownloadResultError = 'downloadResultError';
 
-  static const _androidCancelCurrentDownload = 'cancelCurrentDownload';
 
   MethodChannel? _channelMethod;
 
