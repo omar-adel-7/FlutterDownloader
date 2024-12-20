@@ -45,7 +45,7 @@ abstract class IDownloadService : Service() {
             val action = intent.action
             if (action != null) {
                 if (action == resources.getString(
-                        R.string.download_ACTION_STOP_SERVICE
+                        R.string.download_ACTION_CANCEL_CURRENT_DOWNLOAD
                     )
                 ) {
                     running = false

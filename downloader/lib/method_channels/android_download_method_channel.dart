@@ -8,7 +8,7 @@ class AndroidDownloadMethodChannel {
   static const _androidDownloadResultCompleted = 'downloadResultCompleted';
   static const _androidDownloadResultError = 'downloadResultError';
 
-  static const _androidStopDownloadService = 'stopDownloadService';
+  static const _androidCancelCurrentDownload = 'cancelCurrentDownload';
 
   MethodChannel? _channelMethod;
 
@@ -79,8 +79,8 @@ class AndroidDownloadMethodChannel {
     _channelMethod?.invokeMethod(_androidStartDownload, argsMap);
   }
 
-  stopService() {
-    _channelMethod?.invokeMethod(_androidStopDownloadService);
+  cancelCurrentDownload() {
+    _channelMethod?.invokeMethod(_androidCancelCurrentDownload);
   }
 
 }

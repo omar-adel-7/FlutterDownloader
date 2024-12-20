@@ -98,10 +98,10 @@ class DownloadService : IDownloadService() {
     }
 
     companion object {
-        fun stopService(context: Context) {
+        fun cancelCurrentDownload(context: Context) {
             val intent = Intent(context, DownloadService::class.java)
             intent.action = context.getString(
-                R.string.download_ACTION_STOP_SERVICE
+                R.string.download_ACTION_CANCEL_CURRENT_DOWNLOAD
             )
             context.startService(intent)
         }

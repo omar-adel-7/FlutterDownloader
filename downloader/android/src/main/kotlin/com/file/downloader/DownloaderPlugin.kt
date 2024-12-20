@@ -24,7 +24,7 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
     private val CHANNEL_DOWNLOAD_RESULT_PROGRESS = "downloadResultProgress"
     private val CHANNEL_DOWNLOAD_RESULT_COMPLETED = "downloadResultCompleted"
     private val CHANNEL_DOWNLOAD_RESULT_ERROR = "downloadResultError"
-    private val CHANNEL_DOWNLOAD_STOP_SERVICE = "stopDownloadService"
+    private val CHANNEL_DOWNLOAD_CANCEL_CURRENT_DOWNLOAD = "cancelCurrentDownload"
 
 
     private var methodChannelDownload: MethodChannel? = null
@@ -108,8 +108,8 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
                 context.startService(intent)
             }
         }
-            else if (call.method.equals(CHANNEL_DOWNLOAD_STOP_SERVICE)) {
-                context?.let { context -> DownloadService.stopService(context) }
+            else if (call.method.equals(CHANNEL_DOWNLOAD_CANCEL_CURRENT_DOWNLOAD)) {
+                context?.let { context -> DownloadService.cancelCurrentDownload(context) }
             }
         else {
                 result.notImplemented()
