@@ -9,7 +9,6 @@ class AndroidDownloadMethodChannel {
   static const _androidDownloadResultCompleted = 'downloadResultCompleted';
   static const _androidDownloadResultError = 'downloadResultError';
 
-
   MethodChannel? _channelMethod;
 
   static final AndroidDownloadMethodChannel instance =
