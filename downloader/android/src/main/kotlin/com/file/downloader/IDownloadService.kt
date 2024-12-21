@@ -175,6 +175,7 @@ abstract class IDownloadService : Service() {
                 }
                 else
                 {
+                    deleteDownloadFile(tempFilePath)
                     notifyStoppedService();
                 }
             } catch (e: Exception) {
