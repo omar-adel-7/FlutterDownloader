@@ -12,7 +12,7 @@ class DownloaderPlugin {
     IOSDownloadMethodChannel.instance.init(downloadCubit);
   }
 
-  static downloadFile(
+  static void downloadFile(
       {required String url,
       required String destinationPath,
       required String fileName,
@@ -73,8 +73,11 @@ class DownloaderPlugin {
   }
 
   static void cancelDownload() {
-    cancelAndroidCurrentDownload();
-    cancelIosDownloads();
+    if (isPlatformAndroid()) {
+      cancelAndroidCurrentDownload();
+    } else if (isPlatformIos()) {
+      cancelIosDownloads();
+    }
   }
 
   static void cancelAndroidCurrentDownload() {
