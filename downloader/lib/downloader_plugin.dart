@@ -69,7 +69,11 @@ class DownloaderPlugin {
   }
 
   static void deleteFile(DownloadArgs downloadArgs) {
-    File(downloadArgs.filePath).deleteSync();
+     File(downloadArgs.filePath).deleteSync();
+  }
+
+  static Future deleteFileAsync(DownloadArgs downloadArgs) async {
+    return await File(downloadArgs.filePath).delete();
   }
 
   static void cancelDownload() {

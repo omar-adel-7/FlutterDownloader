@@ -22,6 +22,7 @@ class DownloadArgs {
     required this.androidNotificationMessage,
     required this.androidNotificationProgressMessage,
     required this.androidNotificationCompleteMessage,
+    this.updateIsDownloaded,
     this.onCompleted,
     this.onDeleted,
   });
