@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
         value: widget.downloadCubit,
         child: getMaterialApp()
     );
-    //or
+    // //or
     // return  MultiBlocProvider(
     //   providers: [
     //     BlocProvider.value(
@@ -72,7 +72,7 @@ class _MyAppState extends State<MyApp> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
-                      color: Colors.cyan, child: Text('Download now')),
+                      color: Colors.cyan, child: const Text('Download now')),
                 ),
                 onTap: () async {
                   String url =
