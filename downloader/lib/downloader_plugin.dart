@@ -45,7 +45,7 @@ class DownloaderPlugin {
         url: downloadArgs.downloadLink,
         destinationPath: downloadArgs.destinationDirPath,
         fileName: downloadArgs.fileName,
-        androidNotificationMessage: downloadArgs.androidNotificationTitle,
+        androidNotificationMessage: downloadArgs.androidNotificationMessage,
         androidNotificationProgressMessage:
             downloadArgs.androidNotificationProgressMessage,
         androidNotificationCompleteMessage:

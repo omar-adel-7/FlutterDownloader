@@ -9,6 +9,10 @@ String path = getFilePath(
 return File(path).existsSync();
 }
 
+bool isFileExistAtPath(String fileFullPath)  {
+  return File(fileFullPath).existsSync();
+}
+
 String getFilePath(
     {required String destinationDirPath, required String fileName})  {
   return join(destinationDirPath, fileName);

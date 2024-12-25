@@ -6,10 +6,11 @@ class DownloadArgs {
   final String downloadLink;
   final String destinationDirPath;
   final String fileName;
-  final String androidNotificationTitle;
+  final String androidNotificationMessage;
   final String androidNotificationProgressMessage;
   final   String androidNotificationCompleteMessage;
-  void Function(String)? onDownloaded;
+  Function? updateIsDownloaded;
+  void Function(String)? onCompleted;
   void Function()? onDeleted;
 
   String get filePath => join(destinationDirPath,fileName);
@@ -18,10 +19,10 @@ class DownloadArgs {
     required this.downloadLink,
     required this.destinationDirPath,
     required this.fileName,
-    required this.androidNotificationTitle,
+    required this.androidNotificationMessage,
     required this.androidNotificationProgressMessage,
     required this.androidNotificationCompleteMessage,
-    this.onDownloaded,
+    this.onCompleted,
     this.onDeleted,
   });
 }

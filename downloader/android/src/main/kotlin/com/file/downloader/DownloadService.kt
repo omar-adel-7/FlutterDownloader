@@ -57,7 +57,7 @@ class DownloadService : IDownloadService() {
         val notificationBuilder =
             NotificationCompat.Builder(this, NotificationUtils.ANDROID_CHANNEL_ID)
         notificationBuilder
-            .setContentText(
+            .setContentTitle(
                 "$notification_progress_message $notification_message"
             )
             .setTicker(
@@ -73,7 +73,7 @@ class DownloadService : IDownloadService() {
         val notificationBuilder =
             NotificationCompat.Builder(this, NotificationUtils.ANDROID_CHANNEL_ID)
         notificationBuilder
-            .setContentText("$notification_complete_message $notification_message")
+            .setContentTitle("$notification_complete_message $notification_message")
             .setTicker("$notification_complete_message $notification_message")
             .setSmallIcon(android.R.drawable.stat_sys_download_done)
         return notificationBuilder
