@@ -21,11 +21,11 @@ abstract class IDownloadService : Service() {
     var running = true
 
     protected abstract fun getNotificationBuilderOfDownload(
-        notification_message: String, notification_progress_message: String
+        notificationMessage: String, notificationProgressMessage: String
     ): NotificationCompat.Builder
 
     protected abstract fun getNotificationBuilderOfCompleteDownload(
-        notification_message: String, notification_complete_message: String
+        notificationMessage: String, notificationCompleteMessage: String
     ): NotificationCompat.Builder
 
     protected abstract fun onStartCommandCustom(intent: Intent?)
@@ -258,8 +258,6 @@ abstract class IDownloadService : Service() {
     fun stopThisService() {
         stopSelf()
     }
-
-    abstract val notificationId: Int
 
     companion object {
         var STATUS_DOWNLOAD_PROGRESS = "STATUS_DOWNLOAD_PROGRESS"

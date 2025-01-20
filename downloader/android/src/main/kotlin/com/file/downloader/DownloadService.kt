@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
+import android.service.notification.StatusBarNotification
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.file.downloader.IDownload.ResultReceiver_Error
@@ -21,20 +22,29 @@ class DownloadService : IDownloadService() {
     }
 
     override fun notifyProgress(url:String,notification: Notification?) {
-        notificationUtils?.manager?.notify( url,notificationId, notification)
+        notificationUtils?.manager?.notify(notificationPrefixTag+url,notificationId, notification)
     }
 
     override fun notifySuccess(url:String,notification: Notification?) {
-        notificationUtils?.manager?.cancel(notificationId)
-        notificationUtils?.manager?.notify(url,notificationId,notification)
+        notificationUtils?.manager?.cancel(notificationPrefixTag+url,notificationId)
+        notificationUtils?.manager?.notify(notificationPrefixTag+"completed"+url,notificationId,notification)
     }
 
     override fun notifyError(url:String) {
-        notificationUtils?.manager?.cancel(url,notificationId)
+        notificationUtils?.manager?.cancel(notificationPrefixTag+url,notificationId)
     }
 
     override fun notifyStoppedService() {
-        notificationUtils?.manager?.cancelAll()
+        val notificationList  = notificationUtils?.manager?.getActiveNotifications()
+        if(notificationList?.isNotEmpty()==true){
+            for (i in 0 until notificationList.size)
+            {
+                if(notificationList[i].tag.startsWith(notificationPrefixTag)){
+                    notificationList[i].id
+                    notificationUtils?.manager?.cancel(notificationList[i].tag,notificationId)
+                }
+            }
+        }
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -52,35 +62,39 @@ class DownloadService : IDownloadService() {
 
 
     public override fun getNotificationBuilderOfDownload(
-        notification_message: String,notification_progress_message: String
+        notificationMessage: String,notificationProgressMessage: String
     ): NotificationCompat.Builder {
         val notificationBuilder =
             NotificationCompat.Builder(this, NotificationUtils.ANDROID_CHANNEL_ID)
         notificationBuilder
             .setContentTitle(
-                "$notification_progress_message $notification_message"
+                "$notificationProgressMessage $notificationMessage"
             )
             .setTicker(
-                "$notification_progress_message $notification_message"
+                "$notificationProgressMessage $notificationMessage"
             )
             .setSmallIcon(android.R.drawable.stat_sys_download)
         return notificationBuilder
     }
 
     override fun getNotificationBuilderOfCompleteDownload(
-        notification_message: String,notification_complete_message: String
+        notificationMessage: String,notificationCompleteMessage: String
     ): NotificationCompat.Builder {
         val notificationBuilder =
             NotificationCompat.Builder(this, NotificationUtils.ANDROID_CHANNEL_ID)
         notificationBuilder
-            .setContentTitle("$notification_complete_message $notification_message")
-            .setTicker("$notification_complete_message $notification_message")
+            .setContentTitle("$notificationCompleteMessage $notificationMessage")
+            .setTicker("$notificationCompleteMessage $notificationMessage")
             .setSmallIcon(android.R.drawable.stat_sys_download_done)
         return notificationBuilder
     }
 
-    override val notificationId: Int
+    val notificationId: Int
         get() = 1
+
+    val notificationPrefixTag: String
+        get() = "DownloadServiceNotificationPrefixTag"
+
 
     override fun sendEvent(message: Bundle) {
         val downloadEvent = IDownload.getDownloadEvent(this, message)
