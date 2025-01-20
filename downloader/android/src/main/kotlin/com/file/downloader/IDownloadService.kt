@@ -29,9 +29,9 @@ abstract class IDownloadService : Service() {
     ): NotificationCompat.Builder
 
     protected abstract fun onStartCommandCustom(intent: Intent?)
-    protected abstract fun notifyProgress(notification: Notification?)
+    protected abstract fun notifyProgress(url:String,notification: Notification?)
     protected abstract fun notifySuccess(url:String,notification: Notification?)
-    protected abstract fun notifyError()
+    protected abstract fun notifyError(url:String)
     protected abstract fun notifyStoppedService()
     abstract fun callback_before_error(downloadErrorMessage: String)
     abstract fun sendEvent(message: Bundle)
@@ -227,7 +227,7 @@ abstract class IDownloadService : Service() {
             )
             lastProgressTime = time
             notificationBuilder.setProgress(100, progress, false)
-            notifyProgress(notificationBuilder.build())
+            notifyProgress(url,notificationBuilder.build())
         }
     }
 
@@ -244,7 +244,7 @@ abstract class IDownloadService : Service() {
             if (errorMessage != null) {
                 callback_before_error(errorMessage)
             }
-            notifyError();
+            notifyError(url);
         }
         if (isSuccess) {
             val notificationBuilder = getNotificationBuilderOfCompleteDownload(

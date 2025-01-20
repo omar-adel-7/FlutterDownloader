@@ -20,8 +20,8 @@ class DownloadService : IDownloadService() {
         notificationUtils = NotificationUtils(this)
     }
 
-    override fun notifyProgress(notification: Notification?) {
-        notificationUtils?.manager?.notify( /*FOREGROUND_ID*/notificationId, notification)
+    override fun notifyProgress(url:String,notification: Notification?) {
+        notificationUtils?.manager?.notify( url,notificationId, notification)
     }
 
     override fun notifySuccess(url:String,notification: Notification?) {
@@ -29,8 +29,8 @@ class DownloadService : IDownloadService() {
         notificationUtils?.manager?.notify(url,notificationId,notification)
     }
 
-    override fun notifyError() {
-        notificationUtils?.manager?.cancel(notificationId)
+    override fun notifyError(url:String) {
+        notificationUtils?.manager?.cancel(url,notificationId)
     }
 
     override fun notifyStoppedService() {
