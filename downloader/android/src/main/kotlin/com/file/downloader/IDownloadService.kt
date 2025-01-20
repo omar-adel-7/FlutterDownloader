@@ -105,6 +105,7 @@ abstract class IDownloadService : Service() {
             try {
                 val url = URL(link)
                 connection = url.openConnection() as HttpURLConnection
+                connection.setRequestProperty("Accept-Encoding", "identity")
                 connection.connectTimeout = 15000
                 connection.connect()
                 if (!IDownload.createFolderIfNotExists(

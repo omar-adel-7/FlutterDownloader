@@ -68,6 +68,8 @@ class AndroidDownloadMethodChannel {
       'notificationCompleteMessage': notificationCompleteMessage,
     });
     _channelMethod?.invokeMethod(_androidStartDownload, argsMap);
+    downloadCubit.publishStarted(
+        url: url);
   }
 
   cancelCurrentDownload() {

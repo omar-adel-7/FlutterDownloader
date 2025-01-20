@@ -98,14 +98,19 @@ class _MyAppState extends State<MyApp> {
               color: Colors.yellow,
               child: BlocConsumer<DownloadCubit, DownloadStates>(
                 listener: (context, downloadState) {
-                  if (downloadState is DownloadProgressState) {
+                  if (downloadState is DownloadStartedState) {
+                    print(
+                        "BlocConsumer listener onStarted url=${downloadState.url}");
+                    onStarted(downloadState.url);
+                  }
+                  else if (downloadState is DownloadProgressState) {
                     print(
                         "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
                     onProgress(downloadState.url,downloadState.progress);
                   }
                   else if (downloadState is DownloadCompletedState) {
-                    print("BlocConsumer listener onComplete url=${downloadState.url}");
-                    onComplete(downloadState.url);
+                    print("BlocConsumer listener onCompleted url=${downloadState.url}");
+                    onCompleted(downloadState.url);
                   }
                   else if (downloadState is DownloadErrorState) {
                     print(
@@ -114,13 +119,17 @@ class _MyAppState extends State<MyApp> {
                   }
                 },
                 builder: (context, downloadState) {
-                  if (downloadState is DownloadProgressState) {
+                  if (downloadState is DownloadStartedState) {
+                    print(
+                        "BlocConsumer builder onStarted url=${downloadState.url}");
+                  }
+                  else if (downloadState is DownloadProgressState) {
                     print(
                         "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
 
                   }
                   else if (downloadState is DownloadCompletedState) {
-                    print("BlocConsumer builder onComplete url=${downloadState.url}");
+                    print("BlocConsumer builder onCompleted url=${downloadState.url}");
 
                   }
                   else if (downloadState is DownloadErrorState) {
@@ -172,7 +181,7 @@ class _MyAppState extends State<MyApp> {
     // setState(() {});
   }
 
-  void onComplete(String url) {
+  void onCompleted(String url) {
     progress = 100;
     message = "completed";
     // //in case of not using bloc

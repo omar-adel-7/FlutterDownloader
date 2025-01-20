@@ -4,7 +4,12 @@ import 'download_state.dart';
 class DownloadCubit extends Cubit<DownloadStates> {
   static DownloadCubit get(context) => BlocProvider.of(context);
 
-  DownloadCubit() : super(DownloadInitialState()) {}
+  DownloadCubit() : super(DownloadInitialState());
+
+  publishStarted({required String url}) {
+    emit(DownloadStartedState(url));
+  }
+
   publishProgress({required String url,required int progress}) {
     emit(DownloadProgressState(url,progress));
   }

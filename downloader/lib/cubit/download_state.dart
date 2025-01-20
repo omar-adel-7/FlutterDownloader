@@ -4,6 +4,11 @@ abstract class DownloadStates {
 
 class DownloadInitialState extends DownloadStates {}
 
+class DownloadStartedState extends DownloadStates {
+  final String url;
+  DownloadStartedState(this.url);
+}
+
 class DownloadProgressState extends DownloadStates {
   final String url;
   final int progress;
