@@ -1,6 +1,0 @@
-<resources>
-
-    <string name="download_ACTION_DOWNLOAD_ITEM">download.ACTION_DOWNLOAD_ITEM</string>
-    <string name="download_ACTION_CANCEL_CURRENT_DOWNLOAD">download.ACTION_CANCEL_CURRENT_DOWNLOAD</string>
-
-</resources>

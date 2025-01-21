@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
-import android.service.notification.StatusBarNotification
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.file.downloader.IDownload.ResultReceiver_Error
@@ -34,7 +33,7 @@ class DownloadService : IDownloadService() {
     }
 
     override fun notifyStoppedService() {
-        val notificationList  = notificationUtils?.manager?.getActiveNotifications()
+        val notificationList  = notificationUtils?.manager?.activeNotifications
         if(notificationList?.isNotEmpty()==true){
             for (i in 0 until notificationList.size)
             {
@@ -49,7 +48,7 @@ class DownloadService : IDownloadService() {
         return null
     }
 
-    override fun callback_before_error(downloadErrorMessage: String) {
+    override fun callbackBeforeError(downloadErrorMessage: String) {
         // displayToast(downloadErrorMessage)
     }
 
@@ -108,10 +107,19 @@ class DownloadService : IDownloadService() {
     }
 
     companion object {
-        fun cancelCurrentDownload(context: Context) {
+        fun cancelDownloadFile(context: Context, url: String?) {
+            val intent = Intent(context, DownloadService::class.java)
+            intent.action=
+                context.resources.getString(
+                    R.string.download_ACTION_CANCEL_DOWNLOAD
+                )
+            intent.putExtra(IDownload.SRC_URL_KEY, url)
+            context.startService(intent)
+        }
+        fun cancelDownloads(context: Context) {
             val intent = Intent(context, DownloadService::class.java)
             intent.action = context.getString(
-                R.string.download_ACTION_CANCEL_CURRENT_DOWNLOAD
+                R.string.download_ACTION_CANCEL_DOWNLOADS
             )
             context.startService(intent)
         }

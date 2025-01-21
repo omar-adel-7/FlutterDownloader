@@ -4,7 +4,8 @@ import '../cubit/download_cubit.dart';
 class AndroidDownloadMethodChannel {
   static const _androidDownloadChannelName = 'download';
   static const _androidStartDownload = 'startDownload';
-  static const _androidCancelCurrentDownload = 'cancelCurrentDownload';
+  static const _androidCancelDownload = 'cancelDownload';
+  static const _androidCancelDownloads = 'cancelDownloads';
   static const _androidDownloadResultProgress = 'downloadResultProgress';
   static const _androidDownloadResultCompleted = 'downloadResultCompleted';
   static const _androidDownloadResultError = 'downloadResultError';
@@ -18,7 +19,7 @@ class AndroidDownloadMethodChannel {
 
   late DownloadCubit downloadCubit;
 
-  init(DownloadCubit downloadCubit) {
+   init(DownloadCubit downloadCubit) {
     _channelMethod = const MethodChannel(_androidDownloadChannelName);
     _channelMethod?.setMethodCallHandler(methodHandler);
     this.downloadCubit = downloadCubit;
@@ -72,8 +73,17 @@ class AndroidDownloadMethodChannel {
         url: url);
   }
 
-  cancelCurrentDownload() {
-    _channelMethod?.invokeMethod(_androidCancelCurrentDownload);
+  cancelDownloadFile(String url) {
+    Map argsMap = <dynamic, dynamic>{};
+    argsMap.addAll({
+      'url': url
+    });
+    _channelMethod?.invokeMethod(_androidCancelDownload,argsMap);
   }
+
+  cancelDownloads() {
+    _channelMethod?.invokeMethod(_androidCancelDownloads);
+  }
+
 
 }

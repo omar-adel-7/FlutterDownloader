@@ -31,7 +31,7 @@ class DownloadServices {
         }
     }
     
-    static func cancelDownloading() {
-        AF.cancelAllRequests()
+    static func cancelDownload(fileURLString: String) {
+        AF.cancelAllRequests()//todo omar now
     }
 }

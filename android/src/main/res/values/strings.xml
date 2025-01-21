@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="download_ACTION_DOWNLOAD">download.ACTION_DOWNLOAD</string>
+    <string name="download_ACTION_CANCEL_DOWNLOAD">download.ACTION_CANCEL_DOWNLOAD</string>
+    <string name="download_ACTION_CANCEL_DOWNLOADS">download.ACTION_CANCEL_DOWNLOADS</string>
+
+</resources>

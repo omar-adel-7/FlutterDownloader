@@ -11,12 +11,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   DownloadCubit downloadCubit = DownloadCubit();
-  DownloaderPlugin.init(downloadCubit);
+  DownloaderPlugin.init(downloadCubit, allow_cancel: true, is_serial: false);
   runApp(MyApp(downloadCubit: downloadCubit));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key,  required this .downloadCubit});
+  const MyApp({super.key, required this.downloadCubit});
+
   final DownloadCubit downloadCubit;
 
   @override
@@ -43,10 +44,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return  BlocProvider.value(
-        value: widget.downloadCubit,
-        child: getMaterialApp()
-    );
+    return BlocProvider.value(
+        value: widget.downloadCubit, child: getMaterialApp());
     // //or
     // return  MultiBlocProvider(
     //   providers: [
@@ -75,10 +74,10 @@ class _MyAppState extends State<MyApp> {
                       color: Colors.cyan, child: const Text('Download now')),
                 ),
                 onTap: () async {
-                  String url =
-                      "https://server8.mp3quran.net/frs_a/014.mp3";
+                  String url = "https://server8.mp3quran.net/frs_a/014.mp3";
                   String destinationDirPath = await getDestination();
-                  String fileName = "test File Name'with'apostrophe ' and comma, ,.mp3";
+                  String fileName =
+                      "test File Name'with'apostrophe ' and comma, ,.mp3";
                   DownloaderPlugin.downloadFile(
                     url: url,
                     destinationPath: destinationDirPath,
@@ -102,17 +101,15 @@ class _MyAppState extends State<MyApp> {
                     print(
                         "BlocConsumer listener onStarted url=${downloadState.url}");
                     onStarted(downloadState.url);
-                  }
-                  else if (downloadState is DownloadProgressState) {
+                  } else if (downloadState is DownloadProgressState) {
                     print(
                         "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-                    onProgress(downloadState.url,downloadState.progress);
-                  }
-                  else if (downloadState is DownloadCompletedState) {
-                    print("BlocConsumer listener onCompleted url=${downloadState.url}");
+                    onProgress(downloadState.url, downloadState.progress);
+                  } else if (downloadState is DownloadCompletedState) {
+                    print(
+                        "BlocConsumer listener onCompleted url=${downloadState.url}");
                     onCompleted(downloadState.url);
-                  }
-                  else if (downloadState is DownloadErrorState) {
+                  } else if (downloadState is DownloadErrorState) {
                     print(
                         "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
                     onError(downloadState.url, downloadState.error);
@@ -122,17 +119,13 @@ class _MyAppState extends State<MyApp> {
                   if (downloadState is DownloadStartedState) {
                     print(
                         "BlocConsumer builder onStarted url=${downloadState.url}");
-                  }
-                  else if (downloadState is DownloadProgressState) {
+                  } else if (downloadState is DownloadProgressState) {
                     print(
                         "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-
-                  }
-                  else if (downloadState is DownloadCompletedState) {
-                    print("BlocConsumer builder onCompleted url=${downloadState.url}");
-
-                  }
-                  else if (downloadState is DownloadErrorState) {
+                  } else if (downloadState is DownloadCompletedState) {
+                    print(
+                        "BlocConsumer builder onCompleted url=${downloadState.url}");
+                  } else if (downloadState is DownloadErrorState) {
                     print(
                         "BlocConsumer builder onError url=${downloadState.url} , error=${downloadState.error}");
                   }
@@ -154,11 +147,10 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-
   Future<String> getDestination() async {
     return await getAppInternalFolderPath()
-    //+Platform.pathSeparator // it is the same if with this line
-    // or without it as it is handled internally in the plugin
+        //+Platform.pathSeparator // it is the same if with this line
+        // or without it as it is handled internally in the plugin
         ;
   }
 
@@ -202,4 +194,3 @@ class _MyAppState extends State<MyApp> {
     // setState(() {});
   }
 }
-

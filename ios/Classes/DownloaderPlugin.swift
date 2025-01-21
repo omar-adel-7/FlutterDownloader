@@ -31,8 +31,10 @@ public class DownloaderPlugin: NSObject, FlutterPlugin {
                                self.channel?.invokeMethod("iOSDownloadError", arguments: ["error": error.localizedDescription, "url": fileURL!.absoluteString])
                            }
                        }
-    case "cancelDownloads":
-      DownloadServices.cancelDownloading()
+    case "cancelDownload":
+        let arguments = call.arguments as! [String: String]
+             let fileURL = arguments["url"]
+            DownloadServices.cancelDownload(fileURL!)
     default:
       result(FlutterMethodNotImplemented)
     }

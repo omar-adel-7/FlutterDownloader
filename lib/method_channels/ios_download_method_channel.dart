@@ -4,7 +4,7 @@ import '../cubit/download_cubit.dart';
 class IOSDownloadMethodChannel {
   static const _iOSDownloadChannelName = 'iOSDownloadChannelName';
   static const _iOSStartDownload = 'iOSStartDownload';
-  static const _iosCancelDownloads = 'cancelDownloads';
+  static const _iosCancelDownload = 'cancelDownload';
   static const _iOSDownloadResultProgress = 'iOSDownloadProgress';
   static const _iOSDownloadResultCompleted = 'iOSDownloadCompleted';
   static const _iOSDownloadResultError = 'iOSDownloadError';
@@ -60,8 +60,12 @@ class IOSDownloadMethodChannel {
         url: url);
   }
 
-  cancelDownloads() {
-    _channelMethod?.invokeMethod(_iosCancelDownloads);
+  cancelDownloadFile(String url) {
+    Map argsMap = <dynamic, dynamic>{};
+    argsMap.addAll({
+      'url': url
+    });
+    _channelMethod?.invokeMethod(_iosCancelDownload,argsMap);
   }
 
 }

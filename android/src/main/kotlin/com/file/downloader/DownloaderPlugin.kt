@@ -21,7 +21,8 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
 
     val CHANNEL_DOWNLOAD = "download"
     private val CHANNEL_DOWNLOAD_START = "startDownload"
-    private val CHANNEL_DOWNLOAD_CANCEL_CURRENT_DOWNLOAD = "cancelCurrentDownload"
+    private val CHANNEL_DOWNLOAD_CANCEL = "cancelDownload"
+    private val CHANNEL_DOWNLOADS_CANCEL = "cancelDownloads"
     private val CHANNEL_DOWNLOAD_RESULT_PROGRESS = "downloadResultProgress"
     private val CHANNEL_DOWNLOAD_RESULT_COMPLETED = "downloadResultCompleted"
     private val CHANNEL_DOWNLOAD_RESULT_ERROR = "downloadResultError"
@@ -37,7 +38,7 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     override fun onMethodCall(call: MethodCall, @NonNull result: MethodChannel.Result) {
-            if (call.method.equals(CHANNEL_DOWNLOAD_START)) {
+        if (call.method.equals(CHANNEL_DOWNLOAD_START)) {
             val argsMap = call.arguments as HashMap<*, *>
             val url = argsMap["url"] as String
             val destinationDirPath = argsMap["destinationDirPath"] as String
@@ -49,7 +50,7 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
             context?.let { context ->
                 val intent = Intent(context, DownloadService::class.java)
                 intent.action = context.getString(
-                    R.string.download_ACTION_DOWNLOAD_ITEM
+                    R.string.download_ACTION_DOWNLOAD
                 )
                 intent.putExtra(IDownload.SRC_URL_KEY, url)
                 intent.putExtra(IDownload.SRC_DEST_DIR_PATH_KEY, destinationDirPath)
@@ -102,12 +103,17 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler {
                 context.startService(intent)
             }
         }
-            else if (call.method.equals(CHANNEL_DOWNLOAD_CANCEL_CURRENT_DOWNLOAD)) {
-                context?.let { context -> DownloadService.cancelCurrentDownload(context) }
-            }
+        else if (call.method.equals(CHANNEL_DOWNLOAD_CANCEL)) {
+            val argsMap = call.arguments as HashMap<*, *>
+            val url = argsMap["url"] as String
+            context?.let { context -> DownloadService.cancelDownloadFile(context,url) }
+        }
+        else if (call.method.equals(CHANNEL_DOWNLOADS_CANCEL)) {
+            context?.let { context -> DownloadService.cancelDownloads(context) }
+        }
         else {
-                result.notImplemented()
-            }
+            result.notImplemented()
+        }
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
