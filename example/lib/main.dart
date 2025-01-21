@@ -11,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   DownloadCubit downloadCubit = DownloadCubit();
-  DownloaderPlugin.init(downloadCubit, allow_cancel: true, is_serial: false);
+  DownloaderPlugin.init(downloadCubit, allow_cancel: false, is_serial: true);
   runApp(MyApp(downloadCubit: downloadCubit));
 }
 

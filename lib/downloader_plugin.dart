@@ -9,38 +9,38 @@ import 'download_args.dart';
 import 'download_model.dart';
 
 class DownloaderPlugin {
-  static bool defaultAllowCancel = true;
+  static bool defaultAllowCancel = false;
 
-  static bool defaultSerial = true;
+  static bool defaultIsSerial = true;
 
   static bool allowCancel = defaultAllowCancel;
 
-  static bool isSerial = defaultSerial;
+  static bool isSerial = defaultIsSerial;
 
   static init(DownloadCubit downloadCubit,
       {bool? allow_cancel, bool? is_serial}) async {
     allowCancel = allow_cancel ?? defaultAllowCancel;
-    isSerial = is_serial ?? defaultSerial;
+    isSerial = is_serial ?? defaultIsSerial;
     AndroidDownloadMethodChannel.instance.init(downloadCubit);
     IOSDownloadMethodChannel.instance.init(downloadCubit);
   }
 
   static downloadFile(
       {required String url,
-      required String destinationPath,
-      required String fileName,
-      required String androidNotificationMessage,
-      required String androidNotificationProgressMessage,
-      required String androidNotificationCompleteMessage}) async {
-      DownloadManager().downloadFile(
-          url: url,
-          destinationPath: destinationPath,
-          fileName: fileName,
-          androidNotificationMessage: androidNotificationMessage,
-          androidNotificationProgressMessage:
-              androidNotificationProgressMessage,
-          androidNotificationCompleteMessage:
-              androidNotificationCompleteMessage);
+        required String destinationPath,
+        required String fileName,
+        required String androidNotificationMessage,
+        required String androidNotificationProgressMessage,
+        required String androidNotificationCompleteMessage}) async {
+    DownloadManager().downloadFile(
+        url: url,
+        destinationPath: destinationPath,
+        fileName: fileName,
+        androidNotificationMessage: androidNotificationMessage,
+        androidNotificationProgressMessage:
+        androidNotificationProgressMessage,
+        androidNotificationCompleteMessage:
+        androidNotificationCompleteMessage);
   }
 
   static void downloadFileByArgs({required DownloadArgs downloadArgs}) async {
@@ -50,18 +50,18 @@ class DownloaderPlugin {
         fileName: downloadArgs.fileName,
         androidNotificationMessage: downloadArgs.androidNotificationMessage,
         androidNotificationProgressMessage:
-            downloadArgs.androidNotificationProgressMessage,
+        downloadArgs.androidNotificationProgressMessage,
         androidNotificationCompleteMessage:
-            downloadArgs.androidNotificationCompleteMessage);
+        downloadArgs.androidNotificationCompleteMessage);
   }
 
   static void startDownload(
       {required String url,
-      required String destinationPath,
-      required String fileName,
-      required String androidNotificationMessage,
-      required String androidNotificationProgressMessage,
-      required String androidNotificationCompleteMessage}) async {
+        required String destinationPath,
+        required String fileName,
+        required String androidNotificationMessage,
+        required String androidNotificationProgressMessage,
+        required String androidNotificationCompleteMessage}) async {
     String pathSeparator = Platform.pathSeparator;
     if (!destinationPath.endsWith(pathSeparator)) {
       destinationPath = destinationPath + pathSeparator;
