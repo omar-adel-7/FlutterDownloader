@@ -40,7 +40,6 @@ class DownloadService : IDownloadService() {
             for (i in 0 until notificationList.size)
             {
                 if(notificationList[i].tag.startsWith(notificationPrefixTag)){
-                    notificationList[i].id
                     notificationUtils?.manager?.cancel(notificationList[i].tag,notificationId)
                 }
             }
