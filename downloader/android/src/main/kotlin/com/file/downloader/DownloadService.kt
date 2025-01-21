@@ -26,8 +26,7 @@ class DownloadService : IDownloadService() {
     }
 
     override fun notifySuccess(url:String,notification: Notification?) {
-        notificationUtils?.manager?.cancel(notificationPrefixTag+url,notificationId)
-        notificationUtils?.manager?.notify(notificationPrefixTag+"completed"+url,notificationId,notification)
+        notificationUtils?.manager?.notify(notificationPrefixTag+url,notificationId,notification)
     }
 
     override fun notifyError(url:String) {
