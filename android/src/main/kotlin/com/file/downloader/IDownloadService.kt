@@ -175,8 +175,8 @@ abstract class IDownloadService : Service() {
                 while ((input.read(data).also { currentDownload = it }) != -1) {
                     if (Thread.currentThread().isInterrupted) {
                         // Executor has probably asked us to stop
-                        Log.e("Thread.currentThread().isInterrupted ","true")
-                         break
+                        Log.e("in loop Thread.currentThread().isInterrupted ","true")
+                        break
                     }
                     totalDownloaded += currentDownload.toDouble()
                     tmp = totalDownloaded / 1024
@@ -202,7 +202,7 @@ abstract class IDownloadService : Service() {
                     )
                 } else {
                     deleteDownloadFile(tempFilePath)
-                    Log.e("Thread.currentThread().isInterrupted ","true")
+                    Log.e("after loop Thread.currentThread().isInterrupted ","true")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
