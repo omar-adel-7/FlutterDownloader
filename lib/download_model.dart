@@ -5,9 +5,9 @@ class DownloadModel {
   String url;
   final String destinationPath;
   final String fileName;
-  final String notificationMessage;
-  final String notificationProgressMessage;
-  final String notificationCompleteMessage;
+  final String androidNotificationMessage;
+  final String androidNotificationProgressMessage;
+  final String androidNotificationCompleteMessage;
   int progress;
   String get filePath => join(destinationPath,fileName);
 
@@ -16,9 +16,9 @@ class DownloadModel {
     required this.url,
     required this.destinationPath,
     required this.fileName,
-    required this.notificationMessage,
-    required this.notificationProgressMessage,
-    required this.notificationCompleteMessage,
+    required this.androidNotificationMessage,
+    required this.androidNotificationProgressMessage,
+    required this.androidNotificationCompleteMessage,
     this.progress = 0
   });
 

@@ -8,7 +8,7 @@ class DownloadArgs {
   final String fileName;
   final String androidNotificationMessage;
   final String androidNotificationProgressMessage;
-  final   String androidNotificationCompleteMessage;
+  final String androidNotificationCompleteMessage;
   Function? updateIsDownloaded;
   void Function(String)? onCompleted;
   void Function()? onDeleted;

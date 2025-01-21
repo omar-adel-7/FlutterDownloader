@@ -1,7 +1,5 @@
-
-import '../download_args.dart';
-import '../downloader_plugin.dart';
-import 'download_model.dart';
+import '../../downloader_plugin.dart';
+import '../../download_model.dart';
 
 class DownloadManager {
   DownloadManager._();
@@ -124,22 +122,16 @@ class DownloadManager {
         url: downloadModel.url,
         destinationPath: downloadModel.destinationPath,
         fileName: downloadModel.fileName,
-        androidNotificationMessage: downloadModel.notificationMessage,
+        androidNotificationMessage: downloadModel.androidNotificationMessage,
         androidNotificationProgressMessage:
-            downloadModel.notificationProgressMessage,
+            downloadModel.androidNotificationProgressMessage,
         androidNotificationCompleteMessage:
-            downloadModel.notificationCompleteMessage);
+            downloadModel.androidNotificationCompleteMessage);
   }
 
   int getDownloadsCount() {
     //print("getDownloadsCount list.length=${list.length}");
     return list.length;
-  }
-
-  bool isDownloadsNotEmpty() {
-    bool isDownloadsNotEmpty = list.isNotEmpty;
-    //print("isDownloadsNotEmpty = $isDownloadsNotEmpty");
-    return isDownloadsNotEmpty;
   }
 
   _addDownload(
@@ -153,9 +145,9 @@ class DownloadManager {
         url: url,
         destinationPath: destinationPath,
         fileName: fileName,
-        notificationMessage: notificationMessage,
-        notificationProgressMessage: notificationProgressMessage,
-        notificationCompleteMessage: notificationCompleteMessage));
+        androidNotificationMessage: notificationMessage,
+        androidNotificationProgressMessage: notificationProgressMessage,
+        androidNotificationCompleteMessage: notificationCompleteMessage));
   }
 
   updateProgress(String url, int progress) {
@@ -180,6 +172,10 @@ class DownloadManager {
     }
   }
 
+  bool ifCurrentlyDownloading(String url) {
+    return list.isNotEmpty ? list[0].url == url : false;
+  }
+
   bool isInDownloadList(String url) {
     return getDownloadIfExist(url) != null;
   }
@@ -191,8 +187,10 @@ class DownloadManager {
     return null;
   }
 
-  bool ifCurrentlyDownloading(String url) {
-    return list.isNotEmpty ? list[0].url == url : false;
+  bool isDownloadsNotEmpty() {
+    bool isDownloadsNotEmpty = list.isNotEmpty;
+    //print("isDownloadsNotEmpty = $isDownloadsNotEmpty");
+    return isDownloadsNotEmpty;
   }
 
   clearDownloads() {

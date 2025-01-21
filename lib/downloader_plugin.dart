@@ -1,12 +1,12 @@
 import 'dart:io';
-import 'package:downloader/manager/download_manager.dart';
+import 'package:downloader/src/manager/download_manager.dart';
+import 'package:downloader/src/method_channels/android_download_method_channel.dart';
+import 'package:downloader/src/method_channels/ios_download_method_channel.dart';
+import 'package:path/path.dart';
 
-import '../method_channels/android_download_method_channel.dart';
-import '../method_channels/ios_download_method_channel.dart';
 import 'cubit/download_cubit.dart';
 import 'download_args.dart';
-import 'download_file_util.dart';
-import 'manager/download_model.dart';
+import 'download_model.dart';
 
 class DownloaderPlugin {
   static bool defaultAllowCancel = true;
@@ -84,8 +84,8 @@ class DownloaderPlugin {
     required String destinationDirPath,
     required String fileName,
   }) {
-    return isFileExist(
-        destinationDirPath: destinationDirPath, fileName: fileName);
+    String path = join(destinationDirPath, fileName);
+    return File(path).existsSync();
   }
 
   static bool isFileDownloadedByArgs(DownloadArgs downloadArgs) {
@@ -115,22 +115,30 @@ class DownloaderPlugin {
 
   static void cancelUrlDownload(String url) {
     if (isPlatformAndroid()) {
-      cancelAndroidDownloadFile(url);
+      AndroidDownloadMethodChannel.instance.cancelDownloadFile(url);
     } else if (isPlatformIos()) {
-      cancelIosDownloadFile(url);
+      IOSDownloadMethodChannel.instance.cancelDownloadFile(url);
     }
-  }
-
-  static void cancelAndroidDownloadFile(String url) {
-    AndroidDownloadMethodChannel.instance.cancelDownloadFile(url);
-  }
-
-  static void cancelIosDownloadFile(String url) {
-    IOSDownloadMethodChannel.instance.cancelDownloadFile(url);
   }
 
   static void cancelAndroidDownloads() {
     AndroidDownloadMethodChannel.instance.cancelDownloads();
+  }
+
+  static bool isInDownloadList(String url) {
+    return DownloadManager().isInDownloadList(url);
+  }
+
+  static DownloadModel? getDownloadIfExist(String url) {
+    return DownloadManager().getDownloadIfExist(url);
+  }
+
+  static bool isDownloadsNotEmpty() {
+    return DownloadManager().isDownloadsNotEmpty();
+  }
+
+  static clearDownloads() {
+    DownloadManager().clearDownloads();
   }
 
   static bool isPlatformAndroid() {
