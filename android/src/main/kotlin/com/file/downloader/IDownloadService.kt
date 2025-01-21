@@ -36,6 +36,7 @@ abstract class IDownloadService : Service() {
     protected abstract fun notifyProgress(url: String, notification: Notification?)
     protected abstract fun notifySuccess(url: String, notification: Notification?)
     protected abstract fun notifyError(url: String)
+    protected abstract fun notifyCanceled(url: String)
     protected abstract fun notifyStoppedService()
     abstract fun callbackBeforeError(downloadErrorMessage: String)
     abstract fun sendEvent(message: Bundle)
@@ -54,7 +55,12 @@ abstract class IDownloadService : Service() {
                     if(result!=null){
                         if(!result.isDone)
                         {
-                            result.cancel(true)
+                           val cancelResult =  result.cancel(true)
+                            Log.e("runnableResult isDone = ", "false")
+                            Log.e("runnableResult cancel(true) = ", cancelResult.toString())
+                        }
+                        else{
+                            Log.e("runnableResult isDone = ", "true")
                         }
                     }
                 } else
@@ -203,6 +209,7 @@ abstract class IDownloadService : Service() {
                 } else {
                     deleteDownloadFile(tempFilePath)
                     Log.e("after loop Thread.currentThread().isInterrupted ","true")
+                    notifyCanceled(link)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -268,7 +275,7 @@ abstract class IDownloadService : Service() {
             if (errorMessage != null) {
                 callbackBeforeError(errorMessage)
             }
-            notifyError(url);
+            notifyError(url)
         }
         if (isSuccess) {
             val notificationBuilder = getNotificationBuilderOfCompleteDownload(

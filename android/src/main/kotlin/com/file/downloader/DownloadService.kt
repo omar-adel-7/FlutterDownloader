@@ -32,6 +32,10 @@ class DownloadService : IDownloadService() {
         notificationUtils?.manager?.cancel(notificationPrefixTag+url,notificationId)
     }
 
+    override fun notifyCanceled(url:String) {
+        notificationUtils?.manager?.cancel(notificationPrefixTag+url,notificationId)
+    }
+
     override fun notifyStoppedService() {
         val notificationList  = notificationUtils?.manager?.activeNotifications
         if(notificationList?.isNotEmpty()==true){
