@@ -57,8 +57,6 @@ class IOSDownloadMethodChannel {
       'fileName': fileName
     });
     _channelMethod?.invokeMethod(_iOSStartDownload, argsMap);
-    downloadCubit.publishStarted(
-        url: url);
   }
 
   cancelDownloadFile(String url) {

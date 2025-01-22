@@ -1,6 +1,6 @@
 import 'package:downloader/downloader_plugin.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../src/manager/download_manager.dart';
+import '../src/download_manager.dart';
 import 'download_state.dart';
 
 class DownloadCubit extends Cubit<DownloadStates> {

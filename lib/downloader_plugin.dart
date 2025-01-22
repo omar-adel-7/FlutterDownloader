@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:downloader/src/manager/download_manager.dart';
+import 'package:downloader/src/download_manager.dart';
+import 'package:downloader/src/download_util.dart';
 import 'package:downloader/src/method_channels/android_download_method_channel.dart';
 import 'package:downloader/src/method_channels/ios_download_method_channel.dart';
 import 'package:path/path.dart';
@@ -27,20 +28,25 @@ class DownloaderPlugin {
 
   static downloadFile(
       {required String url,
-        required String destinationPath,
-        required String fileName,
-        required String androidNotificationMessage,
-        required String androidNotificationProgressMessage,
-        required String androidNotificationCompleteMessage}) async {
+      required String destinationPath,
+      required String fileName,
+      required String androidNotificationMessage,
+      required String androidNotificationProgressMessage,
+      required String androidNotificationCompleteMessage}) async {
+    if (isPlatformAndroid()) {
+      AndroidDownloadMethodChannel.instance.downloadCubit.publishStarted(
+          url: url);
+    } else if (isPlatformIos()) {
+      IOSDownloadMethodChannel.instance.downloadCubit.publishStarted(
+          url: url);
+    }
     DownloadManager().downloadFile(
         url: url,
         destinationPath: destinationPath,
         fileName: fileName,
         androidNotificationMessage: androidNotificationMessage,
-        androidNotificationProgressMessage:
-        androidNotificationProgressMessage,
-        androidNotificationCompleteMessage:
-        androidNotificationCompleteMessage);
+        androidNotificationProgressMessage: androidNotificationProgressMessage,
+        androidNotificationCompleteMessage: androidNotificationCompleteMessage);
   }
 
   static void downloadFileByArgs({required DownloadArgs downloadArgs}) async {
@@ -50,34 +56,9 @@ class DownloaderPlugin {
         fileName: downloadArgs.fileName,
         androidNotificationMessage: downloadArgs.androidNotificationMessage,
         androidNotificationProgressMessage:
-        downloadArgs.androidNotificationProgressMessage,
+            downloadArgs.androidNotificationProgressMessage,
         androidNotificationCompleteMessage:
-        downloadArgs.androidNotificationCompleteMessage);
-  }
-
-  static void startDownload(
-      {required String url,
-        required String destinationPath,
-        required String fileName,
-        required String androidNotificationMessage,
-        required String androidNotificationProgressMessage,
-        required String androidNotificationCompleteMessage}) async {
-    String pathSeparator = Platform.pathSeparator;
-    if (!destinationPath.endsWith(pathSeparator)) {
-      destinationPath = destinationPath + pathSeparator;
-    }
-    if (isPlatformAndroid()) {
-      AndroidDownloadMethodChannel.instance.downloadFile(
-          url: url,
-          destinationDirPath: destinationPath,
-          fileName: fileName,
-          notificationMessage: androidNotificationMessage,
-          notificationProgressMessage: androidNotificationProgressMessage,
-          notificationCompleteMessage: androidNotificationCompleteMessage);
-    } else if (isPlatformIos()) {
-      IOSDownloadMethodChannel.instance.downloadFile(
-          url: url, destinationDirPath: destinationPath, fileName: fileName);
-    }
+            downloadArgs.androidNotificationCompleteMessage);
   }
 
   static bool isFileDownloaded({
@@ -104,21 +85,12 @@ class DownloaderPlugin {
   }
 
   static cancelDownloadFile(String url) async {
-    cancelUrlDownload(url);
+    DownloadUtil.cancelUrlDownload(url);
     DownloadManager().cancelUrlDownload(url);
   }
 
   static cancelDownloadMultiFiles(List<String> urlsList) async {
     DownloadManager().cancelMultiUrlsDownload(urlsList);
-  }
-
-
-  static void cancelUrlDownload(String url) {
-    if (isPlatformAndroid()) {
-      AndroidDownloadMethodChannel.instance.cancelDownloadFile(url);
-    } else if (isPlatformIos()) {
-      IOSDownloadMethodChannel.instance.cancelDownloadFile(url);
-    }
   }
 
   static void cancelAndroidDownloads() {

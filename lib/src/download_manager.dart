@@ -1,5 +1,6 @@
-import '../../downloader_plugin.dart';
-import '../../download_model.dart';
+import '../downloader_plugin.dart';
+import '../download_model.dart';
+import 'download_util.dart';
 
 class DownloadManager {
   DownloadManager._();
@@ -16,11 +17,11 @@ class DownloadManager {
 
   downloadFile(
       {required String url,
-      required String destinationPath,
-      required String fileName,
-      required String androidNotificationMessage,
-      required String androidNotificationProgressMessage,
-      required String androidNotificationCompleteMessage}) async {
+        required String destinationPath,
+        required String fileName,
+        required String androidNotificationMessage,
+        required String androidNotificationProgressMessage,
+        required String androidNotificationCompleteMessage}) async {
 
     if (!isInDownloadList(url)) {
       _addDownload(
@@ -31,21 +32,8 @@ class DownloadManager {
           androidNotificationProgressMessage,
           androidNotificationCompleteMessage);
       if(DownloaderPlugin.isSerial)
-        {
-          if (getDownloadsCount() == 1) {
-            _startDownload(
-                url: url,
-                destinationPath: destinationPath,
-                fileName: fileName,
-                androidNotificationMessage: androidNotificationMessage,
-                androidNotificationProgressMessage:
-                androidNotificationProgressMessage,
-                androidNotificationCompleteMessage:
-                androidNotificationCompleteMessage);
-          }
-        }
-      else
-        {
+      {
+        if (getDownloadsCount() == 1) {
           _startDownload(
               url: url,
               destinationPath: destinationPath,
@@ -56,6 +44,19 @@ class DownloadManager {
               androidNotificationCompleteMessage:
               androidNotificationCompleteMessage);
         }
+      }
+      else
+      {
+        _startDownload(
+            url: url,
+            destinationPath: destinationPath,
+            fileName: fileName,
+            androidNotificationMessage: androidNotificationMessage,
+            androidNotificationProgressMessage:
+            androidNotificationProgressMessage,
+            androidNotificationCompleteMessage:
+            androidNotificationCompleteMessage);
+      }
     }
   }
 
@@ -80,7 +81,7 @@ class DownloadManager {
     for (String url in urlsList) {
       DownloadModel? downloadModel = getDownloadIfExist(url);
       if (downloadModel != null) {
-        DownloaderPlugin.cancelUrlDownload(url);
+        DownloadUtil.cancelUrlDownload(url);
         if(DownloaderPlugin.isSerial)
         {
           if (ifCurrentlyDownloading(url)) {
@@ -103,12 +104,12 @@ class DownloadManager {
 
   void _startDownload(
       {required String url,
-      required String destinationPath,
-      required String fileName,
-      required String androidNotificationMessage,
-      required String androidNotificationProgressMessage,
-      required String androidNotificationCompleteMessage}) {
-    DownloaderPlugin.startDownload(
+        required String destinationPath,
+        required String fileName,
+        required String androidNotificationMessage,
+        required String androidNotificationProgressMessage,
+        required String androidNotificationCompleteMessage}) {
+    DownloadUtil.startDownload(
         url: url,
         destinationPath: destinationPath,
         fileName: fileName,
@@ -124,9 +125,9 @@ class DownloadManager {
         fileName: downloadModel.fileName,
         androidNotificationMessage: downloadModel.androidNotificationMessage,
         androidNotificationProgressMessage:
-            downloadModel.androidNotificationProgressMessage,
+        downloadModel.androidNotificationProgressMessage,
         androidNotificationCompleteMessage:
-            downloadModel.androidNotificationCompleteMessage);
+        downloadModel.androidNotificationCompleteMessage);
   }
 
   int getDownloadsCount() {
