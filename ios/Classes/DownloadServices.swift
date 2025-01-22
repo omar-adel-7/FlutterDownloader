@@ -17,8 +17,9 @@ class DownloadServices {
       let destination: DownloadRequest.Destination = { _, _ in
             return (destinationPath, [.removePreviousFile, .createIntermediateDirectories])
         }
-        
-        AF.download(fileURL, to: destination).response { response in
+         var urlRequest = URLRequest(url: fileURL)
+           urlRequest.setValue("identity", forHTTPHeaderField: "Accept-Encoding")
+        AF.download(urlRequest, to: destination).response { response in
             switch response.result {
             case .success(let url):
                 guard let url = url else { return }
