@@ -58,6 +58,7 @@ abstract class IDownloadService : Service() {
                            val cancelResult =  result.cancel(true)
                             Log.e("runnableResult isDone = ", "false")
                             Log.e("runnableResult cancel(true) = ", cancelResult.toString())
+                            runnableResults.remove(url)
                         }
                         else{
                             Log.e("runnableResult isDone = ", "true")
@@ -267,6 +268,7 @@ abstract class IDownloadService : Service() {
         isSuccess: Boolean, errorMessage: String?,
         notificationMessage: String, notificationCompleteMessage: String
     ) {
+        runnableResults.remove(url)
         val message = Bundle()
         message.putString(IDownload.RESPONSE_URL_KEY, url)
         message.putBoolean(IDownload.RESPONSE_SUCCESS_ERROR_KEY, isSuccess)
