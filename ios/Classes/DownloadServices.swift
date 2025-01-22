@@ -42,10 +42,12 @@ class DownloadServices {
     
     static func cancelDownload(_ fileURLString: String) {
         downloadsList[fileURLString]?.cancel()
+        downloadsList.removeValue(forKey: fileURLString)
     }
     
     
     static func cancelAllDownload() {
+        downloadsList = [:]
         AF.cancelAllRequests()
     }
 }
