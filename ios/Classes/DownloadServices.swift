@@ -20,15 +20,17 @@ class DownloadServices {
         let destination: DownloadRequest.Destination = { _, _ in
             return (destinationPath, [.removePreviousFile, .createIntermediateDirectories])
         }
-        
+        cancelDownload(fileURLString)
         var urlRequest = URLRequest(url: fileURL)
         urlRequest.setValue("identity", forHTTPHeaderField: "Accept-Encoding")
         let downloadRequest = AF.download(urlRequest, to: destination).response { response in
             switch response.result {
             case .success(let url):
                 guard let url = url else { return }
+                downloadsList.removeValue(forKey: fileURLString)
                 completionHandler(url, fileURL, nil, nil)
             case .failure(let error):
+                downloadsList.removeValue(forKey: fileURLString)
                 completionHandler(nil, fileURL, error, nil)
             }
         }.downloadProgress { progress in
