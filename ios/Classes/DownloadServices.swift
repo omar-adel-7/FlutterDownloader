@@ -9,17 +9,21 @@ import Foundation
 import Alamofire
 
 class DownloadServices {
+    
+    static var downloadsList:[String:DownloadRequest] = [:]
+    
     static func download(fileURLString: String, destinationPath: String, fileName: String, completionHandler: @escaping (URL?, URL?, Error?, Int?) -> ()) {
-       guard let fileURL = URL(string: fileURLString),
+        guard let fileURL = URL(string: fileURLString),
               let destinationURL = destinationPath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-             let fileName = fileName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-             let destinationPath = URL(string: "file://" + destinationURL + fileName) else { return } 
-      let destination: DownloadRequest.Destination = { _, _ in
+              let fileName = fileName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let destinationPath = URL(string: "file://" + destinationURL + fileName) else { return }
+        let destination: DownloadRequest.Destination = { _, _ in
             return (destinationPath, [.removePreviousFile, .createIntermediateDirectories])
         }
-         var urlRequest = URLRequest(url: fileURL)
-           urlRequest.setValue("identity", forHTTPHeaderField: "Accept-Encoding")
-        AF.download(urlRequest, to: destination).response { response in
+        
+        var urlRequest = URLRequest(url: fileURL)
+        urlRequest.setValue("identity", forHTTPHeaderField: "Accept-Encoding")
+        let downloadRequest = AF.download(urlRequest, to: destination).response { response in
             switch response.result {
             case .success(let url):
                 guard let url = url else { return }
@@ -30,9 +34,16 @@ class DownloadServices {
         }.downloadProgress { progress in
             completionHandler(nil, fileURL, nil, Int(progress.fractionCompleted * 100))
         }
+        
+        downloadsList[fileURLString] = downloadRequest
     }
     
-    static func cancelDownload(fileURLString: String) {
+    static func cancelDownload(_ fileURLString: String) {
+        downloadsList[fileURLString]?.cancel()
+    }
+    
+    
+    static func cancelAllDownload() {
         AF.cancelAllRequests()
     }
 }
