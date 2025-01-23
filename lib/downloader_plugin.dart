@@ -34,11 +34,9 @@ class DownloaderPlugin {
       required String androidNotificationProgressMessage,
       required String androidNotificationCompleteMessage}) async {
     if (isPlatformAndroid()) {
-      AndroidDownloadMethodChannel.instance.downloadCubit.publishStarted(
-          url: url);
+      AndroidDownloadMethodChannel.instance.downloadCubit.publishStarted(url);
     } else if (isPlatformIos()) {
-      IOSDownloadMethodChannel.instance.downloadCubit.publishStarted(
-          url: url);
+      IOSDownloadMethodChannel.instance.downloadCubit.publishStarted(url);
     }
     DownloadManager().downloadFile(
         url: url,
@@ -76,12 +74,14 @@ class DownloaderPlugin {
     );
   }
 
-  static void deleteFile(DownloadArgs downloadArgs) {
+  static void deleteDownloadedFile(DownloadArgs downloadArgs) {
     File(downloadArgs.filePath).deleteSync();
+    DownloadUtil.sendFileDeleted(downloadArgs.downloadLink);
   }
 
-  static Future deleteFileAsync(DownloadArgs downloadArgs) async {
-    return await File(downloadArgs.filePath).delete();
+  static Future deleteDownloadedFileAsync(DownloadArgs downloadArgs) async {
+      await File(downloadArgs.filePath).delete();
+      DownloadUtil.sendFileDeleted(downloadArgs.downloadLink);
   }
 
   static cancelDownloadFile(String url) async {

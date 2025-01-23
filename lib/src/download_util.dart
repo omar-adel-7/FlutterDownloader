@@ -38,4 +38,19 @@ class DownloadUtil {
     }
   }
 
+  static void sendCanceled(String url) {
+    if (DownloaderPlugin.isPlatformAndroid()) {
+      AndroidDownloadMethodChannel.instance.downloadCubit.publishCanceled(url);
+    } else if (DownloaderPlugin.isPlatformIos()) {
+      IOSDownloadMethodChannel.instance.downloadCubit.publishCanceled(url);
+    }
+  }
+
+  static void sendFileDeleted(String url) {
+    if (DownloaderPlugin.isPlatformAndroid()) {
+      AndroidDownloadMethodChannel.instance.downloadCubit.publishFileDeleted(url);
+    } else if (DownloaderPlugin.isPlatformIos()) {
+      IOSDownloadMethodChannel.instance.downloadCubit.publishFileDeleted(url);
+    }
+  }
 }

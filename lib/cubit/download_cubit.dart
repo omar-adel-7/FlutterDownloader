@@ -8,13 +8,17 @@ class DownloadCubit extends Cubit<DownloadStates> {
 
   DownloadCubit() : super(DownloadInitialState());
 
-  publishStarted({required String url}) {
+  publishStarted(String url) {
     emit(DownloadStartedState(url));
   }
 
   publishProgress({required String url, required int progress}) {
     emit(DownloadProgressState(url, progress));
       DownloadManager().updateProgress(url, progress);
+  }
+
+  publishCanceled(String url) {
+    emit(DownloadCanceledState(url));
   }
 
   publishCompleted({required String url}) async {
@@ -25,6 +29,11 @@ class DownloadCubit extends Cubit<DownloadStates> {
         DownloadManager().removeDownload(url);
       }
   }
+
+  publishFileDeleted(String url) {
+    emit(DownloadFileDeletedState(url));
+  }
+
 
   publishError({required String url, String? error}) async {
     emit(DownloadErrorState(url, error));

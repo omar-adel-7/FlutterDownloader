@@ -65,14 +65,17 @@ class DownloadManager {
     {
       if (ifCurrentlyDownloading(url)) {
         removeDownload(url);
+        DownloadUtil.sendCanceled(url);
         _checkToDownloadNext();
       } else {
         removeDownload(url);
+        DownloadUtil.sendCanceled(url);
       }
     }
     else
     {
       removeDownload(url);
+      DownloadUtil.sendCanceled(url);
     }
   }
 
@@ -87,13 +90,16 @@ class DownloadManager {
           if (ifCurrentlyDownloading(url)) {
             foundCurrentlyDownloadingLink = true;
             removeDownload(url);
+            DownloadUtil.sendCanceled(url);
           } else {
             removeDownload(url);
+            DownloadUtil.sendCanceled(url);
           }
         }
         else
         {
           removeDownload(url);
+          DownloadUtil.sendCanceled(url);
         }
       }
     }
