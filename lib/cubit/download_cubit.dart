@@ -13,8 +13,8 @@ class DownloadCubit extends Cubit<DownloadStates> {
   }
 
   publishProgress({required String url, required int progress}) {
+    DownloadManager().updateProgress(url, progress);
     emit(DownloadProgressState(url, progress));
-      DownloadManager().updateProgress(url, progress);
   }
 
   publishCanceled(String url) {
@@ -23,24 +23,23 @@ class DownloadCubit extends Cubit<DownloadStates> {
 
   publishCompleted({required String url}) async {
     emit(DownloadCompletedState(url));
-      if (DownloaderPlugin.isSerial) {
-        DownloadManager().removeAndDownloadNext(url);
-      } else {
-        DownloadManager().removeDownload(url);
-      }
+    if (DownloaderPlugin.isSerial) {
+      DownloadManager().removeAndDownloadNext(url);
+    } else {
+      DownloadManager().removeDownload(url);
+    }
   }
 
   publishFileDeleted(String url) {
     emit(DownloadFileDeletedState(url));
   }
 
-
   publishError({required String url, String? error}) async {
     emit(DownloadErrorState(url, error));
-      if (DownloaderPlugin.isSerial) {
-        DownloadManager().removeAndDownloadNext(url);
-      } else {
-        DownloadManager().removeDownload(url);
-      }
+    if (DownloaderPlugin.isSerial) {
+      DownloadManager().removeAndDownloadNext(url);
+    } else {
+      DownloadManager().removeDownload(url);
+    }
   }
 }
