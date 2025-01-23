@@ -1,6 +1,8 @@
 import '../downloader_plugin.dart';
 import '../download_model.dart';
 import 'download_util.dart';
+import 'method_channels/android_download_method_channel.dart';
+import 'method_channels/ios_download_method_channel.dart';
 
 class DownloadManager {
   DownloadManager._();
@@ -31,6 +33,12 @@ class DownloadManager {
           androidNotificationMessage,
           androidNotificationProgressMessage,
           androidNotificationCompleteMessage);
+
+      if (DownloaderPlugin.isPlatformAndroid()) {
+        AndroidDownloadMethodChannel.instance.downloadCubit.publishStarted(url);
+      } else if (DownloaderPlugin.isPlatformIos()) {
+        IOSDownloadMethodChannel.instance.downloadCubit.publishStarted(url);
+      }
       if(DownloaderPlugin.isSerial)
       {
         if (getDownloadsCount() == 1) {

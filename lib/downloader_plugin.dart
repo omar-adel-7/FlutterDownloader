@@ -33,11 +33,6 @@ class DownloaderPlugin {
       required String androidNotificationMessage,
       required String androidNotificationProgressMessage,
       required String androidNotificationCompleteMessage}) async {
-    if (isPlatformAndroid()) {
-      AndroidDownloadMethodChannel.instance.downloadCubit.publishStarted(url);
-    } else if (isPlatformIos()) {
-      IOSDownloadMethodChannel.instance.downloadCubit.publishStarted(url);
-    }
     DownloadManager().downloadFile(
         url: url,
         destinationPath: destinationPath,
