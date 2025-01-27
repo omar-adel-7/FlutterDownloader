@@ -11,7 +11,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   DownloadCubit downloadCubit = DownloadCubit();
-  DownloaderPlugin.init(downloadCubit, allow_cancel: false, is_serial: true);
+  DownloaderPlugin.init(downloadCubit, allow_cancel: false, is_serial: true,
+    android_parallel_main_notification_message: "test parallel",//todo omar
+    android_notification_progress_message: "downloading",
+    android_notification_complete_message: "complete download",);
   runApp(MyApp(downloadCubit: downloadCubit));
 }
 
@@ -66,28 +69,43 @@ class _MyAppState extends State<MyApp> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Center(
-              child: GestureDetector(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                      color: Colors.cyan, child: const Text('Download now')),
-                ),
-                onTap: () async {
-                  String url = "https://server8.mp3quran.net/frs_a/014.mp3";
-                  String destinationDirPath = await getDestination();
-                  String fileName =
-                      "test File Name'with'apostrophe ' and comma, ,.mp3";
-                  DownloaderPlugin.downloadFile(
-                    url: url,
-                    destinationPath: destinationDirPath,
-                    fileName: fileName,
-                    androidNotificationMessage: "test notification message",
-                    androidNotificationProgressMessage: "downloading",
-                    androidNotificationCompleteMessage: "complete download",
-                  );
-                },
+            GestureDetector(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                    color: Colors.cyan, child: const Text('Download url 1 now')),
               ),
+              onTap: () async {
+                String url = "https://server8.mp3quran.net/frs_a/014.mp3";
+                String destinationDirPath = await getDestination();
+                String fileName =
+                    "test File 111 Name'with'apostrophe ' and comma, ,.mp3";
+                DownloaderPlugin.downloadFile(
+                  url: url,
+                  destinationPath: destinationDirPath,
+                  fileName: fileName,
+                  androidNotificationMessage: "test 111 notification message",
+                );
+              },
+            ),
+            GestureDetector(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                    color: Colors.cyan, child: const Text('Download url 2 now')),
+              ),
+              onTap: () async {
+                String url = "https://server8.mp3quran.net/frs_a/018.mp3";
+                String destinationDirPath = await getDestination();
+                String fileName =
+                    "test File 222 Name'with'apostrophe ' and comma, ,.mp3";
+                DownloaderPlugin.downloadFile(
+                  url: url,
+                  destinationPath: destinationDirPath,
+                  fileName: fileName,
+                  androidNotificationMessage: "test 222 notification message",
+                );
+              },
             ),
             const SizedBox(
               height: 20,
@@ -97,10 +115,10 @@ class _MyAppState extends State<MyApp> {
               color: Colors.yellow,
               child: BlocConsumer<DownloadCubit, DownloadStates>(
                 listener: (context, downloadState) {
-                  if (downloadState is DownloadStartedState) {
+                  if (downloadState is DownloadAddedState) {
                     print(
-                        "BlocConsumer listener onStarted url=${downloadState.url}");
-                    onStarted(downloadState.url);
+                        "BlocConsumer listener onAdded url=${downloadState.url}");
+                    onAdded(downloadState.url);
                   } else if (downloadState is DownloadProgressState) {
                     print(
                         "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
@@ -116,9 +134,9 @@ class _MyAppState extends State<MyApp> {
                   }
                 },
                 builder: (context, downloadState) {
-                  if (downloadState is DownloadStartedState) {
+                  if (downloadState is DownloadAddedState) {
                     print(
-                        "BlocConsumer builder onStarted url=${downloadState.url}");
+                        "BlocConsumer builder onAdded url=${downloadState.url}");
                   } else if (downloadState is DownloadProgressState) {
                     print(
                         "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
@@ -159,9 +177,9 @@ class _MyAppState extends State<MyApp> {
     return appDocumentsDirectory.path;
   }
 
-  void onStarted(String url) {
+  void onAdded(String url) {
     progress = 0;
-    message = "started";
+    message = "added";
     // //in case of not using bloc
     // setState(() {});
   }

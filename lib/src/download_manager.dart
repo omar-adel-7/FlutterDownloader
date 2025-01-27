@@ -1,7 +1,6 @@
 import '../downloader_plugin.dart';
 import '../download_model.dart';
 import 'download_util.dart';
-import 'method_channels/android_download_method_channel.dart';
 import 'method_channels/ios_download_method_channel.dart';
 
 class DownloadManager {
@@ -19,71 +18,52 @@ class DownloadManager {
 
   downloadFile(
       {required String url,
-        required String destinationPath,
-        required String fileName,
-        required String androidNotificationMessage,
-        required String androidNotificationProgressMessage,
-        required String androidNotificationCompleteMessage}) async {
-
+      required String destinationPath,
+      required String fileName,
+      required String androidNotificationMessage}) {
     if (!isInDownloadList(url)) {
-      _addDownload(
-          url,
-          destinationPath,
-          fileName,
-          androidNotificationMessage,
-          androidNotificationProgressMessage,
-          androidNotificationCompleteMessage);
-
       if (DownloaderPlugin.isPlatformAndroid()) {
-        AndroidDownloadMethodChannel.instance.downloadCubit.publishStarted(url);
-      } else if (DownloaderPlugin.isPlatformIos()) {
-        IOSDownloadMethodChannel.instance.downloadCubit.publishStarted(url);
-      }
-      if(DownloaderPlugin.isSerial)
-      {
-        if (getDownloadsCount() == 1) {
-          _startDownload(
-              url: url,
-              destinationPath: destinationPath,
-              fileName: fileName,
-              androidNotificationMessage: androidNotificationMessage,
-              androidNotificationProgressMessage:
-              androidNotificationProgressMessage,
-              androidNotificationCompleteMessage:
-              androidNotificationCompleteMessage);
-        }
-      }
-      else
-      {
-        _startDownload(
+        DownloadUtil.startAndroidDownload(
             url: url,
             destinationPath: destinationPath,
             fileName: fileName,
-            androidNotificationMessage: androidNotificationMessage,
-            androidNotificationProgressMessage:
-            androidNotificationProgressMessage,
-            androidNotificationCompleteMessage:
-            androidNotificationCompleteMessage);
+            notificationMessage: androidNotificationMessage);
+      } else if (DownloaderPlugin.isPlatformIos()) {
+        list.add(DownloadModel(
+          url: url,
+          destinationPath: destinationPath,
+          fileName: fileName,
+        ));
+        IOSDownloadMethodChannel.instance.downloadCubit.publishAdded(url:url);
+        if (DownloaderPlugin.isSerial) {
+          if (getDownloadsCount() == 1) {
+            DownloadUtil.startIosDownload(
+                url: url, destinationPath: destinationPath, fileName: fileName);
+          }
+        } else {
+          DownloadUtil.startIosDownload(
+              url: url, destinationPath: destinationPath, fileName: fileName);
+        }
       }
     }
   }
 
   cancelUrlDownload(String url) {
-    if(DownloaderPlugin.isSerial)
-    {
-      if (ifCurrentlyDownloading(url)) {
-        removeDownload(url);
-        DownloadUtil.sendCanceled(url);
-        _checkToDownloadNext();
+    DownloadUtil.cancelUrlDownload(url);
+    if (DownloaderPlugin.isPlatformIos()) {
+      if (DownloaderPlugin.isSerial) {
+        if (_iosIfCurrentlyDownloading(url)) {
+          iosRemoveDownload(url);
+          DownloadUtil.sendIosCanceled(url);
+          iosCheckToDownloadNext();
+        } else {
+          iosRemoveDownload(url);
+          DownloadUtil.sendIosCanceled(url);
+        }
       } else {
-        removeDownload(url);
-        DownloadUtil.sendCanceled(url);
+        iosRemoveDownload(url);
+        DownloadUtil.sendIosCanceled(url);
       }
-    }
-    else
-    {
-      removeDownload(url);
-      DownloadUtil.sendCanceled(url);
     }
   }
 
@@ -93,76 +73,31 @@ class DownloadManager {
       DownloadModel? downloadModel = getDownloadIfExist(url);
       if (downloadModel != null) {
         DownloadUtil.cancelUrlDownload(url);
-        if(DownloaderPlugin.isSerial)
-        {
-          if (ifCurrentlyDownloading(url)) {
-            foundCurrentlyDownloadingLink = true;
-            removeDownload(url);
-            DownloadUtil.sendCanceled(url);
+        if (DownloaderPlugin.isPlatformIos()) {
+          if (DownloaderPlugin.isSerial) {
+            if (_iosIfCurrentlyDownloading(url)) {
+              foundCurrentlyDownloadingLink = true;
+              iosRemoveDownload(url);
+              DownloadUtil.sendIosCanceled(url);
+            } else {
+              iosRemoveDownload(url);
+              DownloadUtil.sendIosCanceled(url);
+            }
           } else {
-            removeDownload(url);
-            DownloadUtil.sendCanceled(url);
+            iosRemoveDownload(url);
+            DownloadUtil.sendIosCanceled(url);
           }
-        }
-        else
-        {
-          removeDownload(url);
-          DownloadUtil.sendCanceled(url);
         }
       }
     }
     if (foundCurrentlyDownloadingLink) {
-      _checkToDownloadNext();
+      iosCheckToDownloadNext();
     }
-  }
-
-  void _startDownload(
-      {required String url,
-        required String destinationPath,
-        required String fileName,
-        required String androidNotificationMessage,
-        required String androidNotificationProgressMessage,
-        required String androidNotificationCompleteMessage}) {
-    DownloadUtil.startDownload(
-        url: url,
-        destinationPath: destinationPath,
-        fileName: fileName,
-        androidNotificationMessage: androidNotificationMessage,
-        androidNotificationProgressMessage: androidNotificationProgressMessage,
-        androidNotificationCompleteMessage: androidNotificationCompleteMessage);
-  }
-
-  void _startDownloadModel(DownloadModel downloadModel) {
-    _startDownload(
-        url: downloadModel.url,
-        destinationPath: downloadModel.destinationPath,
-        fileName: downloadModel.fileName,
-        androidNotificationMessage: downloadModel.androidNotificationMessage,
-        androidNotificationProgressMessage:
-        downloadModel.androidNotificationProgressMessage,
-        androidNotificationCompleteMessage:
-        downloadModel.androidNotificationCompleteMessage);
   }
 
   int getDownloadsCount() {
     //print("getDownloadsCount list.length=${list.length}");
     return list.length;
-  }
-
-  _addDownload(
-      String url,
-      String destinationPath,
-      String fileName,
-      String notificationMessage,
-      String notificationProgressMessage,
-      String notificationCompleteMessage) {
-    list.add(DownloadModel(
-        url: url,
-        destinationPath: destinationPath,
-        fileName: fileName,
-        androidNotificationMessage: notificationMessage,
-        androidNotificationProgressMessage: notificationProgressMessage,
-        androidNotificationCompleteMessage: notificationCompleteMessage));
   }
 
   updateProgress(String url, int progress) {
@@ -172,22 +107,21 @@ class DownloadManager {
         : null;
   }
 
-  removeAndDownloadNext(String url) {
-    removeDownload(url);
-    _checkToDownloadNext();
-  }
-
-  removeDownload(String url) {
+  iosRemoveDownload(String url) {
     list.removeWhere((item) => item.url == url);
   }
 
-  _checkToDownloadNext() {
+  iosCheckToDownloadNext() {
     if (isDownloadsNotEmpty()) {
-      _startDownloadModel(list[0]);
+      DownloadModel downloadModel = list[0];
+      DownloadUtil.startIosDownload(
+          url: downloadModel.url,
+          destinationPath: downloadModel.destinationPath,
+          fileName: downloadModel.fileName);
     }
   }
 
-  bool ifCurrentlyDownloading(String url) {
+  bool _iosIfCurrentlyDownloading(String url) {
     return list.isNotEmpty ? list[0].url == url : false;
   }
 
@@ -208,7 +142,24 @@ class DownloadManager {
     return isDownloadsNotEmpty;
   }
 
-  clearDownloads() {
+  clearDownloadsList() {
     list.clear();
+  }
+
+  getAndroidList(String? listData) {
+    print("getAndroidList at begin list.length = ${list.length}");
+    list.clear();
+    if(listData?.isNotEmpty==true)
+      {
+        List<String> tempList  = listData?.split(DownloaderPlugin.DOWNLOADER_LIST_DIVIDER_KEY)??[];
+        tempList.removeLast();
+        for (int i = 0; i < tempList.length; i++) {
+          List<String> tempItemList =  tempList[i].split(DownloaderPlugin.DOWNLOADER_LIST_ITEM_INTERNAL_KEY);
+          DownloadModel downloadModel = DownloadModel(url: tempItemList[0] ,
+              progress: int.parse(tempItemList[1]));
+          list.add(downloadModel);
+        }
+      }
+    print("getAndroidList at end list.length = ${list.length}");
   }
 }

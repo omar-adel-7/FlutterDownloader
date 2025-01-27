@@ -5,29 +5,31 @@ import 'dart:io';
 
 class DownloadUtil {
 
-  static void startDownload(
+  static void startAndroidDownload(
       {required String url,
         required String destinationPath,
         required String fileName,
-        required String androidNotificationMessage,
-        required String androidNotificationProgressMessage,
-        required String androidNotificationCompleteMessage}) async {
+        required String notificationMessage}) async {
     String pathSeparator = Platform.pathSeparator;
     if (!destinationPath.endsWith(pathSeparator)) {
       destinationPath = destinationPath + pathSeparator;
     }
-    if (DownloaderPlugin.isPlatformAndroid()) {
-      AndroidDownloadMethodChannel.instance.downloadFile(
-          url: url,
+      AndroidDownloadMethodChannel.instance.downloadFile( url: url,
           destinationDirPath: destinationPath,
           fileName: fileName,
-          notificationMessage: androidNotificationMessage,
-          notificationProgressMessage: androidNotificationProgressMessage,
-          notificationCompleteMessage: androidNotificationCompleteMessage);
-    } else if (DownloaderPlugin.isPlatformIos()) {
+          notificationMessage: notificationMessage);
+  }
+
+  static void startIosDownload(
+      {required String url,
+        required String destinationPath,
+        required String fileName}) async {
+    String pathSeparator = Platform.pathSeparator;
+    if (!destinationPath.endsWith(pathSeparator)) {
+      destinationPath = destinationPath + pathSeparator;
+    }
       IOSDownloadMethodChannel.instance.downloadFile(
           url: url, destinationDirPath: destinationPath, fileName: fileName);
-    }
   }
 
   static void cancelUrlDownload(String url) {
@@ -38,12 +40,8 @@ class DownloadUtil {
     }
   }
 
-  static void sendCanceled(String url) {
-    if (DownloaderPlugin.isPlatformAndroid()) {
-      AndroidDownloadMethodChannel.instance.downloadCubit.publishCanceled(url);
-    } else if (DownloaderPlugin.isPlatformIos()) {
-      IOSDownloadMethodChannel.instance.downloadCubit.publishCanceled(url);
-    }
+  static void sendIosCanceled(String url) {
+      IOSDownloadMethodChannel.instance.downloadCubit.publishCanceled(url:url);
   }
 
   static void sendFileDeleted(String url) {

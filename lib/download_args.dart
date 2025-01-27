@@ -7,8 +7,6 @@ class DownloadArgs {
   final String destinationDirPath;
   final String fileName;
   final String androidNotificationMessage;
-  final String androidNotificationProgressMessage;
-  final String androidNotificationCompleteMessage;
   Function? updateIsDownloaded;
   void Function(String)? onCompleted;
   void Function()? onDeleted;
@@ -20,8 +18,6 @@ class DownloadArgs {
     required this.destinationDirPath,
     required this.fileName,
     required this.androidNotificationMessage,
-    required this.androidNotificationProgressMessage,
-    required this.androidNotificationCompleteMessage,
     this.updateIsDownloaded,
     this.onCompleted,
     this.onDeleted,

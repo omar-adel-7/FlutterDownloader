@@ -1,7 +1,7 @@
 <resources>
 
-    <string name="download_ACTION_DOWNLOAD">download.ACTION_DOWNLOAD</string>
-    <string name="download_ACTION_CANCEL_DOWNLOAD">download.ACTION_CANCEL_DOWNLOAD</string>
-    <string name="download_ACTION_CANCEL_DOWNLOADS">download.ACTION_CANCEL_DOWNLOADS</string>
+    <string name="download_ACTION_START">download.ACTION_START</string>
+    <string name="download_ACTION_CANCEL_SINGLE">download.ACTION_CANCEL_SINGLE</string>
+    <string name="download_ACTION_CANCEL_ALL">download.ACTION_CANCEL_ALL</string>
 
 </resources>

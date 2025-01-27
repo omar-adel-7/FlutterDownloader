@@ -4,9 +4,9 @@ abstract class DownloadStates {
 
 class DownloadInitialState extends DownloadStates {}
 
-class DownloadStartedState extends DownloadStates {
+class DownloadAddedState extends DownloadStates {
   final String url;
-  DownloadStartedState(this.url);
+  DownloadAddedState(this.url);
 }
 
 class DownloadProgressState extends DownloadStates {
@@ -18,7 +18,6 @@ class DownloadProgressState extends DownloadStates {
 
 class DownloadCanceledState extends DownloadStates {
   final String url;
-
   DownloadCanceledState(this.url);
 }
 
