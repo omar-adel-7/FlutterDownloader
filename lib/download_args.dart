@@ -6,7 +6,7 @@ class DownloadArgs {
   final String downloadLink;
   final String destinationDirPath;
   final String fileName;
-  String androidNotificationMessage='';
+  String androidNotificationMessage = '';
   Function? updateIsDownloaded;
   void Function(String)? onCompleted;
   void Function()? onDeleted;
@@ -22,6 +22,6 @@ class DownloadArgs {
     this.onCompleted,
     this.onDeleted,
   }){
-    this.androidNotificationMessage=androidNotificationMessage ?? fileName;
+    this.androidNotificationMessage = androidNotificationMessage ?? fileName;
   }
 }
