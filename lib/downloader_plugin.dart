@@ -11,63 +11,66 @@ import 'download_args.dart';
 import 'download_model.dart';
 
 class DownloaderPlugin {
-  static bool defaultAllowCancel = false;
   static bool defaultIsSerial = true;
   static String defaultAndroidParallelMainNotificationMessage =
       "download service working now";
-  static bool allowCancel = defaultAllowCancel;
   static bool isSerial = defaultIsSerial;
-  static String androidParallelMainNotificationMessage =
-      defaultAndroidParallelMainNotificationMessage;
   static String defaultAdroidNotificationProgressMessage = "downloading : ";
   static String defaultAndroidNotificationCompleteMessage =
       "completed download of : ";
-  static String androidNotificationProgressMessage =
-      defaultAdroidNotificationProgressMessage;
-  static String androidNotificationCompleteMessage =
-      defaultAndroidNotificationCompleteMessage;
   static SharedPreferences? androidSharedPreferences;
 
   static const String DOWNLOADER_LIST_ITEM_INTERNAL_KEY = "downloader-internal";
   static const String DOWNLOADER_LIST_DIVIDER_KEY = "downloader-divider";
 
   static init(DownloadCubit downloadCubit,
-      {bool? allow_cancel,
-      bool? is_serial,
+      {bool? is_serial,
       String? android_parallel_main_notification_message,
       String? android_notification_progress_message,
       String? android_notification_complete_message}) async {
-    allowCancel = allow_cancel ?? defaultAllowCancel;
     isSerial = is_serial ?? defaultIsSerial;
-    androidParallelMainNotificationMessage =
-        android_parallel_main_notification_message ??
-            defaultAndroidParallelMainNotificationMessage;
-    androidNotificationProgressMessage =
-        android_notification_progress_message ??
-            defaultAdroidNotificationProgressMessage;
-    androidNotificationCompleteMessage =
-        android_notification_complete_message ??
-            defaultAndroidNotificationCompleteMessage;
-
     if (isPlatformAndroid()) {
       androidSharedPreferences = await SharedPreferences.getInstance();
       androidSharedPreferences?.setBool('isSerial', isSerial);
-      androidSharedPreferences?.setString('parallelMainNotificationMessage',
-          androidParallelMainNotificationMessage);
-      androidSharedPreferences?.setString(
-          'notificationProgressMessage', androidNotificationProgressMessage);
-      androidSharedPreferences?.setString(
-          'notificationCompleteMessage', androidNotificationCompleteMessage);
+      if(
+      android_parallel_main_notification_message != null ||
+          android_notification_progress_message != null ||
+          android_notification_complete_message != null
+      )
+        {
+          initAndroidStrings(android_parallel_main_notification_message:android_parallel_main_notification_message,
+              android_notification_progress_message:android_notification_progress_message,
+              android_notification_complete_message:android_notification_complete_message);
+        }
     }
     AndroidDownloadMethodChannel.instance.init(downloadCubit);
     IOSDownloadMethodChannel.instance.init(downloadCubit);
   }
 
+  static initAndroidStrings({
+        String? android_parallel_main_notification_message,
+        String? android_notification_progress_message,
+        String? android_notification_complete_message}) async {
+    if (isPlatformAndroid()) {
+      androidSharedPreferences = await SharedPreferences.getInstance();
+      androidSharedPreferences?.setString('parallelMainNotificationMessage',
+          android_parallel_main_notification_message ??
+              defaultAndroidParallelMainNotificationMessage);
+      androidSharedPreferences?.setString(
+          'notificationProgressMessage', android_notification_progress_message
+          ??
+          defaultAdroidNotificationProgressMessage
+      );
+      androidSharedPreferences?.setString(
+          'notificationCompleteMessage', android_notification_complete_message ??
+          defaultAndroidNotificationCompleteMessage);
+    }
+  }
+
   static downloadFile(
       {required String url,
       required String destinationPath,
-      required String fileName,
-      required String androidNotificationMessage}) {
+      required String fileName, String? androidNotificationMessage}) {
     DownloadManager().downloadFile(
         url: url,
         destinationPath: destinationPath,

@@ -20,7 +20,7 @@ class DownloadManager {
       {required String url,
       required String destinationPath,
       required String fileName,
-      required String androidNotificationMessage}) {
+        String? androidNotificationMessage}) {
     if (!isInDownloadList(url)) {
       if (DownloaderPlugin.isPlatformAndroid()) {
         DownloadUtil.startAndroidDownload(
@@ -95,12 +95,22 @@ class DownloadManager {
     }
   }
 
-  int getDownloadsCount() {
-    //print("getDownloadsCount list.length=${list.length}");
-    return list.length;
+  getAndroidList(String? listData) {
+    list.clear();
+    if(listData?.isNotEmpty==true)
+    {
+      List<String> tempList  = listData?.split(DownloaderPlugin.DOWNLOADER_LIST_DIVIDER_KEY)??[];
+      tempList.removeLast();
+      for (int i = 0; i < tempList.length; i++) {
+        List<String> tempItemList =  tempList[i].split(DownloaderPlugin.DOWNLOADER_LIST_ITEM_INTERNAL_KEY);
+        DownloadModel downloadModel = DownloadModel(url: tempItemList[0] ,
+            progress: int.parse(tempItemList[1]));
+        list.add(downloadModel);
+      }
+    }
   }
 
-  updateProgress(String url, int progress) {
+  updateIosProgress(String url, int progress) {
     int index = list.indexWhere((element) => element.url == url);
     ((index != -1) && (index < list.length))
         ? list[index].progress = progress
@@ -142,24 +152,12 @@ class DownloadManager {
     return isDownloadsNotEmpty;
   }
 
-  clearDownloadsList() {
-    list.clear();
+  int getDownloadsCount() {
+    //print("getDownloadsCount list.length=${list.length}");
+    return list.length;
   }
 
-  getAndroidList(String? listData) {
-    print("getAndroidList at begin list.length = ${list.length}");
+  clearDownloadsList() {
     list.clear();
-    if(listData?.isNotEmpty==true)
-      {
-        List<String> tempList  = listData?.split(DownloaderPlugin.DOWNLOADER_LIST_DIVIDER_KEY)??[];
-        tempList.removeLast();
-        for (int i = 0; i < tempList.length; i++) {
-          List<String> tempItemList =  tempList[i].split(DownloaderPlugin.DOWNLOADER_LIST_ITEM_INTERNAL_KEY);
-          DownloadModel downloadModel = DownloadModel(url: tempItemList[0] ,
-              progress: int.parse(tempItemList[1]));
-          list.add(downloadModel);
-        }
-      }
-    print("getAndroidList at end list.length = ${list.length}");
   }
 }

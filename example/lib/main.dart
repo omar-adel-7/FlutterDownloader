@@ -11,10 +11,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   DownloadCubit downloadCubit = DownloadCubit();
-  DownloaderPlugin.init(downloadCubit, allow_cancel: false, is_serial: true,
-    android_parallel_main_notification_message: "test parallel",//todo omar
+  DownloaderPlugin.init(downloadCubit,is_serial: true,
+    //android_parallel_main_notification_message: "test parallel",
     android_notification_progress_message: "downloading",
-    android_notification_complete_message: "complete download",);
+    android_notification_complete_message: "complete download");
+  // DownloaderPlugin.init(downloadCubit,is_serial: true);
   runApp(MyApp(downloadCubit: downloadCubit));
 }
 
@@ -34,6 +35,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    // DownloaderPlugin.initAndroidStrings(
+    //    // android_parallel_main_notification_message: "initAndroidStrings test parallel",
+    //     android_notification_progress_message: "initAndroidStrings downloading",
+    //     android_notification_complete_message: "initAndroidStrings complete download");
     requestNotificationPermission();
   }
 
@@ -84,7 +89,7 @@ class _MyAppState extends State<MyApp> {
                   url: url,
                   destinationPath: destinationDirPath,
                   fileName: fileName,
-                  androidNotificationMessage: "test 111 notification message",
+                  androidNotificationMessage: "test 1 notification message",
                 );
               },
             ),
@@ -103,7 +108,7 @@ class _MyAppState extends State<MyApp> {
                   url: url,
                   destinationPath: destinationDirPath,
                   fileName: fileName,
-                  androidNotificationMessage: "test 222 notification message",
+                  androidNotificationMessage: "test 2 notification message",
                 );
               },
             ),

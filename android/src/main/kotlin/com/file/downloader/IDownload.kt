@@ -31,8 +31,6 @@ object IDownload {
         val downloadEvent = DownloadEvent()
         downloadEvent.url = extras.getString(RESPONSE_URL_KEY)
          if (extras.containsKey(RESPONSE_ADDED_KEY)) {
-            //todo omar
-            Log.e("RESPONSE_ADDED_KEY", extras.getString(RESPONSE_ADDED_KEY) ?: "null")
             downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_ADDED
         }
         else if (extras.containsKey(RESPONSE_PROGRESS_KEY)) {
@@ -48,7 +46,6 @@ object IDownload {
                 }
             }
         } else if (extras.containsKey(RESPONSE_CANCELED_KEY)) {
-            Log.e("RESPONSE_CANCELED_KEY", extras.getString(RESPONSE_CANCELED_KEY) ?: "null")
             downloadEvent.status = IDownloadService.STATUS_DOWNLOAD_CANCELED
         }
         return downloadEvent

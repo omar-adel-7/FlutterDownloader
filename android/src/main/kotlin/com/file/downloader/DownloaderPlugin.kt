@@ -37,11 +37,8 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private val CHANNEL_RESULT_ERROR = "resultError"
     private val CHANNEL_RESULT_GET_INITIAL_LIST_DATA = "resultGetInitialListData"
 
-
-    //    private var methodChannel: MethodChannel? = null
     private var context: Context? = null
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        Log.e("android DownloaderPlugin", "onAttachedToEngine")
         flutterPluginBinding = binding
         if(methodChannel==null){
             initPlugin(flutterPluginBinding.binaryMessenger)
@@ -147,7 +144,6 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
 
     override fun onDetachedFromActivity() {
-        Log.e("android DownloaderPlugin", "onDetachedFromActivity")
         context = null
         methodChannel?.setMethodCallHandler(null)
         methodChannel = null
@@ -155,15 +151,12 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        Log.e("android DownloaderPlugin", "onDetachedFromEngine")
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        Log.e("android DownloaderPlugin", "onDetachedFromActivityForConfigChanges")
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-        Log.e("android DownloaderPlugin", "onReattachedToActivityForConfigChanges")
     }
 
     companion object {

@@ -129,14 +129,14 @@ abstract class IDownloadService : Service() {
                         if (result != null) {
                             if (!result.isDone) {
                                 val cancelResult = result.cancel(true)
-                                Log.e("runnableResult isDone = ", "false")
-                                Log.e("runnableResult cancel(true) = ", cancelResult.toString())
+                               // Log.e("runnableResult isDone = ", "false")
+                               // Log.e("runnableResult cancel(true) = ", cancelResult.toString())
                                 delete(url)
                                 notifyCanceled(url)
                                 sendCanceled(url)
                                 checkToStopService()
                             } else {
-                                Log.e("runnableResult isDone = ", "true")
+                              //  Log.e("runnableResult isDone = ", "true")
                             }
                         }
                     }
@@ -216,7 +216,7 @@ abstract class IDownloadService : Service() {
                 while ((input.read(data).also { currentDownload = it }) != -1) {
                     if (Thread.currentThread().isInterrupted) {
                         // Executor has probably asked us to stop
-                        Log.e("in loop Thread.currentThread().isInterrupted ", "true")
+                       // Log.e("in loop Thread.currentThread().isInterrupted ", "true")
                         break
                     }
                     totalDownloaded += currentDownload.toDouble()
@@ -243,7 +243,7 @@ abstract class IDownloadService : Service() {
                     )
                 } else {
                     deleteDownloadFile(tempFilePath)
-                    Log.e("after loop Thread.currentThread().isInterrupted ", "true")
+                  //  Log.e("after loop Thread.currentThread().isInterrupted ", "true")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -301,7 +301,7 @@ abstract class IDownloadService : Service() {
             lastProgressTime = time
             notificationBuilder.setProgress(100, progress, false)
             notifyProgress(url, notificationBuilder.build())
-            Log.e("android idownloadservice","sendProgress")
+            //Log.e("android IDownloadService","sendProgress")
             sendEvent(message)
         }
     }

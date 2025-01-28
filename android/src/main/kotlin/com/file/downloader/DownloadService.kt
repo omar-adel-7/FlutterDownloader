@@ -37,10 +37,19 @@ class DownloadService : IDownloadService() {
     }
 
     override fun notifySuccess(url: String, notification: Notification?) {
-        notificationUtils?.manager?.notify(
-            url,notificationId,
-            notification
-        )
+        if (isSerial) {
+            notificationUtils?.manager?.notify(
+                url,notificationId,
+                notification
+            )
+        } else {
+            notificationUtils?.manager?.cancel(
+                notificationPrefixTag + url, notificationId)
+            notificationUtils?.manager?.notify(
+                url,notificationId,
+                notification
+            )
+        }
     }
 
     override fun notifyError(url: String) {
@@ -61,8 +70,10 @@ class DownloadService : IDownloadService() {
         val notificationList = notificationUtils?.manager?.activeNotifications
         if (notificationList?.isNotEmpty() == true) {
             for (i in 0 until notificationList.size) {
-                if (notificationList[i].tag.startsWith(notificationPrefixTag)) {
-                    notificationUtils?.manager?.cancel(notificationList[i].tag, notificationId)
+                if(notificationList[i].tag!=null){
+                    if (notificationList[i].tag.startsWith(notificationPrefixTag)) {
+                        notificationUtils?.manager?.cancel(notificationList[i].tag, notificationId)
+                    }
                 }
             }
         }
