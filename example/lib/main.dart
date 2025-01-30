@@ -77,165 +77,167 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                    color: Colors.cyan,
-                    child: const Text('Download url 1 now')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                      color: Colors.cyan,
+                      child: const Text('Download url 1 now')),
+                ),
+                onTap: () async {
+                  String url = url1;
+                  String destinationDirPath = await getDestination();
+                  String fileName =
+                      "test File 111 Name'with'apostrophe ' and comma, ,.mp3";
+                  DownloaderPlugin.downloadFile(
+                    url: url,
+                    destinationPath: destinationDirPath,
+                    fileName: fileName,
+                    notificationMessage: "test 1 notificationMessage",
+                    // notificationProgressMessage:
+                    //     "test 1 notificationProgressMessage",
+                    //  notificationCompleteMessage:
+                    //      "test 1 notificationCompleteMessage",
+                  );
+                },
               ),
-              onTap: () async {
-                String url = url1;
-                String destinationDirPath = await getDestination();
-                String fileName =
-                    "test File 111 Name'with'apostrophe ' and comma, ,.mp3";
-                DownloaderPlugin.downloadFile(
-                  url: url,
-                  destinationPath: destinationDirPath,
-                  fileName: fileName,
-                  notificationMessage: "test 1 notificationMessage",
-                  // notificationProgressMessage:
-                  //     "test 1 notificationProgressMessage",
-                  //  notificationCompleteMessage:
-                  //      "test 1 notificationCompleteMessage",
-                );
-              },
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            BlocConsumer<DownloadCubit, DownloadStates>(
-              listener: (context, downloadState) {
-                if (downloadState is DownloadAddedState &&
-                    downloadState.url == url1) {
-                  print(
-                      "BlocConsumer listener onAdded url=${downloadState.url}");
-                  onAdded(1, downloadState.url);
-                } else if (downloadState is DownloadProgressState &&
-                    downloadState.url == url1) {
-                  print(
-                      "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-                  onProgress(1, downloadState.url, downloadState.progress);
-                } else if (downloadState is DownloadCompletedState &&
-                    downloadState.url == url1) {
-                  print(
-                      "BlocConsumer listener onCompleted url=${downloadState.url}");
-                  onCompleted(1, downloadState.url);
-                } else if (downloadState is DownloadErrorState &&
-                    downloadState.url == url1) {
-                  print(
-                      "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
-                  onError(1, downloadState.url, downloadState.error);
-                }
-              },
-              builder: (context, downloadState) {
-                if (downloadState is DownloadAddedState) {
-                  print(
-                      "BlocConsumer builder onAdded url=${downloadState.url}");
-                } else if (downloadState is DownloadProgressState) {
-                  print(
-                      "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-                } else if (downloadState is DownloadCompletedState) {
-                  print(
-                      "BlocConsumer builder onCompleted url=${downloadState.url}");
-                } else if (downloadState is DownloadErrorState) {
-                  print(
-                      "BlocConsumer builder onError url=${downloadState.url} , error=${downloadState.error}");
-                }
-                return Column(
-                  children: [
-                    Text("message = $message1"),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Text("progress = $progress1"),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            GestureDetector(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                    color: Colors.cyan,
-                    child: const Text('Download url 2 now')),
+              const SizedBox(
+                height: 10,
               ),
-              onTap: () async {
-                String url = url2;
-                String destinationDirPath = await getDestination();
-                String fileName =
-                    "test File 222 Name'with'apostrophe ' and comma, ,.mp3";
-                DownloaderPlugin.downloadFile(
-                  url: url,
-                  destinationPath: destinationDirPath,
-                  fileName: fileName,
-                  notificationMessage: "test 2 notificationMessage",
-                  //  notificationProgressMessage:
-                  //      "test 2 notificationProgressMessage",
-                  // notificationCompleteMessage:
-                  //     "test 2 notificationCompleteMessage",
-                );
-              },
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            BlocConsumer<DownloadCubit, DownloadStates>(
-              listener: (context, downloadState) {
-                if (downloadState is DownloadAddedState &&
-                    downloadState.url == url2) {
-                  print(
-                      "BlocConsumer listener onAdded url=${downloadState.url}");
-                  onAdded(2, downloadState.url);
-                } else if (downloadState is DownloadProgressState &&
-                    downloadState.url == url2) {
-                  print(
-                      "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-                  onProgress(2, downloadState.url, downloadState.progress);
-                } else if (downloadState is DownloadCompletedState &&
-                    downloadState.url == url2) {
-                  print(
-                      "BlocConsumer listener onCompleted url=${downloadState.url}");
-                  onCompleted(2, downloadState.url);
-                } else if (downloadState is DownloadErrorState &&
-                    downloadState.url == url2) {
-                  print(
-                      "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
-                  onError(2, downloadState.url, downloadState.error);
-                }
-              },
-              builder: (context, downloadState) {
-                if (downloadState is DownloadAddedState) {
-                  print(
-                      "BlocConsumer builder onAdded url=${downloadState.url}");
-                } else if (downloadState is DownloadProgressState) {
-                  print(
-                      "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-                } else if (downloadState is DownloadCompletedState) {
-                  print(
-                      "BlocConsumer builder onCompleted url=${downloadState.url}");
-                } else if (downloadState is DownloadErrorState) {
-                  print(
-                      "BlocConsumer builder onError url=${downloadState.url} , error=${downloadState.error}");
-                }
-                return Column(
-                  children: [
-                    Text("message = $message2"),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Text("progress = $progress2"),
-                  ],
-                );
-              },
-            )
-          ],
+              BlocConsumer<DownloadCubit, DownloadStates>(
+                listener: (context, downloadState) {
+                  if (downloadState is DownloadAddedState &&
+                      downloadState.url == url1) {
+                    print(
+                        "BlocConsumer listener onAdded url=${downloadState.url}");
+                    onAdded(1, downloadState.url);
+                  } else if (downloadState is DownloadProgressState &&
+                      downloadState.url == url1) {
+                    print(
+                        "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
+                    onProgress(1, downloadState.url, downloadState.progress);
+                  } else if (downloadState is DownloadCompletedState &&
+                      downloadState.url == url1) {
+                    print(
+                        "BlocConsumer listener onCompleted url=${downloadState.url}");
+                    onCompleted(1, downloadState.url);
+                  } else if (downloadState is DownloadErrorState &&
+                      downloadState.url == url1) {
+                    print(
+                        "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
+                    onError(1, downloadState.url, downloadState.error);
+                  }
+                },
+                builder: (context, downloadState) {
+                  if (downloadState is DownloadAddedState) {
+                    print(
+                        "BlocConsumer builder onAdded url=${downloadState.url}");
+                  } else if (downloadState is DownloadProgressState) {
+                    print(
+                        "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
+                  } else if (downloadState is DownloadCompletedState) {
+                    print(
+                        "BlocConsumer builder onCompleted url=${downloadState.url}");
+                  } else if (downloadState is DownloadErrorState) {
+                    print(
+                        "BlocConsumer builder onError url=${downloadState.url} , error=${downloadState.error}");
+                  }
+                  return Column(
+                    children: [
+                      Text("message = $message1"),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Text("progress = $progress1"),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              GestureDetector(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                      color: Colors.cyan,
+                      child: const Text('Download url 2 now')),
+                ),
+                onTap: () async {
+                  String url = url2;
+                  String destinationDirPath = await getDestination();
+                  String fileName =
+                      "test File 222 Name'with'apostrophe ' and comma, ,.mp3";
+                  DownloaderPlugin.downloadFile(
+                    url: url,
+                    destinationPath: destinationDirPath,
+                    fileName: fileName,
+                    notificationMessage: "test 2 notificationMessage",
+                    //  notificationProgressMessage:
+                    //      "test 2 notificationProgressMessage",
+                    // notificationCompleteMessage:
+                    //     "test 2 notificationCompleteMessage",
+                  );
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              BlocConsumer<DownloadCubit, DownloadStates>(
+                listener: (context, downloadState) {
+                  if (downloadState is DownloadAddedState &&
+                      downloadState.url == url2) {
+                    print(
+                        "BlocConsumer listener onAdded url=${downloadState.url}");
+                    onAdded(2, downloadState.url);
+                  } else if (downloadState is DownloadProgressState &&
+                      downloadState.url == url2) {
+                    print(
+                        "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
+                    onProgress(2, downloadState.url, downloadState.progress);
+                  } else if (downloadState is DownloadCompletedState &&
+                      downloadState.url == url2) {
+                    print(
+                        "BlocConsumer listener onCompleted url=${downloadState.url}");
+                    onCompleted(2, downloadState.url);
+                  } else if (downloadState is DownloadErrorState &&
+                      downloadState.url == url2) {
+                    print(
+                        "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
+                    onError(2, downloadState.url, downloadState.error);
+                  }
+                },
+                builder: (context, downloadState) {
+                  if (downloadState is DownloadAddedState) {
+                    print(
+                        "BlocConsumer builder onAdded url=${downloadState.url}");
+                  } else if (downloadState is DownloadProgressState) {
+                    print(
+                        "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
+                  } else if (downloadState is DownloadCompletedState) {
+                    print(
+                        "BlocConsumer builder onCompleted url=${downloadState.url}");
+                  } else if (downloadState is DownloadErrorState) {
+                    print(
+                        "BlocConsumer builder onError url=${downloadState.url} , error=${downloadState.error}");
+                  }
+                  return Column(
+                    children: [
+                      Text("message = $message2"),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Text("progress = $progress2"),
+                    ],
+                  );
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
