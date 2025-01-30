@@ -39,7 +39,9 @@ class IOSDownloadMethodChannel {
       case _iOSDownloadResultError:
         String url = methodData['url'];
         String? error = methodData['error'];
+        if(error?.contains("cancel")==false){
           downloadCubit.publishError(url:url,error: error);
+        }
         break;
       default:
         break;
