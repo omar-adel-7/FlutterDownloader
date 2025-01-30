@@ -122,7 +122,7 @@ class DownloaderPlugin {
     );
   }
 
-  static void deleteDownloadedFile(String filePath, [String? downloadLink]) {
+  static void deleteDownloadedFile(String filePath, {String? downloadLink}) {
     File(filePath).deleteSync();
     if (downloadLink != null) {
       DownloadUtil.sendFileDeleted(downloadLink);
@@ -133,8 +133,7 @@ class DownloaderPlugin {
     downloadArgs.deleteDownloadedFile();
   }
 
-  static Future deleteDownloadedFileAsync(String filePath,
-      [String? downloadLink]) async {
+  static Future deleteDownloadedFileAsync(String filePath, {String? downloadLink}) async {
     await File(filePath).delete();
     if (downloadLink != null) {
       DownloadUtil.sendFileDeleted(downloadLink);
