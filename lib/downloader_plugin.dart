@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:downloader/cubit/download_state.dart';
 import 'package:downloader/src/download_manager.dart';
 import 'package:downloader/src/download_model.dart';
+import 'package:downloader/src/download_util.dart';
 import 'package:downloader/src/method_channels/android_download_method_channel.dart';
 import 'package:downloader/src/method_channels/ios_download_method_channel.dart';
 import 'package:path/path.dart';
@@ -121,11 +122,27 @@ class DownloaderPlugin {
     );
   }
 
-  static void deleteDownloadedFile(DownloadArgs downloadArgs) {
+  static void deleteDownloadedFile(String filePath, [String? downloadLink]) {
+    File(filePath).deleteSync();
+    if (downloadLink != null) {
+      DownloadUtil.sendFileDeleted(downloadLink);
+    }
+  }
+
+  static void deleteDownloadedFileByArgs(DownloadArgs downloadArgs) {
     downloadArgs.deleteDownloadedFile();
   }
 
-  static Future deleteDownloadedFileAsync(DownloadArgs downloadArgs) async {
+  static Future deleteDownloadedFileAsync(String filePath,
+      [String? downloadLink]) async {
+    await File(filePath).delete();
+    if (downloadLink != null) {
+      DownloadUtil.sendFileDeleted(downloadLink);
+    }
+  }
+
+  static Future deleteDownloadedFileAsyncByArgs(
+      DownloadArgs downloadArgs) async {
     downloadArgs.deleteDownloadedFileAsync();
   }
 
