@@ -1,81 +1,99 @@
 import 'dart:io';
+import 'package:downloader/cubit/download_state.dart';
 import 'package:downloader/src/download_manager.dart';
-import 'package:downloader/src/download_util.dart';
+import 'package:downloader/src/download_model.dart';
 import 'package:downloader/src/method_channels/android_download_method_channel.dart';
 import 'package:downloader/src/method_channels/ios_download_method_channel.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'cubit/download_cubit.dart';
 import 'download_args.dart';
-import 'download_model.dart';
 
 class DownloaderPlugin {
   static bool defaultIsSerial = true;
-  static String defaultAndroidParallelMainNotificationMessage =
-      "download service working now";
   static bool isSerial = defaultIsSerial;
-  static String defaultAdroidNotificationProgressMessage = "downloading : ";
-  static String defaultAndroidNotificationCompleteMessage =
-      "completed download of : ";
+  static bool defaultShowIosNotifications = true;
+  static bool showIosNotifications = defaultShowIosNotifications;
+  static String defaultParallelMainNotificationMessage =
+      "download service working now";
+  static String parallelMainNotificationMessage =
+      defaultParallelMainNotificationMessage;
+  static String defaultNotificationProgressMessage = "downloading : ";
+  static String notificationProgressMessage =
+      defaultNotificationProgressMessage;
+  static String defaultNotificationCompleteMessage = "completed download of : ";
+  static String notificationCompleteMessage =
+      defaultNotificationCompleteMessage;
   static SharedPreferences? androidSharedPreferences;
-
-  static const String DOWNLOADER_LIST_ITEM_INTERNAL_KEY = "downloader-internal";
-  static const String DOWNLOADER_LIST_DIVIDER_KEY = "downloader-divider";
+  static const String ANDROID_DOWNLOADER_LIST_ITEM_INTERNAL_KEY =
+      "downloader-internal";
+  static const String ANDROID_DOWNLOADER_LIST_DIVIDER_KEY =
+      "downloader-divider";
 
   static init(DownloadCubit downloadCubit,
       {bool? is_serial,
-      String? android_parallel_main_notification_message,
-      String? android_notification_progress_message,
-      String? android_notification_complete_message}) async {
+      bool? show_ios_notifications,
+      String? parallel_main_notification_message,
+      String? notification_progress_message,
+      String? notification_complete_message}) async {
     isSerial = is_serial ?? defaultIsSerial;
+    showIosNotifications =
+        show_ios_notifications ?? defaultShowIosNotifications;
     if (isPlatformAndroid()) {
       androidSharedPreferences = await SharedPreferences.getInstance();
       androidSharedPreferences?.setBool('isSerial', isSerial);
-      if(
-      android_parallel_main_notification_message != null ||
-          android_notification_progress_message != null ||
-          android_notification_complete_message != null
-      )
-        {
-          initAndroidStrings(android_parallel_main_notification_message:android_parallel_main_notification_message,
-              android_notification_progress_message:android_notification_progress_message,
-              android_notification_complete_message:android_notification_complete_message);
-        }
+    }
+    if (parallel_main_notification_message != null ||
+        notification_progress_message != null ||
+        notification_complete_message != null) {
+      initNotificationStrings(
+          parallel_main_notification_message:
+              parallel_main_notification_message,
+          notification_progress_message: notification_progress_message,
+          notification_complete_message: notification_complete_message);
     }
     AndroidDownloadMethodChannel.instance.init(downloadCubit);
     IOSDownloadMethodChannel.instance.init(downloadCubit);
   }
 
-  static initAndroidStrings({
-        String? android_parallel_main_notification_message,
-        String? android_notification_progress_message,
-        String? android_notification_complete_message}) async {
+  static initNotificationStrings(
+      {String? parallel_main_notification_message,
+      String? notification_progress_message,
+      String? notification_complete_message}) async {
+    parallelMainNotificationMessage =
+        parallel_main_notification_message ?? parallelMainNotificationMessage;
+    notificationProgressMessage =
+        notification_progress_message ?? notificationProgressMessage;
+    notificationCompleteMessage =
+        notification_complete_message ?? notificationCompleteMessage;
     if (isPlatformAndroid()) {
       androidSharedPreferences = await SharedPreferences.getInstance();
-      androidSharedPreferences?.setString('parallelMainNotificationMessage',
-          android_parallel_main_notification_message ??
-              defaultAndroidParallelMainNotificationMessage);
       androidSharedPreferences?.setString(
-          'notificationProgressMessage', android_notification_progress_message
-          ??
-          defaultAdroidNotificationProgressMessage
-      );
+          'parallelMainNotificationMessage', parallelMainNotificationMessage);
       androidSharedPreferences?.setString(
-          'notificationCompleteMessage', android_notification_complete_message ??
-          defaultAndroidNotificationCompleteMessage);
+          'defaultNotificationProgressMessage', notificationProgressMessage);
+      androidSharedPreferences?.setString(
+          'defaultNotificationCompleteMessage', notificationCompleteMessage);
     }
   }
 
   static downloadFile(
       {required String url,
       required String destinationPath,
-      required String fileName, String? androidNotificationMessage}) {
-    DownloadManager().downloadFile(
+      required String fileName,
+      String? notificationMessage,
+      String? notificationProgressMessage,
+      String? notificationCompleteMessage}) {
+    if (url.isNotEmpty) {
+      DownloadManager().downloadFile(
         url: url,
         destinationPath: destinationPath,
         fileName: fileName,
-        androidNotificationMessage: androidNotificationMessage);
+        notificationMessage: notificationMessage,
+        notificationProgressMessage: notificationProgressMessage,
+        notificationCompleteMessage: notificationCompleteMessage,
+      );
+    }
   }
 
   static void downloadFileByArgs(DownloadArgs downloadArgs) {
@@ -83,10 +101,12 @@ class DownloaderPlugin {
         url: downloadArgs.downloadLink,
         destinationPath: downloadArgs.destinationDirPath,
         fileName: downloadArgs.fileName,
-        androidNotificationMessage: downloadArgs.androidNotificationMessage);
+        notificationMessage: downloadArgs.notificationMessage,
+        notificationProgressMessage: downloadArgs.notificationProgressMessage,
+        notificationCompleteMessage: downloadArgs.notificationCompleteMessage);
   }
 
-  static bool isFileDownloaded({
+  static bool isFileExist({
     required String destinationDirPath,
     required String fileName,
   }) {
@@ -94,21 +114,19 @@ class DownloaderPlugin {
     return File(path).existsSync();
   }
 
-  static bool isFileDownloadedByArgs(DownloadArgs downloadArgs) {
-    return isFileDownloaded(
+  static bool isFileByArgsExist(DownloadArgs downloadArgs) {
+    return isFileExist(
       destinationDirPath: downloadArgs.destinationDirPath,
       fileName: downloadArgs.fileName,
     );
   }
 
   static void deleteDownloadedFile(DownloadArgs downloadArgs) {
-    File(downloadArgs.filePath).deleteSync();
-    DownloadUtil.sendFileDeleted(downloadArgs.downloadLink);
+    downloadArgs.deleteDownloadedFile();
   }
 
   static Future deleteDownloadedFileAsync(DownloadArgs downloadArgs) async {
-    await File(downloadArgs.filePath).delete();
-    DownloadUtil.sendFileDeleted(downloadArgs.downloadLink);
+    downloadArgs.deleteDownloadedFileAsync();
   }
 
   static cancelDownloadFile(String url) {
@@ -123,20 +141,32 @@ class DownloaderPlugin {
     AndroidDownloadMethodChannel.instance.cancelDownloads();
   }
 
-  static bool isInDownloadList(String url) {
-    return DownloadManager().isInDownloadList(url);
-  }
-
-  static DownloadModel? getDownloadIfExist(String url) {
-    return DownloadManager().getDownloadIfExist(url);
-  }
-
   static bool isDownloadsNotEmpty() {
     return DownloadManager().isDownloadsNotEmpty();
   }
 
   static clearDownloadsList() {
     DownloadManager().clearDownloadsList();
+  }
+
+  static bool isInDownloadList(String url) {
+    return DownloadManager().isInDownloadList(url);
+  }
+
+  static int? getUrlProgress(String url, DownloadStates downloadState) {
+    if (downloadState is DownloadProgressState && downloadState.url == url) {
+      return downloadState.progress;
+    } else {
+      DownloadModel? downloadModel = _getDownloadIfExist(url);
+      if (downloadModel != null) {
+        return downloadModel.progress;
+      }
+      return null;
+    }
+  }
+
+  static DownloadModel? _getDownloadIfExist(String url) {
+    return DownloadManager().getDownloadIfExist(url);
   }
 
   static bool isPlatformAndroid() {

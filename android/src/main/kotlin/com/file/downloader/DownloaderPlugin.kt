@@ -64,6 +64,8 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             val destinationDirPath = argsMap["destinationDirPath"] as String
             val fileName = argsMap["fileName"] as String
             val notificationMessage = argsMap["notificationMessage"] as String
+            val notificationProgressMessage = argsMap["notificationProgressMessage"] as String?
+            val notificationCompleteMessage = argsMap["notificationCompleteMessage"] as String?
             context?.let { context ->
                 val intent = Intent(context, DownloadService::class.java)
                 intent.action = context.getString(
@@ -76,6 +78,9 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     fileName
                 )
                 intent.putExtra(IDownload.SRC_NOTIFICATION_MESSAGE, notificationMessage)
+                intent.putExtra(IDownload.SRC_NOTIFICATION_PROGRESS_MESSAGE, notificationProgressMessage)
+                intent.putExtra(IDownload.SRC_NOTIFICATION_COMPLETE_MESSAGE, notificationCompleteMessage)
+
                 intent.putExtra(
                     IDownload.ResultReceiver_Key,
                     object : ResultReceiver(Handler(Looper.getMainLooper())) {

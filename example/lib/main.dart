@@ -11,10 +11,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   DownloadCubit downloadCubit = DownloadCubit();
-  DownloaderPlugin.init(downloadCubit,is_serial: true,
-    //android_parallel_main_notification_message: "test parallel",
-    android_notification_progress_message: "downloading",
-    android_notification_complete_message: "complete download");
+  DownloaderPlugin.init(downloadCubit,
+      is_serial: true,
+      //parallel_main_notification_message: "test parallel",
+      notification_progress_message: "downloading",
+      notification_complete_message: "complete download");
   // DownloaderPlugin.init(downloadCubit,is_serial: true);
   runApp(MyApp(downloadCubit: downloadCubit));
 }
@@ -29,16 +30,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  int progress = 0;
-  String message = "";
-
+  int progress1 = 0;
+  String message1 = "";
+  int progress2 = 0;
+  String message2 = "";
   @override
   void initState() {
     super.initState();
-    // DownloaderPlugin.initAndroidStrings(
-    //    // android_parallel_main_notification_message: "initAndroidStrings test parallel",
-    //     android_notification_progress_message: "initAndroidStrings downloading",
-    //     android_notification_complete_message: "initAndroidStrings complete download");
+    // DownloaderPlugin.initNotificationStrings(
+    //    // parallel_main_notification_message: "initNotificationStrings test parallel",
+    //     notification_progress_message: "initNotificationStrings downloading",
+    //     notification_complete_message: "initNotificationStrings complete download");
     requestNotificationPermission();
   }
 
@@ -78,7 +80,8 @@ class _MyAppState extends State<MyApp> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                    color: Colors.cyan, child: const Text('Download url 1 now')),
+                    color: Colors.cyan,
+                    child: const Text('Download url 1 now')),
               ),
               onTap: () async {
                 String url = "https://server8.mp3quran.net/frs_a/014.mp3";
@@ -89,15 +92,71 @@ class _MyAppState extends State<MyApp> {
                   url: url,
                   destinationPath: destinationDirPath,
                   fileName: fileName,
-                  androidNotificationMessage: "test 1 notification message",
+                  notificationMessage: "test 1 notificationMessage",
+                  notificationProgressMessage:
+                      "test 1 notificationProgressMessage",
+                  // notificationCompleteMessage:
+                  //     "test 1 notificationCompleteMessage",
                 );
               },
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            BlocConsumer<DownloadCubit, DownloadStates>(
+              listener: (context, downloadState) {
+                if (downloadState is DownloadAddedState) {
+                  print(
+                      "BlocConsumer listener onAdded url=${downloadState.url}");
+                  onAdded(1,downloadState.url);
+                } else if (downloadState is DownloadProgressState) {
+                  print(
+                      "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
+                  onProgress(1,downloadState.url, downloadState.progress);
+                } else if (downloadState is DownloadCompletedState) {
+                  print(
+                      "BlocConsumer listener onCompleted url=${downloadState.url}");
+                  onCompleted(1,downloadState.url);
+                } else if (downloadState is DownloadErrorState) {
+                  print(
+                      "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
+                  onError(1,downloadState.url, downloadState.error);
+                }
+              },
+              builder: (context, downloadState) {
+                if (downloadState is DownloadAddedState) {
+                  print(
+                      "BlocConsumer builder onAdded url=${downloadState.url}");
+                } else if (downloadState is DownloadProgressState) {
+                  print(
+                      "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
+                } else if (downloadState is DownloadCompletedState) {
+                  print(
+                      "BlocConsumer builder onCompleted url=${downloadState.url}");
+                } else if (downloadState is DownloadErrorState) {
+                  print(
+                      "BlocConsumer builder onError url=${downloadState.url} , error=${downloadState.error}");
+                }
+                return Column(
+                  children: [
+                    Text("message = $message1"),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Text("progress = $progress1"),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(
+              height: 20,
             ),
             GestureDetector(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                    color: Colors.cyan, child: const Text('Download url 2 now')),
+                    color: Colors.cyan,
+                    child: const Text('Download url 2 now')),
               ),
               onTap: () async {
                 String url = "https://server8.mp3quran.net/frs_a/018.mp3";
@@ -108,61 +167,61 @@ class _MyAppState extends State<MyApp> {
                   url: url,
                   destinationPath: destinationDirPath,
                   fileName: fileName,
-                  androidNotificationMessage: "test 2 notification message",
+                  notificationMessage: "test 2 notificationMessage",
+                  // notificationProgressMessage:
+                  //     "test 2 notificationProgressMessage",
+                  notificationCompleteMessage:
+                      "test 2 notificationCompleteMessage",
                 );
               },
             ),
             const SizedBox(
-              height: 20,
+              height: 10,
             ),
-            Container(
-              height: 100,
-              color: Colors.yellow,
-              child: BlocConsumer<DownloadCubit, DownloadStates>(
-                listener: (context, downloadState) {
-                  if (downloadState is DownloadAddedState) {
-                    print(
-                        "BlocConsumer listener onAdded url=${downloadState.url}");
-                    onAdded(downloadState.url);
-                  } else if (downloadState is DownloadProgressState) {
-                    print(
-                        "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-                    onProgress(downloadState.url, downloadState.progress);
-                  } else if (downloadState is DownloadCompletedState) {
-                    print(
-                        "BlocConsumer listener onCompleted url=${downloadState.url}");
-                    onCompleted(downloadState.url);
-                  } else if (downloadState is DownloadErrorState) {
-                    print(
-                        "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
-                    onError(downloadState.url, downloadState.error);
-                  }
-                },
-                builder: (context, downloadState) {
-                  if (downloadState is DownloadAddedState) {
-                    print(
-                        "BlocConsumer builder onAdded url=${downloadState.url}");
-                  } else if (downloadState is DownloadProgressState) {
-                    print(
-                        "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-                  } else if (downloadState is DownloadCompletedState) {
-                    print(
-                        "BlocConsumer builder onCompleted url=${downloadState.url}");
-                  } else if (downloadState is DownloadErrorState) {
-                    print(
-                        "BlocConsumer builder onError url=${downloadState.url} , error=${downloadState.error}");
-                  }
-                  return Column(
-                    children: [
-                      Text("message = $message"),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Text("progress = $progress"),
-                    ],
-                  );
-                },
-              ),
+            BlocConsumer<DownloadCubit, DownloadStates>(
+              listener: (context, downloadState) {
+                if (downloadState is DownloadAddedState) {
+                  print(
+                      "BlocConsumer listener onAdded url=${downloadState.url}");
+                  onAdded(2,downloadState.url);
+                } else if (downloadState is DownloadProgressState) {
+                  print(
+                      "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
+                  onProgress(2,downloadState.url, downloadState.progress);
+                } else if (downloadState is DownloadCompletedState) {
+                  print(
+                      "BlocConsumer listener onCompleted url=${downloadState.url}");
+                  onCompleted(2,downloadState.url);
+                } else if (downloadState is DownloadErrorState) {
+                  print(
+                      "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
+                  onError(2,downloadState.url, downloadState.error);
+                }
+              },
+              builder: (context, downloadState) {
+                if (downloadState is DownloadAddedState) {
+                  print(
+                      "BlocConsumer builder onAdded url=${downloadState.url}");
+                } else if (downloadState is DownloadProgressState) {
+                  print(
+                      "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
+                } else if (downloadState is DownloadCompletedState) {
+                  print(
+                      "BlocConsumer builder onCompleted url=${downloadState.url}");
+                } else if (downloadState is DownloadErrorState) {
+                  print(
+                      "BlocConsumer builder onError url=${downloadState.url} , error=${downloadState.error}");
+                }
+                return Column(
+                  children: [
+                    Text("message = $message2"),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Text("progress = $progress2"),
+                  ],
+                );
+              },
             )
           ],
         ),
@@ -182,33 +241,39 @@ class _MyAppState extends State<MyApp> {
     return appDocumentsDirectory.path;
   }
 
-  void onAdded(String url) {
-    progress = 0;
-    message = "added";
+  void onAdded(int id,String url) {
+    int progress = 0;
+    String message = "added";
+    id == 1 ? progress1 = progress : progress2 = progress;
+    id == 1 ? message1 = message : message2 = message;
     // //in case of not using bloc
     // setState(() {});
   }
 
-  void onProgress(String url, int progress) {
-    this.progress = progress;
-    message = "downloading";
+  void onProgress(int id,String url, int progress) {
+    String message = "downloading";
+    id == 1 ? progress1 = progress : progress2 = progress;
+    id == 1 ? message1 = message : message2 = message;
     // //in case of not using bloc
     // setState(() {});
   }
 
-  void onCompleted(String url) {
-    progress = 100;
-    message = "completed";
+  void onCompleted(int id,String url) {
+    int progress = 100;
+    String message = "completed";
+    id == 1 ? progress1 = progress : progress2 = progress;
+    id == 1 ? message1 = message : message2 = message;
     // //in case of not using bloc
     // setState(() {});
   }
 
-  void onError(String url, String? error) {
-    progress = 0;
-    message = error ?? "error";
-    String errorMessage = message;
+  void onError(int id,String url, String? error) {
+    int progress = 0;
+    String message = error ?? "error";
+    id == 1 ? progress1 = progress : progress2 = progress;
+    id == 1 ? message1 = message : message2 = message;
     Fluttertoast.showToast(
-        msg: errorMessage,
+        msg: message,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,

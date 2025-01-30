@@ -1,5 +1,5 @@
 import '../downloader_plugin.dart';
-import '../download_model.dart';
+import 'download_model.dart';
 import 'download_util.dart';
 import 'method_channels/ios_download_method_channel.dart';
 
@@ -20,19 +20,25 @@ class DownloadManager {
       {required String url,
       required String destinationPath,
       required String fileName,
-        String? androidNotificationMessage}) {
+        String? notificationMessage,
+        String? notificationProgressMessage ,String? notificationCompleteMessage}) {
     if (!isInDownloadList(url)) {
       if (DownloaderPlugin.isPlatformAndroid()) {
         DownloadUtil.startAndroidDownload(
             url: url,
             destinationPath: destinationPath,
             fileName: fileName,
-            notificationMessage: androidNotificationMessage);
+            notificationMessage: notificationMessage,
+            notificationProgressMessage: notificationProgressMessage,
+            notificationCompleteMessage: notificationCompleteMessage);
       } else if (DownloaderPlugin.isPlatformIos()) {
         list.add(DownloadModel(
           url: url,
-          destinationPath: destinationPath,
-          fileName: fileName,
+          iosDestinationPath: destinationPath,
+          iosFileName: fileName,
+          iosNotificationMessage: notificationMessage,
+          iosNotificationProgressMessage: notificationProgressMessage,
+          iosNotificationCompleteMessage: notificationCompleteMessage,
         ));
         IOSDownloadMethodChannel.instance.downloadCubit.publishAdded(url:url);
         if (DownloaderPlugin.isSerial) {
@@ -99,10 +105,10 @@ class DownloadManager {
     list.clear();
     if(listData?.isNotEmpty==true)
     {
-      List<String> tempList  = listData?.split(DownloaderPlugin.DOWNLOADER_LIST_DIVIDER_KEY)??[];
+      List<String> tempList  = listData?.split(DownloaderPlugin.ANDROID_DOWNLOADER_LIST_DIVIDER_KEY)??[];
       tempList.removeLast();
       for (int i = 0; i < tempList.length; i++) {
-        List<String> tempItemList =  tempList[i].split(DownloaderPlugin.DOWNLOADER_LIST_ITEM_INTERNAL_KEY);
+        List<String> tempItemList =  tempList[i].split(DownloaderPlugin.ANDROID_DOWNLOADER_LIST_ITEM_INTERNAL_KEY);
         DownloadModel downloadModel = DownloadModel(url: tempItemList[0] ,
             progress: int.parse(tempItemList[1]));
         list.add(downloadModel);
@@ -126,8 +132,8 @@ class DownloadManager {
       DownloadModel downloadModel = list[0];
       DownloadUtil.startIosDownload(
           url: downloadModel.url,
-          destinationPath: downloadModel.destinationPath,
-          fileName: downloadModel.fileName);
+          destinationPath: downloadModel.iosDestinationPath,
+          fileName: downloadModel.iosFileName);
     }
   }
 

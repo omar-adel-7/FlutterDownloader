@@ -24,8 +24,8 @@ abstract class IDownloadService : Service() {
     val prefsKeyPrefix = "flutter."
     var isSerial: Boolean = true
     var parallelMainNotificationMessage: String = ""
-    var notificationProgressMessage: String = ""
-    var notificationCompleteMessage: String = ""
+    var defaultNotificationProgressMessage: String = ""
+    var defaultNotificationCompleteMessage: String = ""
 
     var resultReceiver: ResultReceiver? = null
     var lastProgressTime: Long = 0
@@ -40,11 +40,11 @@ abstract class IDownloadService : Service() {
     ): NotificationCompat.Builder
 
     protected abstract fun getNotificationBuilderOfDownload(
-        notificationMessage: String
+        notificationMessage: String,notificationProgressMessage: String?
     ): NotificationCompat.Builder
 
     protected abstract fun getNotificationBuilderOfCompleteDownload(
-        notificationMessage: String
+        notificationMessage: String,notificationCompleteMessage: String?
     ): NotificationCompat.Builder
 
     protected abstract fun onStartCommandCustom(intent: Intent?)
@@ -63,14 +63,14 @@ abstract class IDownloadService : Service() {
             prefsKeyPrefix + "parallelMainNotificationMessage",
             parallelMainNotificationMessage
         ) ?: parallelMainNotificationMessage
-        notificationProgressMessage = prefs?.getString(
-            prefsKeyPrefix + "notificationProgressMessage",
-            notificationProgressMessage
-        ) ?: notificationProgressMessage
-        notificationCompleteMessage = prefs?.getString(
-            prefsKeyPrefix + "notificationCompleteMessage",
-            notificationCompleteMessage
-        ) ?: notificationCompleteMessage
+        defaultNotificationProgressMessage = prefs?.getString(
+            prefsKeyPrefix + "defaultNotificationProgressMessage",
+            defaultNotificationProgressMessage
+        ) ?: defaultNotificationProgressMessage
+        defaultNotificationCompleteMessage = prefs?.getString(
+            prefsKeyPrefix + "defaultNotificationCompleteMessage",
+            defaultNotificationCompleteMessage
+        ) ?: defaultNotificationCompleteMessage
 
         executorService = Executors.newFixedThreadPool(if (isSerial) 1 else 4)
     }
@@ -90,6 +90,10 @@ abstract class IDownloadService : Service() {
                         intent.getStringExtra(IDownload.SRC_FILE_NAME_KEY)
                     val notificationMessage =
                         intent.getStringExtra(IDownload.SRC_NOTIFICATION_MESSAGE)
+                    val notificationProgressMessage =
+                        intent.getStringExtra(IDownload.SRC_NOTIFICATION_PROGRESS_MESSAGE)
+                    val notificationCompleteMessage =
+                        intent.getStringExtra(IDownload.SRC_NOTIFICATION_COMPLETE_MESSAGE)
                     resultReceiver =
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             intent.getParcelableExtra(
@@ -105,7 +109,7 @@ abstract class IDownloadService : Service() {
                         if (isSerial) {
                             startForeground( /*FOREGROUND_ID*/notificationId,
                                 getNotificationBuilderOfDownload(
-                                    notificationMessage,
+                                    notificationMessage,notificationProgressMessage
                                 ).build()
                             )
                         } else {
@@ -116,7 +120,9 @@ abstract class IDownloadService : Service() {
                         startDownload(
                             url,
                             destDirPath + fileName,
-                            notificationMessage
+                            notificationMessage,
+                            notificationProgressMessage,
+                            notificationCompleteMessage
                         )
                     }
                 } else if (action == resources.getString(
@@ -158,6 +164,8 @@ abstract class IDownloadService : Service() {
         link: String,
         filePath: String,
         notificationMessage: String,
+        notificationProgressMessage: String?,
+        notificationCompleteMessage: String?
     ) {
         downloadModelList.add(DownloadModel(link))
         sendAdded(link)
@@ -203,7 +211,7 @@ abstract class IDownloadService : Service() {
                     sendSuccessError(
                         link, false,
                         IDownload.RESPONSE_NO_FREE_SPACE_MESSAGE,
-                        notificationMessage,
+                        notificationMessage,notificationCompleteMessage
                     )
                     return@Runnable
                 }
@@ -228,7 +236,8 @@ abstract class IDownloadService : Service() {
                         sendProgress(
                             link,
                             progress.toInt(),
-                            notificationMessage
+                            notificationMessage,
+                            notificationProgressMessage
                         )
                     }
                     output.write(data, 0, currentDownload)
@@ -239,7 +248,7 @@ abstract class IDownloadService : Service() {
                     tempFile.renameTo(targetFile)
                     sendSuccessError(
                         link, true, null,
-                        notificationMessage,
+                        notificationMessage,notificationCompleteMessage
                     )
                 } else {
                     deleteDownloadFile(tempFilePath)
@@ -251,7 +260,7 @@ abstract class IDownloadService : Service() {
                 sendSuccessError(
                     link, false,
                     IDownload.RESPONSE_CONNECTION_ERROR_MESSAGE,
-                    notificationMessage,
+                    notificationMessage,notificationCompleteMessage
                 )
             } finally {
                 try {
@@ -287,7 +296,8 @@ abstract class IDownloadService : Service() {
 
     fun sendProgress(
         url: String, progress: Int,
-        notificationMessage: String
+        notificationMessage: String,
+        notificationProgressMessage: String?
     ) {
         val message = Bundle()
         message.putString(IDownload.RESPONSE_URL_KEY, url)
@@ -296,7 +306,7 @@ abstract class IDownloadService : Service() {
         if (time - lastProgressTime >= 1200) {
             updateProgress(url, progress)
             val notificationBuilder = getNotificationBuilderOfDownload(
-                notificationMessage
+                notificationMessage,notificationProgressMessage
             )
             lastProgressTime = time
             notificationBuilder.setProgress(100, progress, false)
@@ -326,7 +336,7 @@ abstract class IDownloadService : Service() {
     fun sendSuccessError(
         url: String,
         isSuccess: Boolean, errorMessage: String?,
-        notificationMessage: String
+        notificationMessage: String,notificationCompleteMessage: String?
     ) {
         delete(url)
         val message = Bundle()
@@ -341,7 +351,7 @@ abstract class IDownloadService : Service() {
         }
         if (isSuccess) {
             val notificationBuilder = getNotificationBuilderOfCompleteDownload(
-                notificationMessage
+                notificationMessage,notificationCompleteMessage
             )
             notifySuccess(url, notificationBuilder.build())
         }

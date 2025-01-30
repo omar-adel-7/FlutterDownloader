@@ -12,6 +12,8 @@ object IDownload {
     const val SRC_DEST_DIR_PATH_KEY = "src_dest_dir_path"
     const val SRC_FILE_NAME_KEY = "src_file_name"
     const val SRC_NOTIFICATION_MESSAGE = "src_notification_message"
+    const val SRC_NOTIFICATION_PROGRESS_MESSAGE = "src_notification_progress_message"
+    const val SRC_NOTIFICATION_COMPLETE_MESSAGE = "src_notification_complete_message"
     const val RESPONSE_URL_KEY = "response_url"
     const val RESPONSE_ADDED_KEY = "response_added"
     const val RESPONSE_PROGRESS_KEY = "response_progress"

@@ -1,27 +1,65 @@
+import 'dart:io';
 
+import 'package:downloader/downloader_plugin.dart';
+import 'package:downloader/src/download_util.dart';
 import 'package:path/path.dart';
 
 class DownloadArgs {
-
   final String downloadLink;
   final String destinationDirPath;
   final String fileName;
-  String androidNotificationMessage = '';
-  Function? updateIsDownloaded;
+  String? notificationMessage;
+  String? notificationProgressMessage;
+  String? notificationCompleteMessage;
+  void Function(bool)? updateIsDownloaded;
   void Function(String)? onCompleted;
   void Function()? onDeleted;
 
-  String get filePath => join(destinationDirPath,fileName);
+  String get filePath => join(destinationDirPath, fileName);
 
   DownloadArgs({
     required this.downloadLink,
     required this.destinationDirPath,
     required this.fileName,
-    String? androidNotificationMessage,
+    this.notificationMessage,
+    this.notificationProgressMessage,
+    this.notificationCompleteMessage,
     this.updateIsDownloaded,
     this.onCompleted,
     this.onDeleted,
-  }){
-    this.androidNotificationMessage = androidNotificationMessage ?? fileName;
+  });
+
+  updateIsDownloadedWork([bool? value]) {
+    if (updateIsDownloaded != null) {
+      value = value ?? DownloaderPlugin.isFileByArgsExist(this);
+      updateIsDownloaded!(value);
+    }
+  }
+
+  baseCompletedListen() {
+    if (DownloaderPlugin.isFileByArgsExist(this)) {
+      updateIsDownloadedWork(true);
+      if (onCompleted != null) {
+        onCompleted!(filePath);
+      }
+    }
+  }
+
+  void deleteDownloadedFile() {
+    File(filePath).deleteSync();
+    _deleteFileWork();
+  }
+
+  Future deleteDownloadedFileAsync() async {
+    await File(filePath).delete();
+    _deleteFileWork();
+  }
+
+  void _deleteFileWork() {
+    DownloadUtil.sendFileDeleted(downloadLink);
+    updateIsDownloadedWork(false);
+    if (onDeleted != null) {
+      onDeleted!();
+    }
   }
 }

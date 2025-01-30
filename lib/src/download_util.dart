@@ -9,7 +9,9 @@ class DownloadUtil {
       {required String url,
         required String destinationPath,
         required String fileName,
-        String? notificationMessage}) async {
+        String? notificationMessage,
+        String? notificationProgressMessage ,String? notificationCompleteMessage
+      }) async {
     String pathSeparator = Platform.pathSeparator;
     if (!destinationPath.endsWith(pathSeparator)) {
       destinationPath = destinationPath + pathSeparator;
@@ -17,7 +19,9 @@ class DownloadUtil {
       AndroidDownloadMethodChannel.instance.downloadFile( url: url,
           destinationDirPath: destinationPath,
           fileName: fileName,
-          notificationMessage: notificationMessage ?? fileName);
+          notificationMessage: notificationMessage ,
+          notificationProgressMessage: notificationProgressMessage ,
+          notificationCompleteMessage: notificationCompleteMessage );
   }
 
   static void startIosDownload(

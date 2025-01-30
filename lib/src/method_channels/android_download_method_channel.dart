@@ -74,14 +74,18 @@ class AndroidDownloadMethodChannel {
     required String url,
     required String destinationDirPath,
     required String fileName,
-    required String notificationMessage,
+    String? notificationMessage,
+    String? notificationProgressMessage,
+    String? notificationCompleteMessage
   }) {
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
       'url': url,
       'destinationDirPath': destinationDirPath,
       'fileName': fileName,
-      'notificationMessage': notificationMessage
+      'notificationMessage': notificationMessage ?? fileName,
+      'notificationProgressMessage': notificationProgressMessage,
+      'notificationCompleteMessage': notificationCompleteMessage
     });
     _channelMethod?.invokeMethod(_androidStart, argsMap);
   }

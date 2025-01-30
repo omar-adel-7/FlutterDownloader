@@ -108,29 +108,33 @@ class DownloadService : IDownloadService() {
     }
 
     public override fun getNotificationBuilderOfDownload(
-        notificationMessage: String
+        notificationMessage: String,notificationProgressMessage: String?
     ): NotificationCompat.Builder {
         val notificationBuilder =
             NotificationCompat.Builder(this, NotificationUtils.ANDROID_CHANNEL_ID)
         notificationBuilder
             .setContentTitle(
-                "$notificationProgressMessage $notificationMessage"
+                "${notificationProgressMessage?:defaultNotificationProgressMessage} $notificationMessage"
             )
             .setTicker(
-                "$notificationProgressMessage $notificationMessage"
+                "${notificationProgressMessage?:defaultNotificationProgressMessage} $notificationMessage"
             )
             .setSmallIcon(android.R.drawable.stat_sys_download)
         return notificationBuilder
     }
 
     override fun getNotificationBuilderOfCompleteDownload(
-        notificationMessage: String
+        notificationMessage: String,notificationCompleteMessage: String?
     ): NotificationCompat.Builder {
         val notificationBuilder =
             NotificationCompat.Builder(this, NotificationUtils.ANDROID_CHANNEL_ID)
         notificationBuilder
-            .setContentTitle("$notificationCompleteMessage $notificationMessage")
-            .setTicker("$notificationCompleteMessage $notificationMessage")
+            .setContentTitle(
+                "${notificationCompleteMessage?: defaultNotificationCompleteMessage} $notificationMessage"
+            )
+            .setTicker(
+                "${notificationCompleteMessage?: defaultNotificationCompleteMessage} $notificationMessage"
+            )
             .setSmallIcon(android.R.drawable.stat_sys_download_done)
         return notificationBuilder
     }
