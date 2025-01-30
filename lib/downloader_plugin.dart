@@ -13,12 +13,12 @@ import 'download_args.dart';
 class DownloaderPlugin {
   static bool defaultIsSerial = true;
   static bool isSerial = defaultIsSerial;
-  static bool defaultShowIosNotifications = true;
+  static bool defaultShowIosNotifications = false;
   static bool showIosNotifications = defaultShowIosNotifications;
-  static String defaultParallelMainNotificationMessage =
+  static String defaultAndroidParallelMainNotificationMessage =
       "download service working now";
-  static String parallelMainNotificationMessage =
-      defaultParallelMainNotificationMessage;
+  static String androidParallelMainNotificationMessage =
+      defaultAndroidParallelMainNotificationMessage;
   static String defaultNotificationProgressMessage = "downloading : ";
   static String notificationProgressMessage =
       defaultNotificationProgressMessage;
@@ -34,7 +34,7 @@ class DownloaderPlugin {
   static init(DownloadCubit downloadCubit,
       {bool? is_serial,
       bool? show_ios_notifications,
-      String? parallel_main_notification_message,
+      String? android_parallel_main_notification_message,
       String? notification_progress_message,
       String? notification_complete_message}) async {
     isSerial = is_serial ?? defaultIsSerial;
@@ -44,12 +44,12 @@ class DownloaderPlugin {
       androidSharedPreferences = await SharedPreferences.getInstance();
       androidSharedPreferences?.setBool('isSerial', isSerial);
     }
-    if (parallel_main_notification_message != null ||
+    if (android_parallel_main_notification_message != null ||
         notification_progress_message != null ||
         notification_complete_message != null) {
       initNotificationStrings(
-          parallel_main_notification_message:
-              parallel_main_notification_message,
+          android_parallel_main_notification_message:
+          android_parallel_main_notification_message,
           notification_progress_message: notification_progress_message,
           notification_complete_message: notification_complete_message);
     }
@@ -58,11 +58,11 @@ class DownloaderPlugin {
   }
 
   static initNotificationStrings(
-      {String? parallel_main_notification_message,
+      {String? android_parallel_main_notification_message,
       String? notification_progress_message,
       String? notification_complete_message}) async {
-    parallelMainNotificationMessage =
-        parallel_main_notification_message ?? parallelMainNotificationMessage;
+    androidParallelMainNotificationMessage =
+        android_parallel_main_notification_message ?? androidParallelMainNotificationMessage;
     notificationProgressMessage =
         notification_progress_message ?? notificationProgressMessage;
     notificationCompleteMessage =
@@ -70,7 +70,7 @@ class DownloaderPlugin {
     if (isPlatformAndroid()) {
       androidSharedPreferences = await SharedPreferences.getInstance();
       androidSharedPreferences?.setString(
-          'parallelMainNotificationMessage', parallelMainNotificationMessage);
+          'parallelMainNotificationMessage', androidParallelMainNotificationMessage);
       androidSharedPreferences?.setString(
           'defaultNotificationProgressMessage', notificationProgressMessage);
       androidSharedPreferences?.setString(
@@ -180,6 +180,28 @@ class DownloaderPlugin {
       }
       return null;
     }
+  }
+
+  static bool isUrlDownloaded(String url, DownloadStates downloadState,
+  {String?  destinationDirPath, String? fileName}) {
+    bool checkFile = (destinationDirPath!=null) && (fileName!=null);
+    if(checkFile){
+      bool checkFileResult = isFileExist(
+          destinationDirPath: destinationDirPath,
+          fileName: fileName);
+      if (checkFileResult &&
+          downloadState is DownloadCompletedState && downloadState.url == url
+      ) {
+        return true;
+      }
+    }
+    else{
+      if (downloadState is DownloadCompletedState && downloadState.url == url
+      ) {
+        return true;
+      }
+    }
+    return false;
   }
 
   static DownloadModel? _getDownloadIfExist(String url) {

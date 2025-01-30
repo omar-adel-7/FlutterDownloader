@@ -9,9 +9,9 @@ class IosLocalNotificationsUtil {
 
   Future<void> initialize() async {
     DarwinInitializationSettings initializationSettingsDarwin =
-        const DarwinInitializationSettings(
-      requestSoundPermission: true,
-      requestBadgePermission: true,
+        const DarwinInitializationSettings(//any of them true for request notification permission
+      requestSoundPermission: false,
+      requestBadgePermission: false,
       requestAlertPermission: true,
     );
 
@@ -24,12 +24,15 @@ class IosLocalNotificationsUtil {
             onDidReceiveBackgroundNotificationResponse);
   }
 
-  showNotification({required id, String? title, required String body}) {
+  showNotification({required int id, String? title, required String body}) {
     flutterLocalNotificationsPlugin.show(
       id,
       title,
       body,
-      const NotificationDetails(iOS: DarwinNotificationDetails()),
+      const NotificationDetails(iOS: DarwinNotificationDetails(
+        presentAlert: false,//disable foreground
+        presentBanner: false//disable foreground
+      )),
     );
   }
 

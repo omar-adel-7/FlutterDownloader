@@ -24,6 +24,8 @@ class IOSDownloadMethodChannel {
   late DownloadCubit downloadCubit;
 
   IosLocalNotificationsUtil? iosLocalNotificationsUtil;
+  Map<String, int> notificationsMap = {};
+  int notificationId = 0;
 
   init(DownloadCubit downloadCubit) {
     _channelMethod = const MethodChannel(_iOSDownloadChannelName);
@@ -40,54 +42,54 @@ class IOSDownloadMethodChannel {
       case _iOSDownloadResultProgress:
         String url = methodData['url'];
         int progress = methodData['progress'];
-        downloadCubit.publishProgress(url: url, progress: progress);
         if (DownloaderPlugin.showIosNotifications) {
           DownloadModel? downloadModel =
               DownloadManager().getDownloadIfExist(url);
           if (downloadModel != null) {
-            int? index = DownloadManager().getDownloadIndexIfExist(url);
-            if (index != null) {
+            if (notificationsMap[url] == null) {
+              notificationId++;
               iosLocalNotificationsUtil?.showNotification(
-                  id: index + 1,
+                  id: notificationId,
                   body: downloadModel.iosNotificationProgressMessage ??
                       "${DownloaderPlugin.notificationProgressMessage} "
                           "${downloadModel.iosNotificationMessage}");
+              notificationsMap[url] = notificationId;
             }
           }
         }
-
+        downloadCubit.publishProgress(url: url, progress: progress);
         break;
       case _iOSDownloadResultCompleted:
         String url = methodData['url'];
-        downloadCubit.publishCompleted(url: url);
         if (DownloaderPlugin.showIosNotifications) {
           DownloadModel? downloadModel =
               DownloadManager().getDownloadIfExist(url);
           if (downloadModel != null) {
-            int? index = DownloadManager().getDownloadIndexIfExist(url);
-            if (index != null) {
+            if (notificationsMap[url] != null) {
               iosLocalNotificationsUtil?.showNotification(
-                  id: index + 1,
+                  id: notificationsMap[url]!,
                   body: downloadModel.iosNotificationCompleteMessage ??
                       "${DownloaderPlugin.notificationCompleteMessage} "
                           "${downloadModel.iosNotificationMessage}");
+              notificationsMap.remove(url);
             }
           }
         }
+        downloadCubit.publishCompleted(url: url);
         break;
       case _iOSDownloadResultError:
         String url = methodData['url'];
+        if (DownloaderPlugin.showIosNotifications) {
+          if (notificationsMap[url] != null) {
+            iosLocalNotificationsUtil
+                ?.cancelNotification(notificationsMap[url]!);
+            notificationsMap.remove(url);
+          }
+        }
         String? error = methodData['error'];
         if (error?.contains("cancel") == false) {
           downloadCubit.publishError(url: url, error: error);
         }
-        if (DownloaderPlugin.showIosNotifications) {
-          int? index = DownloadManager().getDownloadIndexIfExist(url);
-          if (index != null) {
-            iosLocalNotificationsUtil?.cancelNotification(index + 1);
-          }
-        }
-
         break;
       default:
         break;

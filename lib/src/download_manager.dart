@@ -158,12 +158,6 @@ class DownloadManager {
     return null;
   }
 
-  int? getDownloadIndexIfExist(String url) {
-    final int foundIndex =
-        list.indexWhere((downloadModel) => downloadModel.url == url);
-    return foundIndex != -1 ? foundIndex : null;
-  }
-
   bool isDownloadsNotEmpty() {
     bool isDownloadsNotEmpty = list.isNotEmpty;
     //print("isDownloadsNotEmpty = $isDownloadsNotEmpty");

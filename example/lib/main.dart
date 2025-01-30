@@ -13,10 +13,11 @@ void main() {
   DownloadCubit downloadCubit = DownloadCubit();
   DownloaderPlugin.init(downloadCubit,
       is_serial: true,
-      //parallel_main_notification_message: "parallel download service running",
+      show_ios_notifications: false,
+      //android_parallel_main_notification_message: "parallel download service running",
       notification_progress_message: "downloading",
       notification_complete_message: "completed download");
-  // DownloaderPlugin.init(downloadCubit,is_serial: true);
+  // DownloaderPlugin.init(downloadCubit,is_serial: true,show_ios_notifications: false);
   runApp(MyApp(downloadCubit: downloadCubit));
 }
 
@@ -39,18 +40,18 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     // DownloaderPlugin.initNotificationStrings(
-    //     //parallel_main_notification_message: "initNotificationStrings parallel download service running",
+    //   //  android_parallel_main_notification_message: "initNotificationStrings parallel download service running",
     //     notification_progress_message: "initNotificationStrings downloading",
     //     notification_complete_message: "initNotificationStrings completed download");
     requestNotificationPermission();
   }
 
   Future<void> requestNotificationPermission() async {
-    PermissionStatus status = await Permission.notification.status;
-    if (!status.isGranted) {
-      // The permission is not granted, request it.
-      status = await Permission.notification.request();
-    }
+        PermissionStatus status = await Permission.notification.status;
+        if (!status.isGranted) {
+          // The permission is not granted, request it.
+          status = await Permission.notification.request();
+        }
   }
 
   @override
@@ -92,16 +93,16 @@ class _MyAppState extends State<MyApp> {
                   String url = url1;
                   String destinationDirPath = await getDestination();
                   String fileName =
-                      "test File 111 Name'with'apostrophe ' and comma, ,.mp3";
+                      "test File 1 Name'with'apostrophe ' and comma, ,.mp3";
                   DownloaderPlugin.downloadFile(
                     url: url,
                     destinationPath: destinationDirPath,
                     fileName: fileName,
                     notificationMessage: "test 1 notificationMessage",
-                    // notificationProgressMessage:
-                    //     "test 1 notificationProgressMessage",
-                    //  notificationCompleteMessage:
-                    //      "test 1 notificationCompleteMessage",
+                    notificationProgressMessage:
+                        "test 1 notificationProgressMessage",
+                     notificationCompleteMessage:
+                         "test 1 notificationCompleteMessage",
                   );
                 },
               ),
@@ -133,16 +134,20 @@ class _MyAppState extends State<MyApp> {
                   }
                 },
                 builder: (context, downloadState) {
-                  if (downloadState is DownloadAddedState) {
+                  if (downloadState is DownloadAddedState &&
+                      downloadState.url == url1) {
                     print(
                         "BlocConsumer builder onAdded url=${downloadState.url}");
-                  } else if (downloadState is DownloadProgressState) {
+                  } else if (downloadState is DownloadProgressState &&
+                      downloadState.url == url1) {
                     print(
                         "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-                  } else if (downloadState is DownloadCompletedState) {
+                  } else if (downloadState is DownloadCompletedState &&
+                      downloadState.url == url1) {
                     print(
                         "BlocConsumer builder onCompleted url=${downloadState.url}");
-                  } else if (downloadState is DownloadErrorState) {
+                  } else if (downloadState is DownloadErrorState &&
+                      downloadState.url == url1) {
                     print(
                         "BlocConsumer builder onError url=${downloadState.url} , error=${downloadState.error}");
                   }
@@ -171,7 +176,7 @@ class _MyAppState extends State<MyApp> {
                   String url = url2;
                   String destinationDirPath = await getDestination();
                   String fileName =
-                      "test File 222 Name'with'apostrophe ' and comma, ,.mp3";
+                      "test File 2 Name'with'apostrophe ' and comma, ,.mp3";
                   DownloaderPlugin.downloadFile(
                     url: url,
                     destinationPath: destinationDirPath,
@@ -212,16 +217,20 @@ class _MyAppState extends State<MyApp> {
                   }
                 },
                 builder: (context, downloadState) {
-                  if (downloadState is DownloadAddedState) {
+                  if (downloadState is DownloadAddedState &&
+                      downloadState.url == url2) {
                     print(
                         "BlocConsumer builder onAdded url=${downloadState.url}");
-                  } else if (downloadState is DownloadProgressState) {
+                  } else if (downloadState is DownloadProgressState &&
+                      downloadState.url == url2) {
                     print(
                         "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-                  } else if (downloadState is DownloadCompletedState) {
+                  } else if (downloadState is DownloadCompletedState &&
+                      downloadState.url == url2) {
                     print(
                         "BlocConsumer builder onCompleted url=${downloadState.url}");
-                  } else if (downloadState is DownloadErrorState) {
+                  } else if (downloadState is DownloadErrorState &&
+                      downloadState.url == url2) {
                     print(
                         "BlocConsumer builder onError url=${downloadState.url} , error=${downloadState.error}");
                   }
