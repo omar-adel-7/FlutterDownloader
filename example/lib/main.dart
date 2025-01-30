@@ -15,7 +15,7 @@ void main() {
       is_serial: true,
       //parallel_main_notification_message: "test parallel",
       notification_progress_message: "downloading",
-      notification_complete_message: "complete download");
+      notification_complete_message: "completed download");
   // DownloaderPlugin.init(downloadCubit,is_serial: true);
   runApp(MyApp(downloadCubit: downloadCubit));
 }
@@ -40,7 +40,7 @@ class _MyAppState extends State<MyApp> {
     // DownloaderPlugin.initNotificationStrings(
     //    // parallel_main_notification_message: "initNotificationStrings test parallel",
     //     notification_progress_message: "initNotificationStrings downloading",
-    //     notification_complete_message: "initNotificationStrings complete download");
+    //     notification_complete_message: "initNotificationStrings completed download");
     requestNotificationPermission();
   }
 
@@ -68,6 +68,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   getMaterialApp() {
+    String url1 = "https://server8.mp3quran.net/frs_a/014.mp3";
+    String url2 = "https://server8.mp3quran.net/frs_a/018.mp3";
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -84,7 +87,7 @@ class _MyAppState extends State<MyApp> {
                     child: const Text('Download url 1 now')),
               ),
               onTap: () async {
-                String url = "https://server8.mp3quran.net/frs_a/014.mp3";
+                String url = url1;
                 String destinationDirPath = await getDestination();
                 String fileName =
                     "test File 111 Name'with'apostrophe ' and comma, ,.mp3";
@@ -105,19 +108,19 @@ class _MyAppState extends State<MyApp> {
             ),
             BlocConsumer<DownloadCubit, DownloadStates>(
               listener: (context, downloadState) {
-                if (downloadState is DownloadAddedState) {
+                if (downloadState is DownloadAddedState && downloadState.url == url1) {
                   print(
                       "BlocConsumer listener onAdded url=${downloadState.url}");
                   onAdded(1,downloadState.url);
-                } else if (downloadState is DownloadProgressState) {
+                } else if (downloadState is DownloadProgressState && downloadState.url == url1) {
                   print(
                       "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
                   onProgress(1,downloadState.url, downloadState.progress);
-                } else if (downloadState is DownloadCompletedState) {
+                } else if (downloadState is DownloadCompletedState && downloadState.url == url1) {
                   print(
                       "BlocConsumer listener onCompleted url=${downloadState.url}");
                   onCompleted(1,downloadState.url);
-                } else if (downloadState is DownloadErrorState) {
+                } else if (downloadState is DownloadErrorState && downloadState.url == url1) {
                   print(
                       "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
                   onError(1,downloadState.url, downloadState.error);
@@ -159,7 +162,7 @@ class _MyAppState extends State<MyApp> {
                     child: const Text('Download url 2 now')),
               ),
               onTap: () async {
-                String url = "https://server8.mp3quran.net/frs_a/018.mp3";
+                String url = url2;
                 String destinationDirPath = await getDestination();
                 String fileName =
                     "test File 222 Name'with'apostrophe ' and comma, ,.mp3";
@@ -180,19 +183,19 @@ class _MyAppState extends State<MyApp> {
             ),
             BlocConsumer<DownloadCubit, DownloadStates>(
               listener: (context, downloadState) {
-                if (downloadState is DownloadAddedState) {
+                if (downloadState is DownloadAddedState && downloadState.url == url2) {
                   print(
                       "BlocConsumer listener onAdded url=${downloadState.url}");
                   onAdded(2,downloadState.url);
-                } else if (downloadState is DownloadProgressState) {
+                } else if (downloadState is DownloadProgressState && downloadState.url == url2) {
                   print(
                       "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
                   onProgress(2,downloadState.url, downloadState.progress);
-                } else if (downloadState is DownloadCompletedState) {
+                } else if (downloadState is DownloadCompletedState && downloadState.url == url2) {
                   print(
                       "BlocConsumer listener onCompleted url=${downloadState.url}");
                   onCompleted(2,downloadState.url);
-                } else if (downloadState is DownloadErrorState) {
+                } else if (downloadState is DownloadErrorState && downloadState.url == url2) {
                   print(
                       "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
                   onError(2,downloadState.url, downloadState.error);
