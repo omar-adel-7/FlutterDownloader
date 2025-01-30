@@ -4,6 +4,8 @@ import 'package:downloader/downloader_plugin.dart';
 import 'package:downloader/src/download_util.dart';
 import 'package:path/path.dart';
 
+import 'cubit/download_state.dart';
+
 class DownloadArgs {
   final String downloadLink;
   final String destinationDirPath;
@@ -36,13 +38,16 @@ class DownloadArgs {
     }
   }
 
-  baseCompletedListen() {
-    if (DownloaderPlugin.isFileByArgsExist(this)) {
-      updateIsDownloadedWork(true);
-      if (onCompleted != null) {
-        onCompleted!(filePath);
+  baseCompletedListen(String url, DownloadStates downloadState) {
+    if(downloadState is DownloadCompletedState &&
+        downloadState.url == url &&
+        DownloaderPlugin.isFileByArgsExist(this))
+      {
+        updateIsDownloadedWork(true);
+        if (onCompleted != null) {
+          onCompleted!(filePath);
+        }
       }
-    }
   }
 
   void deleteDownloadedFile() {
