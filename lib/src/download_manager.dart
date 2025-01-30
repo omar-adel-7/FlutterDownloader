@@ -20,8 +20,9 @@ class DownloadManager {
       {required String url,
       required String destinationPath,
       required String fileName,
-        String? notificationMessage,
-        String? notificationProgressMessage ,String? notificationCompleteMessage}) {
+      String? notificationMessage,
+      String? notificationProgressMessage,
+      String? notificationCompleteMessage}) {
     if (!isInDownloadList(url)) {
       if (DownloaderPlugin.isPlatformAndroid()) {
         DownloadUtil.startAndroidDownload(
@@ -40,7 +41,7 @@ class DownloadManager {
           iosNotificationProgressMessage: notificationProgressMessage,
           iosNotificationCompleteMessage: notificationCompleteMessage,
         ));
-        IOSDownloadMethodChannel.instance.downloadCubit.publishAdded(url:url);
+        IOSDownloadMethodChannel.instance.downloadCubit.publishAdded(url: url);
         if (DownloaderPlugin.isSerial) {
           if (getDownloadsCount() == 1) {
             DownloadUtil.startIosDownload(
@@ -55,20 +56,23 @@ class DownloadManager {
   }
 
   cancelUrlDownload(String url) {
-    DownloadUtil.cancelUrlDownload(url);
-    if (DownloaderPlugin.isPlatformIos()) {
-      if (DownloaderPlugin.isSerial) {
-        if (_iosIfCurrentlyDownloading(url)) {
-          iosRemoveDownload(url);
-          DownloadUtil.sendIosCanceled(url);
-          iosCheckToDownloadNext();
+    DownloadModel? downloadModel = getDownloadIfExist(url);
+    if (downloadModel != null) {
+      DownloadUtil.cancelUrlDownload(url);
+      if (DownloaderPlugin.isPlatformIos()) {
+        if (DownloaderPlugin.isSerial) {
+          if (_iosIfCurrentlyDownloading(url)) {
+            iosRemoveDownload(url);
+            DownloadUtil.sendIosCanceled(url);
+            iosCheckToDownloadNext();
+          } else {
+            iosRemoveDownload(url);
+            DownloadUtil.sendIosCanceled(url);
+          }
         } else {
           iosRemoveDownload(url);
           DownloadUtil.sendIosCanceled(url);
         }
-      } else {
-        iosRemoveDownload(url);
-        DownloadUtil.sendIosCanceled(url);
       }
     }
   }
@@ -103,14 +107,16 @@ class DownloadManager {
 
   getAndroidList(String? listData) {
     list.clear();
-    if(listData?.isNotEmpty==true)
-    {
-      List<String> tempList  = listData?.split(DownloaderPlugin.ANDROID_DOWNLOADER_LIST_DIVIDER_KEY)??[];
+    if (listData?.isNotEmpty == true) {
+      List<String> tempList = listData
+              ?.split(DownloaderPlugin.ANDROID_DOWNLOADER_LIST_DIVIDER_KEY) ??
+          [];
       tempList.removeLast();
       for (int i = 0; i < tempList.length; i++) {
-        List<String> tempItemList =  tempList[i].split(DownloaderPlugin.ANDROID_DOWNLOADER_LIST_ITEM_INTERNAL_KEY);
-        DownloadModel downloadModel = DownloadModel(url: tempItemList[0] ,
-            progress: int.parse(tempItemList[1]));
+        List<String> tempItemList = tempList[i]
+            .split(DownloaderPlugin.ANDROID_DOWNLOADER_LIST_ITEM_INTERNAL_KEY);
+        DownloadModel downloadModel = DownloadModel(
+            url: tempItemList[0], progress: int.parse(tempItemList[1]));
         list.add(downloadModel);
       }
     }
@@ -150,6 +156,12 @@ class DownloadManager {
       if (downloadModel.url == url) return downloadModel;
     }
     return null;
+  }
+
+  int? getDownloadIndexIfExist(String url) {
+    final int foundIndex =
+        list.indexWhere((downloadModel) => downloadModel.url == url);
+    return foundIndex != -1 ? foundIndex : null;
   }
 
   bool isDownloadsNotEmpty() {

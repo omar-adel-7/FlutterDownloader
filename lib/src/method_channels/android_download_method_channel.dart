@@ -1,8 +1,5 @@
 import 'package:flutter/services.dart';
-
 import '../../cubit/download_cubit.dart';
-import '../../downloader_plugin.dart';
-import '../download_manager.dart';
 
 class AndroidDownloadMethodChannel {
   static const _androidDownloadChannelName = 'download';

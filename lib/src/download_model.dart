@@ -3,7 +3,7 @@ class DownloadModel {
   final String iosDestinationPath;
   final String iosFileName;
   int progress;
-  String? iosNotificationMessage ;
+  String iosNotificationMessage = '';
   String? iosNotificationProgressMessage;
   String? iosNotificationCompleteMessage;
 
@@ -12,8 +12,10 @@ class DownloadModel {
     this.iosDestinationPath = "",
     this.iosFileName = "",
     this.progress = 0,
-    this.iosNotificationMessage,
+    String? iosNotificationMessage,
     this.iosNotificationProgressMessage,
     this.iosNotificationCompleteMessage,
-  });
+  }) {
+    this.iosNotificationMessage = iosNotificationMessage ?? iosFileName;
+  }
 }

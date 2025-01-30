@@ -1,6 +1,10 @@
+import 'package:downloader/downloader_plugin.dart';
 import 'package:flutter/services.dart';
 
 import '../../cubit/download_cubit.dart';
+import '../download_manager.dart';
+import '../download_model.dart';
+import '../ios_local_notifications_util.dart';
 
 class IOSDownloadMethodChannel {
   static const _iOSDownloadChannelName = 'iOSDownloadChannelName';
@@ -17,11 +21,17 @@ class IOSDownloadMethodChannel {
 
   IOSDownloadMethodChannel._init();
 
-  late DownloadCubit downloadCubit ;
+  late DownloadCubit downloadCubit;
+
+  IosLocalNotificationsUtil? iosLocalNotificationsUtil;
+
   init(DownloadCubit downloadCubit) {
     _channelMethod = const MethodChannel(_iOSDownloadChannelName);
     _channelMethod?.setMethodCallHandler(methodHandler);
-    this.downloadCubit=downloadCubit;
+    this.downloadCubit = downloadCubit;
+    if (DownloaderPlugin.showIosNotifications) {
+      iosLocalNotificationsUtil = IosLocalNotificationsUtil();
+    }
   }
 
   Future<void> methodHandler(MethodCall call) async {
@@ -30,18 +40,54 @@ class IOSDownloadMethodChannel {
       case _iOSDownloadResultProgress:
         String url = methodData['url'];
         int progress = methodData['progress'];
-          downloadCubit.publishProgress(url:url, progress: progress);
+        downloadCubit.publishProgress(url: url, progress: progress);
+        if (DownloaderPlugin.showIosNotifications) {
+          DownloadModel? downloadModel =
+              DownloadManager().getDownloadIfExist(url);
+          if (downloadModel != null) {
+            int? index = DownloadManager().getDownloadIndexIfExist(url);
+            if (index != null) {
+              iosLocalNotificationsUtil?.showNotification(
+                  id: index + 1,
+                  body: downloadModel.iosNotificationProgressMessage ??
+                      "${DownloaderPlugin.notificationProgressMessage} "
+                          "${downloadModel.iosNotificationMessage}");
+            }
+          }
+        }
+
         break;
       case _iOSDownloadResultCompleted:
         String url = methodData['url'];
-          downloadCubit.publishCompleted(url:url);
+        downloadCubit.publishCompleted(url: url);
+        if (DownloaderPlugin.showIosNotifications) {
+          DownloadModel? downloadModel =
+              DownloadManager().getDownloadIfExist(url);
+          if (downloadModel != null) {
+            int? index = DownloadManager().getDownloadIndexIfExist(url);
+            if (index != null) {
+              iosLocalNotificationsUtil?.showNotification(
+                  id: index + 1,
+                  body: downloadModel.iosNotificationCompleteMessage ??
+                      "${DownloaderPlugin.notificationCompleteMessage} "
+                          "${downloadModel.iosNotificationMessage}");
+            }
+          }
+        }
         break;
       case _iOSDownloadResultError:
         String url = methodData['url'];
         String? error = methodData['error'];
-        if(error?.contains("cancel")==false){
-          downloadCubit.publishError(url:url,error: error);
+        if (error?.contains("cancel") == false) {
+          downloadCubit.publishError(url: url, error: error);
         }
+        if (DownloaderPlugin.showIosNotifications) {
+          int? index = DownloadManager().getDownloadIndexIfExist(url);
+          if (index != null) {
+            iosLocalNotificationsUtil?.cancelNotification(index + 1);
+          }
+        }
+
         break;
       default:
         break;
@@ -63,10 +109,7 @@ class IOSDownloadMethodChannel {
 
   cancelDownloadFile(String url) {
     Map argsMap = <dynamic, dynamic>{};
-    argsMap.addAll({
-      'url': url
-    });
-    _channelMethod?.invokeMethod(_iosCancelDownload,argsMap);
+    argsMap.addAll({'url': url});
+    _channelMethod?.invokeMethod(_iosCancelDownload, argsMap);
   }
-
 }
