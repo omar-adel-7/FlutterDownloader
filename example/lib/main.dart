@@ -13,7 +13,7 @@ void main() {
   DownloadCubit downloadCubit = DownloadCubit();
   DownloaderPlugin.init(downloadCubit,
       is_serial: true,
-      //parallel_main_notification_message: "test parallel",
+      //parallel_main_notification_message: "parallel download service running",
       notification_progress_message: "downloading",
       notification_complete_message: "completed download");
   // DownloaderPlugin.init(downloadCubit,is_serial: true);
@@ -34,11 +34,12 @@ class _MyAppState extends State<MyApp> {
   String message1 = "";
   int progress2 = 0;
   String message2 = "";
+
   @override
   void initState() {
     super.initState();
     // DownloaderPlugin.initNotificationStrings(
-    //    // parallel_main_notification_message: "initNotificationStrings test parallel",
+    //     //parallel_main_notification_message: "initNotificationStrings parallel download service running",
     //     notification_progress_message: "initNotificationStrings downloading",
     //     notification_complete_message: "initNotificationStrings completed download");
     requestNotificationPermission();
@@ -96,10 +97,10 @@ class _MyAppState extends State<MyApp> {
                   destinationPath: destinationDirPath,
                   fileName: fileName,
                   notificationMessage: "test 1 notificationMessage",
-                  notificationProgressMessage:
-                      "test 1 notificationProgressMessage",
-                  // notificationCompleteMessage:
-                  //     "test 1 notificationCompleteMessage",
+                  // notificationProgressMessage:
+                  //     "test 1 notificationProgressMessage",
+                  //  notificationCompleteMessage:
+                  //      "test 1 notificationCompleteMessage",
                 );
               },
             ),
@@ -108,22 +109,26 @@ class _MyAppState extends State<MyApp> {
             ),
             BlocConsumer<DownloadCubit, DownloadStates>(
               listener: (context, downloadState) {
-                if (downloadState is DownloadAddedState && downloadState.url == url1) {
+                if (downloadState is DownloadAddedState &&
+                    downloadState.url == url1) {
                   print(
                       "BlocConsumer listener onAdded url=${downloadState.url}");
-                  onAdded(1,downloadState.url);
-                } else if (downloadState is DownloadProgressState && downloadState.url == url1) {
+                  onAdded(1, downloadState.url);
+                } else if (downloadState is DownloadProgressState &&
+                    downloadState.url == url1) {
                   print(
                       "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-                  onProgress(1,downloadState.url, downloadState.progress);
-                } else if (downloadState is DownloadCompletedState && downloadState.url == url1) {
+                  onProgress(1, downloadState.url, downloadState.progress);
+                } else if (downloadState is DownloadCompletedState &&
+                    downloadState.url == url1) {
                   print(
                       "BlocConsumer listener onCompleted url=${downloadState.url}");
-                  onCompleted(1,downloadState.url);
-                } else if (downloadState is DownloadErrorState && downloadState.url == url1) {
+                  onCompleted(1, downloadState.url);
+                } else if (downloadState is DownloadErrorState &&
+                    downloadState.url == url1) {
                   print(
                       "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
-                  onError(1,downloadState.url, downloadState.error);
+                  onError(1, downloadState.url, downloadState.error);
                 }
               },
               builder: (context, downloadState) {
@@ -171,10 +176,10 @@ class _MyAppState extends State<MyApp> {
                   destinationPath: destinationDirPath,
                   fileName: fileName,
                   notificationMessage: "test 2 notificationMessage",
-                  // notificationProgressMessage:
-                  //     "test 2 notificationProgressMessage",
-                  notificationCompleteMessage:
-                      "test 2 notificationCompleteMessage",
+                  //  notificationProgressMessage:
+                  //      "test 2 notificationProgressMessage",
+                  // notificationCompleteMessage:
+                  //     "test 2 notificationCompleteMessage",
                 );
               },
             ),
@@ -183,22 +188,26 @@ class _MyAppState extends State<MyApp> {
             ),
             BlocConsumer<DownloadCubit, DownloadStates>(
               listener: (context, downloadState) {
-                if (downloadState is DownloadAddedState && downloadState.url == url2) {
+                if (downloadState is DownloadAddedState &&
+                    downloadState.url == url2) {
                   print(
                       "BlocConsumer listener onAdded url=${downloadState.url}");
-                  onAdded(2,downloadState.url);
-                } else if (downloadState is DownloadProgressState && downloadState.url == url2) {
+                  onAdded(2, downloadState.url);
+                } else if (downloadState is DownloadProgressState &&
+                    downloadState.url == url2) {
                   print(
                       "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-                  onProgress(2,downloadState.url, downloadState.progress);
-                } else if (downloadState is DownloadCompletedState && downloadState.url == url2) {
+                  onProgress(2, downloadState.url, downloadState.progress);
+                } else if (downloadState is DownloadCompletedState &&
+                    downloadState.url == url2) {
                   print(
                       "BlocConsumer listener onCompleted url=${downloadState.url}");
-                  onCompleted(2,downloadState.url);
-                } else if (downloadState is DownloadErrorState && downloadState.url == url2) {
+                  onCompleted(2, downloadState.url);
+                } else if (downloadState is DownloadErrorState &&
+                    downloadState.url == url2) {
                   print(
                       "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
-                  onError(2,downloadState.url, downloadState.error);
+                  onError(2, downloadState.url, downloadState.error);
                 }
               },
               builder: (context, downloadState) {
@@ -244,7 +253,7 @@ class _MyAppState extends State<MyApp> {
     return appDocumentsDirectory.path;
   }
 
-  void onAdded(int id,String url) {
+  void onAdded(int id, String url) {
     int progress = 0;
     String message = "added";
     id == 1 ? progress1 = progress : progress2 = progress;
@@ -253,7 +262,7 @@ class _MyAppState extends State<MyApp> {
     // setState(() {});
   }
 
-  void onProgress(int id,String url, int progress) {
+  void onProgress(int id, String url, int progress) {
     String message = "downloading";
     id == 1 ? progress1 = progress : progress2 = progress;
     id == 1 ? message1 = message : message2 = message;
@@ -261,7 +270,7 @@ class _MyAppState extends State<MyApp> {
     // setState(() {});
   }
 
-  void onCompleted(int id,String url) {
+  void onCompleted(int id, String url) {
     int progress = 100;
     String message = "completed";
     id == 1 ? progress1 = progress : progress2 = progress;
@@ -270,7 +279,7 @@ class _MyAppState extends State<MyApp> {
     // setState(() {});
   }
 
-  void onError(int id,String url, String? error) {
+  void onError(int id, String url, String? error) {
     int progress = 0;
     String message = error ?? "error";
     id == 1 ? progress1 = progress : progress2 = progress;

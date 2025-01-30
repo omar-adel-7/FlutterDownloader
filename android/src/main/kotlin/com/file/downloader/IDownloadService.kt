@@ -24,8 +24,8 @@ abstract class IDownloadService : Service() {
     val prefsKeyPrefix = "flutter."
     var isSerial: Boolean = true
     var parallelMainNotificationMessage: String = ""
-    var defaultNotificationProgressMessage: String = ""
-    var defaultNotificationCompleteMessage: String = ""
+    var defaultNotificationProgressMessage: String = "downloading : "
+    var defaultNotificationCompleteMessage: String = "completed download of : "
 
     var resultReceiver: ResultReceiver? = null
     var lastProgressTime: Long = 0
