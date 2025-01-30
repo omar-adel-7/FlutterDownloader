@@ -190,7 +190,7 @@ abstract class IDownloadService : Service() {
                         link,
                         false,
                         IDownload.RESPONSE_CREATE_FOLDER_ERROR_MESSAGE,
-                        notificationMessage,
+                        notificationMessage,notificationCompleteMessage
                     )
                     return@Runnable
                 }
