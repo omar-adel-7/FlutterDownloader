@@ -23,7 +23,8 @@ class DownloadServices {
         cancelDownload(fileURLString)
         var urlRequest = URLRequest(url: fileURL)
         urlRequest.setValue("identity", forHTTPHeaderField: "Accept-Encoding")
-        let downloadRequest = AF.download(urlRequest, to: destination).response { response in
+        let downloadRequest = AF.download(urlRequest, to: destination).response {
+            response in
             switch response.result {
             case .success(let url):
                 guard let url = url else { return }
@@ -31,7 +32,13 @@ class DownloadServices {
                 completionHandler(url, fileURL, nil, nil)
             case .failure(let error):
                 downloadsList.removeValue(forKey: fileURLString)
+               if case AFError.explicitlyCancelled = error {
+                   // print("failure explicitlyCancelled")
+                }
+                else{
+                  //  print("other failure")
                 completionHandler(nil, fileURL, error, nil)
+                }
             }
         }.downloadProgress { progress in
             completionHandler(nil, fileURL, nil, Int(progress.fractionCompleted * 100))
