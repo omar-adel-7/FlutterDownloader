@@ -11,6 +11,7 @@ class IOSDownloadMethodChannel {
   static const _iOSStartDownload = 'iOSStartDownload';
   static const _iosCancelDownload = 'cancelDownload';
   static const _iOSDownloadResultProgress = 'iOSDownloadProgress';
+  static const _iOSDownloadResultCanceled = 'iOSDownloadCanceled';
   static const _iOSDownloadResultCompleted = 'iOSDownloadCompleted';
   static const _iOSDownloadResultError = 'iOSDownloadError';
 
@@ -58,6 +59,16 @@ class IOSDownloadMethodChannel {
           }
         }
         downloadCubit.publishProgress(url: url, progress: progress);
+        break;
+      case _iOSDownloadResultCanceled:
+        String url = methodData['url'];
+        if (DownloaderPlugin.showIosNotifications) {
+          if (notificationsMap[url] != null) {
+            iosLocalNotificationsUtil
+                ?.cancelNotification(notificationsMap[url]!);
+            notificationsMap.remove(url);
+          }
+        }
         break;
       case _iOSDownloadResultCompleted:
         String url = methodData['url'];

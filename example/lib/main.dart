@@ -43,7 +43,9 @@ class _MyAppState extends State<MyApp> {
     //   //  android_parallel_main_notification_message: "initNotificationStrings parallel download service running",
     //     notification_progress_message: "initNotificationStrings downloading",
     //     notification_complete_message: "initNotificationStrings completed download");
-    requestNotificationPermission();
+    if(Platform.isAndroid){
+      requestNotificationPermission();
+    }
   }
 
   Future<void> requestNotificationPermission() async {

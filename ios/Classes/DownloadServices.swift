@@ -32,13 +32,7 @@ class DownloadServices {
                 completionHandler(url, fileURL, nil, nil)
             case .failure(let error):
                 downloadsList.removeValue(forKey: fileURLString)
-               if case AFError.explicitlyCancelled = error {
-                   // print("failure explicitlyCancelled")
-                }
-                else{
-                  //  print("other failure")
                 completionHandler(nil, fileURL, error, nil)
-                }
             }
         }.downloadProgress { progress in
             completionHandler(nil, fileURL, nil, Int(progress.fractionCompleted * 100))

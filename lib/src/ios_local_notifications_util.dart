@@ -9,10 +9,11 @@ class IosLocalNotificationsUtil {
 
   Future<void> initialize() async {
     DarwinInitializationSettings initializationSettingsDarwin =
-        const DarwinInitializationSettings(//any of them true for request notification permission
+        const DarwinInitializationSettings(
+      //make any of them true for request notification permission
       requestSoundPermission: false,
       requestBadgePermission: false,
-      requestAlertPermission: true,
+      requestAlertPermission: false,
     );
 
     InitializationSettings settings =
@@ -24,16 +25,23 @@ class IosLocalNotificationsUtil {
             onDidReceiveBackgroundNotificationResponse);
   }
 
-  showNotification({required int id, String? title, required String body}) {
-    flutterLocalNotificationsPlugin.show(
-      id,
-      title,
-      body,
-      const NotificationDetails(iOS: DarwinNotificationDetails(
-        presentAlert: false,//disable foreground
-        presentBanner: false//disable foreground
-      )),
-    );
+  showNotification(
+      {required int id, String? title, required String body}) async {
+    if (await requestNotificationsPermission()) {
+      print("showNotification requestNotificationsPermission granted");
+      flutterLocalNotificationsPlugin.show(
+        id,
+        title,
+        body,
+        const NotificationDetails(
+            iOS: DarwinNotificationDetails(
+                presentAlert: false, //disable foreground
+                presentBanner: false //disable foreground
+                )),
+      );
+    } else {
+      print("showNotification requestNotificationsPermission not granted");
+    }
   }
 
   cancelNotification(int id) {
@@ -48,4 +56,12 @@ class IosLocalNotificationsUtil {
 
   static onDidReceiveBackgroundNotificationResponse(
       NotificationResponse details) {}
+
+  Future<bool> requestNotificationsPermission() async {
+    return await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                IOSFlutterLocalNotificationsPlugin>()
+            ?.requestPermissions(sound: true, alert: true, badge: true) ??
+        false;
+  }
 }

@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import Alamofire
 
 public class DownloaderPlugin: NSObject, FlutterPlugin {
 
@@ -28,7 +29,14 @@ public class DownloaderPlugin: NSObject, FlutterPlugin {
                                self.channel?.invokeMethod("iOSDownloadCompleted", arguments: ["url": fileURL!.absoluteString])
                            }
                            if let error = error {
-                               self.channel?.invokeMethod("iOSDownloadError", arguments: ["error": error.localizedDescription, "url": fileURL!.absoluteString])
+                               if case AFError.explicitlyCancelled = error {
+                                    print("failure explicitlyCancelled")
+                                   self.channel?.invokeMethod("iOSDownloadCanceled", arguments: ["url": fileURL!.absoluteString])
+                                }
+                                else{
+                                    print("other failure")
+                                    self.channel?.invokeMethod("iOSDownloadError", arguments: ["error": error.localizedDescription, "url": fileURL!.absoluteString])
+                                 }
                            }
                        }
     case "cancelDownload":
