@@ -13,7 +13,7 @@ void main() {
   DownloadCubit downloadCubit = DownloadCubit();
   DownloaderPlugin.init(downloadCubit,
       is_serial: true,
-      show_ios_notifications: true,
+      //show_ios_notifications: false,
       //android_parallel_main_notification_message: "parallel download service running",
       notification_progress_message: "downloading",
       notification_complete_message: "completed download");
