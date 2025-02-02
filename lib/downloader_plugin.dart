@@ -158,6 +158,10 @@ class DownloaderPlugin {
     AndroidDownloadMethodChannel.instance.cancelDownloads();
   }
 
+  static void cancelIosDownloads() {
+    IOSDownloadMethodChannel.instance.cancelDownloads();
+  }
+
   static bool isDownloadsNotEmpty() {
     return DownloadManager().isDownloadsNotEmpty();
   }

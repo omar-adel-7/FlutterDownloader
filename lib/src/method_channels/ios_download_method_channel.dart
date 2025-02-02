@@ -53,7 +53,7 @@ class IOSDownloadMethodChannel {
               iosLocalNotificationsUtil?.showNotification(
                   id: notificationId,
                   body: "${downloadModel.iosNotificationProgressMessage ??
-                      "${DownloaderPlugin.notificationProgressMessage} "}${downloadModel.iosNotificationMessage}");
+                      DownloaderPlugin.notificationProgressMessage} ${downloadModel.iosNotificationMessage}");
               notificationsMap[url] = notificationId;
             }
           }
@@ -80,7 +80,7 @@ class IOSDownloadMethodChannel {
               iosLocalNotificationsUtil?.showNotification(
                   id: notificationsMap[url]!,
                   body: "${downloadModel.iosNotificationCompleteMessage ??
-                      "${DownloaderPlugin.notificationCompleteMessage} "}${downloadModel.iosNotificationMessage}");
+                      DownloaderPlugin.notificationCompleteMessage} ${downloadModel.iosNotificationMessage}");
               notificationsMap.remove(url);
             }
           }
@@ -121,5 +121,9 @@ class IOSDownloadMethodChannel {
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({'url': url});
     _channelMethod?.invokeMethod(_iosCancelSingle, argsMap);
+  }
+
+  cancelDownloads() {
+    _channelMethod?.invokeMethod(_iosCancelAll);
   }
 }
