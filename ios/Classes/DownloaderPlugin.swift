@@ -30,11 +30,9 @@ public class DownloaderPlugin: NSObject, FlutterPlugin {
                            }
                            if let error = error {
                                if case AFError.explicitlyCancelled = error {
-                                    print("failure explicitlyCancelled")
                                    self.channel?.invokeMethod("iOSDownloadCanceled", arguments: ["url": fileURL!.absoluteString])
                                 }
                                 else{
-                                    print("other failure")
                                     self.channel?.invokeMethod("iOSDownloadError", arguments: ["error": error.localizedDescription, "url": fileURL!.absoluteString])
                                  }
                            }
