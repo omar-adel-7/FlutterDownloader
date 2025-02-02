@@ -47,7 +47,7 @@ class DownloadServices {
     }
     
     
-    static func cancelAllDownload() {
+    static func cancelDownloads() {
         downloadsList = [:]
         AF.cancelAllRequests()
     }

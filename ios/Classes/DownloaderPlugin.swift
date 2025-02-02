@@ -7,7 +7,7 @@ public class DownloaderPlugin: NSObject, FlutterPlugin {
     private var channel: FlutterMethodChannel? = nil
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-      let channel  = FlutterMethodChannel(name: "iOSDownloadChannelName", binaryMessenger: registrar.messenger())
+      let channel  = FlutterMethodChannel(name: "download", binaryMessenger: registrar.messenger())
     let instance = DownloaderPlugin()
       instance.channel = channel
     registrar.addMethodCallDelegate(instance, channel: channel)
@@ -15,7 +15,7 @@ public class DownloaderPlugin: NSObject, FlutterPlugin {
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
      switch call.method {
-    case "iOSStartDownload":
+    case "start":
     let arguments = call.arguments as! [String: String]
                        let fileURL = arguments["url"]
                        let fileName = arguments["fileName"]
@@ -23,24 +23,26 @@ public class DownloaderPlugin: NSObject, FlutterPlugin {
 
                        DownloadServices.download(fileURLString: fileURL!, destinationPath: destinationPath!, fileName: fileName!) { destinationURL, fileURL, error, progress in
                            if let progress = progress {
-                               self.channel?.invokeMethod("iOSDownloadProgress", arguments: ["progress": progress, "url": fileURL!.absoluteString])
+                               self.channel?.invokeMethod("resultProgress", arguments: ["progress": progress, "url": fileURL!.absoluteString])
                              }
                            if let _ = destinationURL {
-                               self.channel?.invokeMethod("iOSDownloadCompleted", arguments: ["url": fileURL!.absoluteString])
+                               self.channel?.invokeMethod("resultCompleted", arguments: ["url": fileURL!.absoluteString])
                            }
                            if let error = error {
                                if case AFError.explicitlyCancelled = error {
-                                   self.channel?.invokeMethod("iOSDownloadCanceled", arguments: ["url": fileURL!.absoluteString])
+                                   self.channel?.invokeMethod("resultCanceled", arguments: ["url": fileURL!.absoluteString])
                                 }
                                 else{
-                                    self.channel?.invokeMethod("iOSDownloadError", arguments: ["error": error.localizedDescription, "url": fileURL!.absoluteString])
+                                    self.channel?.invokeMethod("resultError", arguments: ["error": error.localizedDescription, "url": fileURL!.absoluteString])
                                  }
                            }
                        }
-    case "cancelDownload":
+    case "cancelSingle":
         let arguments = call.arguments as! [String: String]
              let fileURL = arguments["url"]
             DownloadServices.cancelDownload(fileURL!)
+     case "cancelAll":
+         DownloadServices.cancelDownloads()
     default:
       result(FlutterMethodNotImplemented)
     }

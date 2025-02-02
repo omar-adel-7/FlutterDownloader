@@ -7,13 +7,14 @@ import '../download_model.dart';
 import '../ios_local_notifications_util.dart';
 
 class IOSDownloadMethodChannel {
-  static const _iOSDownloadChannelName = 'iOSDownloadChannelName';
-  static const _iOSStartDownload = 'iOSStartDownload';
-  static const _iosCancelDownload = 'cancelDownload';
-  static const _iOSDownloadResultProgress = 'iOSDownloadProgress';
-  static const _iOSDownloadResultCanceled = 'iOSDownloadCanceled';
-  static const _iOSDownloadResultCompleted = 'iOSDownloadCompleted';
-  static const _iOSDownloadResultError = 'iOSDownloadError';
+  static const _iOSDownloadChannelName = 'download';
+  static const _iOSStart = 'start';
+  static const _iosCancelSingle = 'cancelSingle';
+  static const _iosCancelAll = 'cancelAll';
+  static const _iOSDownloadResultProgress = 'resultProgress';
+  static const _iOSDownloadResultCanceled = 'resultCanceled';
+  static const _iOSDownloadResultCompleted = 'resultCompleted';
+  static const _iOSDownloadResultError = 'resultError';
 
   MethodChannel? _channelMethod;
 
@@ -51,9 +52,8 @@ class IOSDownloadMethodChannel {
               notificationId++;
               iosLocalNotificationsUtil?.showNotification(
                   id: notificationId,
-                  body: downloadModel.iosNotificationProgressMessage ??
-                      "${DownloaderPlugin.notificationProgressMessage} "
-                          "${downloadModel.iosNotificationMessage}");
+                  body: "${downloadModel.iosNotificationProgressMessage ??
+                      "${DownloaderPlugin.notificationProgressMessage} "}${downloadModel.iosNotificationMessage}");
               notificationsMap[url] = notificationId;
             }
           }
@@ -79,9 +79,8 @@ class IOSDownloadMethodChannel {
             if (notificationsMap[url] != null) {
               iosLocalNotificationsUtil?.showNotification(
                   id: notificationsMap[url]!,
-                  body: downloadModel.iosNotificationCompleteMessage ??
-                      "${DownloaderPlugin.notificationCompleteMessage} "
-                          "${downloadModel.iosNotificationMessage}");
+                  body: "${downloadModel.iosNotificationCompleteMessage ??
+                      "${DownloaderPlugin.notificationCompleteMessage} "}${downloadModel.iosNotificationMessage}");
               notificationsMap.remove(url);
             }
           }
@@ -115,12 +114,12 @@ class IOSDownloadMethodChannel {
       'destinationPath': destinationDirPath,
       'fileName': fileName
     });
-    _channelMethod?.invokeMethod(_iOSStartDownload, argsMap);
+    _channelMethod?.invokeMethod(_iOSStart, argsMap);
   }
 
   cancelDownloadFile(String url) {
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({'url': url});
-    _channelMethod?.invokeMethod(_iosCancelDownload, argsMap);
+    _channelMethod?.invokeMethod(_iosCancelSingle, argsMap);
   }
 }

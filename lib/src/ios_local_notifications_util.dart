@@ -28,7 +28,6 @@ class IosLocalNotificationsUtil {
   showNotification(
       {required int id, String? title, required String body}) async {
     if (await requestNotificationsPermission()) {
-      print("showNotification requestNotificationsPermission granted");
       flutterLocalNotificationsPlugin.show(
         id,
         title,
@@ -39,8 +38,6 @@ class IosLocalNotificationsUtil {
                 presentBanner: false //disable foreground
                 )),
       );
-    } else {
-      print("showNotification requestNotificationsPermission not granted");
     }
   }
 
