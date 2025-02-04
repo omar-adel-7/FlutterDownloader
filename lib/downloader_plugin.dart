@@ -49,12 +49,15 @@ class DownloaderPlugin {
         notification_complete_message != null) {
       initNotificationStrings(
           android_parallel_main_notification_message:
-          android_parallel_main_notification_message,
+              android_parallel_main_notification_message,
           notification_progress_message: notification_progress_message,
           notification_complete_message: notification_complete_message);
     }
-    AndroidDownloadMethodChannel.instance.init(downloadCubit);
-    IOSDownloadMethodChannel.instance.init(downloadCubit);
+    if (DownloaderPlugin.isPlatformAndroid()) {
+      AndroidDownloadMethodChannel.instance.init(downloadCubit);
+    } else if (DownloaderPlugin.isPlatformIos()) {
+      IOSDownloadMethodChannel.instance.init(downloadCubit);
+    }
   }
 
   static initNotificationStrings(
@@ -62,15 +65,16 @@ class DownloaderPlugin {
       String? notification_progress_message,
       String? notification_complete_message}) async {
     androidParallelMainNotificationMessage =
-        android_parallel_main_notification_message ?? androidParallelMainNotificationMessage;
+        android_parallel_main_notification_message ??
+            androidParallelMainNotificationMessage;
     notificationProgressMessage =
         notification_progress_message ?? notificationProgressMessage;
     notificationCompleteMessage =
         notification_complete_message ?? notificationCompleteMessage;
     if (isPlatformAndroid()) {
       androidSharedPreferences = await SharedPreferences.getInstance();
-      androidSharedPreferences?.setString(
-          'parallelMainNotificationMessage', androidParallelMainNotificationMessage);
+      androidSharedPreferences?.setString('parallelMainNotificationMessage',
+          androidParallelMainNotificationMessage);
       androidSharedPreferences?.setString(
           'defaultNotificationProgressMessage', notificationProgressMessage);
       androidSharedPreferences?.setString(
@@ -187,21 +191,18 @@ class DownloaderPlugin {
   }
 
   static bool isUrlDownloaded(String url, DownloadStates downloadState,
-  {String?  destinationDirPath, String? fileName}) {
-    bool checkFile = (destinationDirPath!=null) && (fileName!=null);
-    if(checkFile){
+      {String? destinationDirPath, String? fileName}) {
+    bool checkFile = (destinationDirPath != null) && (fileName != null);
+    if (checkFile) {
       bool checkFileResult = isFileExist(
-          destinationDirPath: destinationDirPath,
-          fileName: fileName);
+          destinationDirPath: destinationDirPath, fileName: fileName);
       if (checkFileResult &&
-          downloadState is DownloadCompletedState && downloadState.url == url
-      ) {
+          downloadState is DownloadCompletedState &&
+          downloadState.url == url) {
         return true;
       }
-    }
-    else{
-      if (downloadState is DownloadCompletedState && downloadState.url == url
-      ) {
+    } else {
+      if (downloadState is DownloadCompletedState && downloadState.url == url) {
         return true;
       }
     }
