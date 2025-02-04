@@ -53,9 +53,9 @@ class DownloaderPlugin {
           notification_progress_message: notification_progress_message,
           notification_complete_message: notification_complete_message);
     }
-    if (DownloaderPlugin.isPlatformAndroid()) {
+    if (isPlatformAndroid()) {
       AndroidDownloadMethodChannel.instance.init(downloadCubit);
-    } else if (DownloaderPlugin.isPlatformIos()) {
+    } else if (isPlatformIos()) {
       IOSDownloadMethodChannel.instance.init(downloadCubit);
     }
   }
