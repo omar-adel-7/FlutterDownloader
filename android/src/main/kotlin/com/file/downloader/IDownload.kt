@@ -3,9 +3,7 @@ package com.file.downloader
 import android.content.Context
 import android.os.Bundle
 import android.os.StatFs
-import android.util.Log
 import java.io.File
-import kotlin.collections.get
 
 object IDownload {
     const val SRC_URL_KEY = "src_url"

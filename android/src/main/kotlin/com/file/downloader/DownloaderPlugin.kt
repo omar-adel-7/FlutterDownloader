@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.ResultReceiver
-import android.util.Log
 import androidx.annotation.NonNull
 import com.file.downloader.IDownloadService.Companion.STATUS_DOWNLOAD_ADDED
 import com.file.downloader.IDownloadService.Companion.STATUS_DOWNLOAD_CANCELED
