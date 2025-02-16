@@ -317,11 +317,9 @@ abstract class IDownloadService : Service() {
     }
 
     fun updateProgress(url: String, progress: Int) {
-        if (downloadModelList.any { it.url == url }) {
-            val index = downloadModelList.indexOfFirst { it.url == url }
-            if ((index != -1) && (index < downloadModelList.size))
-                downloadModelList[index].progress = progress
-        }
+        val index = downloadModelList.indexOfFirst { it.url == url }
+        if (index != -1)
+            downloadModelList[index].progress = progress
     }
 
     fun sendCanceled(
@@ -362,7 +360,9 @@ abstract class IDownloadService : Service() {
 
     fun delete(url: String) {
         runnableResults.remove(url)
-        downloadModelList.removeAll { item -> item.url == url }
+        val index = downloadModelList.indexOfFirst { item -> item.url == url }
+        if (index != -1)
+            downloadModelList.removeAt(index)
     }
 
     fun checkToStopService() {
