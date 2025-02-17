@@ -8,7 +8,7 @@ allprojects {
 rootProject.layout.buildDirectory = file('../build')
 subprojects {
     def directory = "${rootProject.layout.buildDirectory.get().asFile}/${project.name}"
-    logger.quiet("directory is: $directory") // debugging
+    //logger.quiet("directory is: $directory") // debugging
     project.layout.buildDirectory = file(directory)
 }
 subprojects {
