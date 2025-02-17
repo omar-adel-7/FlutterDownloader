@@ -49,11 +49,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> requestNotificationPermission() async {
-        PermissionStatus status = await Permission.notification.status;
-        if (!status.isGranted) {
-          // The permission is not granted, request it.
-          status = await Permission.notification.request();
-        }
+    PermissionStatus status = await Permission.notification.status;
+    if (!status.isGranted) {
+      // The permission is not granted, request it.
+      status = await Permission.notification.request();
+    }
   }
 
   @override
@@ -72,6 +72,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   getMaterialApp() {
+
     String url1 = "https://server8.mp3quran.net/frs_a/014.mp3";
     String url2 = "https://server8.mp3quran.net/frs_a/018.mp3";
 
@@ -102,9 +103,9 @@ class _MyAppState extends State<MyApp> {
                     fileName: fileName,
                     notificationMessage: "test 1 notificationMessage",
                     notificationProgressMessage:
-                        "test 1 notificationProgressMessage",
-                     notificationCompleteMessage:
-                         "test 1 notificationCompleteMessage",
+                    "test 1 notificationProgressMessage",
+                    notificationCompleteMessage:
+                    "test 1 notificationCompleteMessage",
                   );
                 },
               ),
@@ -116,42 +117,41 @@ class _MyAppState extends State<MyApp> {
                   if (downloadState is DownloadAddedState &&
                       downloadState.url == url1) {
                     print(
-                        "BlocConsumer listener onAdded url=${downloadState.url}");
+                        "BlocConsumer listener url1 onAdded url=${downloadState.url}");
                     onAdded(1, downloadState.url);
                   } else if (downloadState is DownloadProgressState &&
                       downloadState.url == url1) {
                     print(
-                        "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
+                        "BlocConsumer listener url1 onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
                     onProgress(1, downloadState.url, downloadState.progress);
                   } else if (downloadState is DownloadCompletedState &&
                       downloadState.url == url1) {
                     print(
-                        "BlocConsumer listener onCompleted url=${downloadState.url}");
+                        "BlocConsumer listener url1 onCompleted url=${downloadState.url}");
                     onCompleted(1, downloadState.url);
                   } else if (downloadState is DownloadErrorState &&
                       downloadState.url == url1) {
                     print(
-                        "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
+                        "BlocConsumer listener url1 onError url=${downloadState.url} , error=${downloadState.error}");
                     onError(1, downloadState.url, downloadState.error);
                   }
                 },
                 builder: (context, downloadState) {
-                  if (downloadState is DownloadAddedState &&
+                  int? progress = DownloaderPlugin.getUrlProgress(
+                      url1, downloadState);
+                  if (progress != null) {
+                    print(
+                        "BlocConsumer builder url1 progress url=$url1"
+                            " and progress = $progress");
+                  }
+                  else if (downloadState is DownloadCompletedState &&
                       downloadState.url == url1) {
                     print(
-                        "BlocConsumer builder onAdded url=${downloadState.url}");
-                  } else if (downloadState is DownloadProgressState &&
-                      downloadState.url == url1) {
-                    print(
-                        "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-                  } else if (downloadState is DownloadCompletedState &&
-                      downloadState.url == url1) {
-                    print(
-                        "BlocConsumer builder onCompleted url=${downloadState.url}");
+                        "BlocConsumer builder url1 onCompleted url=$url1");
                   } else if (downloadState is DownloadErrorState &&
                       downloadState.url == url1) {
                     print(
-                        "BlocConsumer builder onError url=${downloadState.url} , error=${downloadState.error}");
+                        "BlocConsumer builder url1 onError url=$url1 and error=${downloadState.error}");
                   }
                   return Column(
                     children: [
@@ -199,42 +199,41 @@ class _MyAppState extends State<MyApp> {
                   if (downloadState is DownloadAddedState &&
                       downloadState.url == url2) {
                     print(
-                        "BlocConsumer listener onAdded url=${downloadState.url}");
+                        "BlocConsumer listener url2 onAdded url=${downloadState.url}");
                     onAdded(2, downloadState.url);
                   } else if (downloadState is DownloadProgressState &&
                       downloadState.url == url2) {
                     print(
-                        "BlocConsumer listener onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
+                        "BlocConsumer listener url2 onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
                     onProgress(2, downloadState.url, downloadState.progress);
                   } else if (downloadState is DownloadCompletedState &&
                       downloadState.url == url2) {
                     print(
-                        "BlocConsumer listener onCompleted url=${downloadState.url}");
+                        "BlocConsumer listener url2 onCompleted url=${downloadState.url}");
                     onCompleted(2, downloadState.url);
                   } else if (downloadState is DownloadErrorState &&
                       downloadState.url == url2) {
                     print(
-                        "BlocConsumer listener onError url=${downloadState.url} , error=${downloadState.error}");
+                        "BlocConsumer listener url2 onError url=${downloadState.url} , error=${downloadState.error}");
                     onError(2, downloadState.url, downloadState.error);
                   }
                 },
                 builder: (context, downloadState) {
-                  if (downloadState is DownloadAddedState &&
+                  int? progress = DownloaderPlugin.getUrlProgress(
+                      url2, downloadState);
+                  if (progress != null) {
+                    print(
+                        "BlocConsumer builder url2 progress url=$url2"
+                            " and progress = $progress");
+                  }
+                  else if (downloadState is DownloadCompletedState &&
                       downloadState.url == url2) {
                     print(
-                        "BlocConsumer builder onAdded url=${downloadState.url}");
-                  } else if (downloadState is DownloadProgressState &&
-                      downloadState.url == url2) {
-                    print(
-                        "BlocConsumer builder onProgress url=${downloadState.url} and progress = ${downloadState.progress}");
-                  } else if (downloadState is DownloadCompletedState &&
-                      downloadState.url == url2) {
-                    print(
-                        "BlocConsumer builder onCompleted url=${downloadState.url}");
+                        "BlocConsumer builder url2 onCompleted url=$url2");
                   } else if (downloadState is DownloadErrorState &&
                       downloadState.url == url2) {
                     print(
-                        "BlocConsumer builder onError url=${downloadState.url} , error=${downloadState.error}");
+                        "BlocConsumer builder url2 onError url=$url2 and error=${downloadState.error}");
                   }
                   return Column(
                     children: [
@@ -256,8 +255,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<String> getDestination() async {
     return await getAppInternalFolderPath()
-        //+Platform.pathSeparator // it is the same if with this line
-        // or without it as it is handled internally in the plugin
+    //+Platform.pathSeparator // it is the same if with this line
+    // or without it as it is handled internally in the plugin
         ;
   }
 
@@ -271,16 +270,12 @@ class _MyAppState extends State<MyApp> {
     String message = "added";
     id == 1 ? progress1 = progress : progress2 = progress;
     id == 1 ? message1 = message : message2 = message;
-    // //in case of not using bloc
-    // setState(() {});
   }
 
   void onProgress(int id, String url, int progress) {
     String message = "downloading";
     id == 1 ? progress1 = progress : progress2 = progress;
     id == 1 ? message1 = message : message2 = message;
-    // //in case of not using bloc
-    // setState(() {});
   }
 
   void onCompleted(int id, String url) {
@@ -288,8 +283,6 @@ class _MyAppState extends State<MyApp> {
     String message = "completed";
     id == 1 ? progress1 = progress : progress2 = progress;
     id == 1 ? message1 = message : message2 = message;
-    // //in case of not using bloc
-    // setState(() {});
   }
 
   void onError(int id, String url, String? error) {
@@ -303,7 +296,5 @@ class _MyAppState extends State<MyApp> {
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
         fontSize: 16.0);
-    // //in case of not using bloc
-    // setState(() {});
   }
 }

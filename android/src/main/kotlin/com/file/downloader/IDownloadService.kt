@@ -55,6 +55,12 @@ abstract class IDownloadService : Service() {
     abstract fun callbackBeforeError(downloadErrorMessage: String)
     abstract fun sendEvent(message: Bundle)
 
+    override fun onTimeout(startId: Int, fgsType: Int) {
+        runnableResults.clear()
+        downloadModelList.clear()
+        stopThisService()
+    }
+
     override fun onCreate() {
         prefs = getSharedPreferences("FlutterSharedPreferences", MODE_PRIVATE)
         isSerial = prefs?.getBoolean(prefsKeyPrefix + "isSerial", isSerial) ?: isSerial
