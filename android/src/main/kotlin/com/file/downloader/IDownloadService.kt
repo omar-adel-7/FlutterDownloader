@@ -255,11 +255,13 @@ abstract class IDownloadService : Service() {
             } catch (e: Exception) {
                 e.printStackTrace()
                 deleteDownloadFile(tempFilePath)
-                sendSuccessError(
-                    link, false,
-                    IDownload.RESPONSE_CONNECTION_ERROR_MESSAGE,
-                    notificationMessage,notificationCompleteMessage
-                )
+                if(e !is InterruptedIOException){
+                    sendSuccessError(
+                        link, false,
+                        IDownload.RESPONSE_CONNECTION_ERROR_MESSAGE,
+                        notificationMessage,notificationCompleteMessage
+                    )
+                }
             } finally {
                 try {
                     if (output != null) {
