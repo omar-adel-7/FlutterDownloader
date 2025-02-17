@@ -51,12 +51,11 @@ object IDownload {
         return downloadEvent
     }
 
-    fun DeleteRecursive(context: Context?, path: String?) {
+    fun DeleteRecursive(path: String?) {
         try {
             val fileOrDirectory = path?.let { File(it) }
             if (fileOrDirectory?.exists() == true) {
                 if (fileOrDirectory.isDirectory) for (child in fileOrDirectory.listFiles()!!) DeleteRecursive(
-                    context,
                     child.absolutePath
                 )
                 fileOrDirectory.delete()

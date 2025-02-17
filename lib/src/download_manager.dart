@@ -124,13 +124,16 @@ class DownloadManager {
 
   updateIosProgress(String url, int progress) {
     int index = list.indexWhere((element) => element.url == url);
-    ((index != -1) && (index < list.length))
-        ? list[index].progress = progress
-        : null;
+    if (index != -1) {
+      list[index].progress = progress;
+    }
   }
 
   iosRemoveDownload(String url) {
-    list.removeWhere((item) => item.url == url);
+    int index = list.indexWhere((element) => element.url == url);
+    if (index != -1) {
+      list.removeAt(index);
+    }
   }
 
   iosCheckToDownloadNext() {
@@ -152,8 +155,9 @@ class DownloadManager {
   }
 
   DownloadModel? getDownloadIfExist(String url) {
-    for (var downloadModel in list) {
-      if (downloadModel.url == url) return downloadModel;
+    int index = list.indexWhere((element) => element.url == url);
+    if (index != -1) {
+      return list[index];
     }
     return null;
   }

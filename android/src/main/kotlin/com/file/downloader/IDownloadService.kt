@@ -277,10 +277,7 @@ abstract class IDownloadService : Service() {
     }
 
     private fun deleteDownloadFile(tempFilePath: String) {
-        IDownload.DeleteRecursive(
-            this,
-            tempFilePath
-        )
+        IDownload.DeleteRecursive(tempFilePath)
     }
 
     fun sendAdded(
