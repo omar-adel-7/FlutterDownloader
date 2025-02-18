@@ -25,7 +25,6 @@ abstract class IDownloadService : Service() {
     var parallelMainNotificationMessage: String = ""
     var defaultNotificationProgressMessage: String = "downloading : "
     var defaultNotificationCompleteMessage: String = "completed download of : "
-
     var resultReceiver: ResultReceiver? = null
     var lastProgressTime: Long = 0
 
@@ -111,17 +110,6 @@ abstract class IDownloadService : Service() {
                     if (
                         url != null && notificationMessage != null
                     ) {
-                        if (isSerial) {
-                            startForeground( /*FOREGROUND_ID*/notificationId,
-                                getNotificationBuilderOfDownload(
-                                    notificationMessage,notificationProgressMessage
-                                ).build()
-                            )
-                        } else {
-                            startForeground( /*FOREGROUND_ID*/notificationId,
-                                getParallelMainNotificationBuilder().build()
-                            )
-                        }
                         startDownload(
                             url,
                             destDirPath + fileName,
@@ -170,6 +158,18 @@ abstract class IDownloadService : Service() {
     ) {
         downloadModelList.add(DownloadModel(link))
         sendAdded(link)
+        if (isSerial) {
+            if(downloadModelList.size==1){
+                startForeground( /*FOREGROUND_ID*/notificationId,
+                    getNotificationBuilderOfDownload(notificationMessage,
+                        notificationProgressMessage).build()
+                )
+            }
+        } else {
+            startForeground( /*FOREGROUND_ID*/notificationId,
+                getParallelMainNotificationBuilder().build()
+            )
+        }
         val result: Future<*>? = executorService?.submit(Runnable {
             val tempFilePath = filePath + "temp"
             var connection: HttpURLConnection? = null
