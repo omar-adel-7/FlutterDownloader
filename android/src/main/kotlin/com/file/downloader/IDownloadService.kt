@@ -368,8 +368,6 @@ abstract class IDownloadService : Service() {
     }
 
     fun stopThisService() {
-        executorService?.shutdown()
-        executorService?.shutdownNow()
         if (!isSerial) {
             notifyStoppedService()
         }
