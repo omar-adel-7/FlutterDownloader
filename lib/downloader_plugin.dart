@@ -82,13 +82,15 @@ class DownloaderPlugin {
     }
   }
 
-  static downloadFile(
-      {required String url,
-      required String destinationPath,
-      required String fileName,
-      String? notificationMessage,
-      String? notificationProgressMessage,
-      String? notificationCompleteMessage}) {
+  static downloadFile({
+    required String url,
+    required String destinationPath,
+    required String fileName,
+    String? notificationMessage,
+    String? notificationProgressMessage,
+    String? notificationCompleteMessage,
+    bool? androidCancel,
+  }) {
     if (url.isNotEmpty) {
       DownloadManager().downloadFile(
         url: url,
@@ -97,6 +99,7 @@ class DownloaderPlugin {
         notificationMessage: notificationMessage,
         notificationProgressMessage: notificationProgressMessage,
         notificationCompleteMessage: notificationCompleteMessage,
+        androidCancel: androidCancel
       );
     }
   }

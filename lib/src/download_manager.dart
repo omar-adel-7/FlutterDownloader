@@ -16,13 +16,19 @@ class DownloadManager {
 
   List<DownloadModel> list = [];
 
-  downloadFile(
-      {required String url,
-      required String destinationPath,
-      required String fileName,
-      String? notificationMessage,
-      String? notificationProgressMessage,
-      String? notificationCompleteMessage}) {
+  downloadFile({
+    required String url,
+    required String destinationPath,
+    required String fileName,
+    String? notificationMessage,
+    String? notificationProgressMessage,
+    String? notificationCompleteMessage,
+    bool? androidCancel,
+  }) async {
+    if(DownloaderPlugin.isPlatformAndroid() && androidCancel == true){
+      cancelUrlDownload(url);
+      await Future.delayed(const Duration(milliseconds: 1700));
+    }
     if (!isInDownloadList(url)) {
       if (DownloaderPlugin.isPlatformAndroid()) {
         DownloadUtil.startAndroidDownload(
