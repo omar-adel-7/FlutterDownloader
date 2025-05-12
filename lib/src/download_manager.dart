@@ -27,7 +27,7 @@ class DownloadManager {
   }) async {
     if(DownloaderPlugin.isPlatformAndroid() && androidCancel == true){
       cancelUrlDownload(url);
-      await Future.delayed(const Duration(milliseconds: 1800));
+      await Future.delayed(const Duration(milliseconds: 2000));
     }
     if (!isInDownloadList(url)) {
       if (DownloaderPlugin.isPlatformAndroid()) {
