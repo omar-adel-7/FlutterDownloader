@@ -353,13 +353,21 @@ abstract class IDownloadService : Service() {
         checkToStopService()
     }
 
-
     fun delete(url: String) {
+        val thread = Thread {
+            deleteWork(url)
+        }
+        thread.start()
+        thread.join() // Waits for thread to finish
+    }
+
+    fun deleteWork(url: String) {
         runnableResults.remove(url)
         val index = downloadModelList.indexOfFirst { item -> item.url == url }
         if (index != -1)
             downloadModelList.removeAt(index)
     }
+
 
     fun checkToStopService() {
         if (downloadModelList.isEmpty()) {
