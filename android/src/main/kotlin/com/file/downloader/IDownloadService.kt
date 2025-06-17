@@ -392,8 +392,7 @@ abstract class IDownloadService : Service() {
         var downloadModelList: MutableList<DownloadModel> = mutableListOf()
         fun getListData(): String {
             var data = ""
-            val copiedList = downloadModelList.toMutableList()
-//            val copiedList = downloadModelList.map { model: DownloadModel -> model.copy() }
+            val copiedList = downloadModelList.map { it -> it.copy() }
             for (item in copiedList) {
                 data = (data + item.url
                         + DOWNLOADER_LIST_ITEM_INTERNAL_KEY
