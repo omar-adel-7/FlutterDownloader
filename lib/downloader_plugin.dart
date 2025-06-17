@@ -212,6 +212,15 @@ class DownloaderPlugin {
     return false;
   }
 
+  static bool isToBuildByUrl(String url, DownloadStates downloadState) {
+     return  downloadState is DownloadInitialState ||
+         (downloadState is DownloadAddedState && downloadState.url == url) ||
+         (downloadState is DownloadProgressState && downloadState.url == url) ||
+         (downloadState is DownloadCompletedState && downloadState.url == url) ||
+         (downloadState is DownloadFileDeletedState && downloadState.url == url) ||
+         (downloadState is DownloadErrorState && downloadState.url == url);
+  }
+
   static DownloadModel? _getDownloadIfExist(String url) {
     return DownloadManager().getDownloadIfExist(url);
   }
