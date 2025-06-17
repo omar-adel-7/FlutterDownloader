@@ -128,7 +128,11 @@ abstract class IDownloadService : Service() {
                         if (result != null) {
                             if (!result.isDone) {
                                 result.cancel(true)
-                                delete(url)
+                                val thread = Thread {
+                                    delete(url)
+                                }
+                                thread.start()
+                                thread.join() // Waits for thread to finish
                                 notifyCanceled(url)
                                 sendCanceled(url)
                                 checkToStopService()
