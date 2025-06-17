@@ -12,11 +12,5 @@ class DownloadModel(url: String) {
     init {
         this.url = url
     }
-
-     fun copy(): DownloadModel {
-        val copied = DownloadModel(this.url)
-        copied.progress = this.progress
-        return copied
-    }
 }
 
