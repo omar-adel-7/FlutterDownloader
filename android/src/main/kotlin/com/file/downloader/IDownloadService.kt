@@ -38,11 +38,11 @@ abstract class IDownloadService : Service() {
     ): NotificationCompat.Builder
 
     protected abstract fun getNotificationBuilderOfDownload(
-        notificationMessage: String,notificationProgressMessage: String?
+        notificationMessage: String, notificationProgressMessage: String?
     ): NotificationCompat.Builder
 
     protected abstract fun getNotificationBuilderOfCompleteDownload(
-        notificationMessage: String,notificationCompleteMessage: String?
+        notificationMessage: String, notificationCompleteMessage: String?
     ): NotificationCompat.Builder
 
     protected abstract fun onStartCommandCustom(intent: Intent?)
@@ -159,10 +159,12 @@ abstract class IDownloadService : Service() {
         downloadModelList.add(DownloadModel(link))
         sendAdded(link)
         if (isSerial) {
-            if(downloadModelList.size==1){
+            if (downloadModelList.size == 1) {
                 startForeground( /*FOREGROUND_ID*/notificationId,
-                    getNotificationBuilderOfDownload(notificationMessage,
-                        notificationProgressMessage).build()
+                    getNotificationBuilderOfDownload(
+                        notificationMessage,
+                        notificationProgressMessage
+                    ).build()
                 )
             }
         } else {
@@ -191,7 +193,7 @@ abstract class IDownloadService : Service() {
                         link,
                         false,
                         IDownload.RESPONSE_CREATE_FOLDER_ERROR_MESSAGE,
-                        notificationMessage,notificationCompleteMessage
+                        notificationMessage, notificationCompleteMessage
                     )
                     return@Runnable
                 }
@@ -212,7 +214,7 @@ abstract class IDownloadService : Service() {
                     sendSuccessError(
                         link, false,
                         IDownload.RESPONSE_NO_FREE_SPACE_MESSAGE,
-                        notificationMessage,notificationCompleteMessage
+                        notificationMessage, notificationCompleteMessage
                     )
                     return@Runnable
                 }
@@ -247,7 +249,7 @@ abstract class IDownloadService : Service() {
                     tempFile.renameTo(targetFile)
                     sendSuccessError(
                         link, true, null,
-                        notificationMessage,notificationCompleteMessage
+                        notificationMessage, notificationCompleteMessage
                     )
                 } else {
                     deleteDownloadFile(tempFilePath)
@@ -255,11 +257,11 @@ abstract class IDownloadService : Service() {
             } catch (e: Exception) {
                 e.printStackTrace()
                 deleteDownloadFile(tempFilePath)
-                if(e !is InterruptedIOException){
+                if (e !is InterruptedIOException) {
                     sendSuccessError(
                         link, false,
                         IDownload.RESPONSE_CONNECTION_ERROR_MESSAGE,
-                        notificationMessage,notificationCompleteMessage
+                        notificationMessage, notificationCompleteMessage
                     )
                 }
             } finally {
@@ -303,7 +305,7 @@ abstract class IDownloadService : Service() {
         if (time - lastProgressTime >= 1200) {
             updateProgress(url, progress)
             val notificationBuilder = getNotificationBuilderOfDownload(
-                notificationMessage,notificationProgressMessage
+                notificationMessage, notificationProgressMessage
             )
             lastProgressTime = time
             notificationBuilder.setProgress(100, progress, false)
@@ -330,9 +332,14 @@ abstract class IDownloadService : Service() {
     fun sendSuccessError(
         url: String,
         isSuccess: Boolean, errorMessage: String?,
-        notificationMessage: String,notificationCompleteMessage: String?
+        notificationMessage: String, notificationCompleteMessage: String?
     ) {
-        delete(url)
+        val thread = Thread {
+            delete(url)
+        }
+        thread.start()
+        thread.join() // Waits for thread to finish
+
         val message = Bundle()
         message.putString(IDownload.RESPONSE_URL_KEY, url)
         message.putBoolean(IDownload.RESPONSE_SUCCESS_ERROR_KEY, isSuccess)
@@ -345,7 +352,7 @@ abstract class IDownloadService : Service() {
         }
         if (isSuccess) {
             val notificationBuilder = getNotificationBuilderOfCompleteDownload(
-                notificationMessage,notificationCompleteMessage
+                notificationMessage, notificationCompleteMessage
             )
             notifySuccess(url, notificationBuilder.build())
         }
@@ -354,20 +361,11 @@ abstract class IDownloadService : Service() {
     }
 
     fun delete(url: String) {
-        val thread = Thread {
-            deleteWork(url)
-        }
-        thread.start()
-        thread.join() // Waits for thread to finish
-    }
-
-    fun deleteWork(url: String) {
         runnableResults.remove(url)
         val index = downloadModelList.indexOfFirst { item -> item.url == url }
         if (index != -1)
             downloadModelList.removeAt(index)
     }
-
 
     fun checkToStopService() {
         if (downloadModelList.isEmpty()) {
@@ -393,19 +391,21 @@ abstract class IDownloadService : Service() {
             var data = ""
             for (i in 0 until downloadModelList.size) {
                 data = (data + downloadModelList[i].url
-                        +DOWNLOADER_LIST_ITEM_INTERNAL_KEY
-                        +downloadModelList[i].progress
-                        +DOWNLOADER_LIST_DIVIDER_KEY)
+                        + DOWNLOADER_LIST_ITEM_INTERNAL_KEY
+                        + downloadModelList[i].progress
+                        + DOWNLOADER_LIST_DIVIDER_KEY)
             }
             return data
         }
+
         val STATUS_DOWNLOAD_ADDED = "STATUS_DOWNLOAD_ADDED"
         val STATUS_DOWNLOAD_PROGRESS = "STATUS_DOWNLOAD_PROGRESS"
         val STATUS_DOWNLOAD_CANCELED = "STATUS_DOWNLOAD_CANCELED"
         val STATUS_DOWNLOAD_COMPLETED = "STATUS_DOWNLOAD_COMPLETED"
         val STATUS_DOWNLOAD_ERROR = "STATUS_DOWNLOAD_ERROR"
         val DOWNLOADER_LIST_ITEM_INTERNAL_KEY = "downloader-internal"
-        val DOWNLOADER_LIST_DIVIDER_KEY = "downloader-divider" }
+        val DOWNLOADER_LIST_DIVIDER_KEY = "downloader-divider"
+    }
 
 
 }
