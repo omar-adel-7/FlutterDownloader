@@ -392,10 +392,10 @@ abstract class IDownloadService : Service() {
         var downloadModelList: MutableList<DownloadModel> = mutableListOf()
         fun getListData(): String {
             var data = ""
-            for (i in 0 until downloadModelList.size) {
-                data = (data + downloadModelList[i].url
+            for (item in downloadModelList) {
+                data = (data + item.url
                         + DOWNLOADER_LIST_ITEM_INTERNAL_KEY
-                        + downloadModelList[i].progress
+                        + item.progress
                         + DOWNLOADER_LIST_DIVIDER_KEY)
             }
             return data
