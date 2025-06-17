@@ -128,7 +128,11 @@ abstract class IDownloadService : Service() {
                         if (result != null) {
                             if (!result.isDone) {
                                 result.cancel(true)
-                                delete(url)
+                                val thread = Thread {
+                                    delete(url)
+                                }
+                                thread.start()
+                                thread.join() // Waits for thread to finish
                                 notifyCanceled(url)
                                 sendCanceled(url)
                                 checkToStopService()
@@ -334,7 +338,11 @@ abstract class IDownloadService : Service() {
         isSuccess: Boolean, errorMessage: String?,
         notificationMessage: String, notificationCompleteMessage: String?
     ) {
-        delete(url)
+        val thread = Thread {
+            delete(url)
+        }
+        thread.start()
+        thread.join() // Waits for thread to finish
         val message = Bundle()
         message.putString(IDownload.RESPONSE_URL_KEY, url)
         message.putBoolean(IDownload.RESPONSE_SUCCESS_ERROR_KEY, isSuccess)
