@@ -343,7 +343,6 @@ abstract class IDownloadService : Service() {
         }
         thread.start()
         thread.join() // Waits for thread to finish
-
         val message = Bundle()
         message.putString(IDownload.RESPONSE_URL_KEY, url)
         message.putBoolean(IDownload.RESPONSE_SUCCESS_ERROR_KEY, isSuccess)
