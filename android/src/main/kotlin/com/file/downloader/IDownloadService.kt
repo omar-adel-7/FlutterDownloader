@@ -17,6 +17,7 @@ import java.util.concurrent.Future
 import kotlin.String
 
 import android.content.SharedPreferences
+import java.util.concurrent.CopyOnWriteArrayList
 
 abstract class IDownloadService : Service() {
     var prefs: SharedPreferences? = null
@@ -389,10 +390,10 @@ abstract class IDownloadService : Service() {
     }
 
     companion object {
-        var downloadModelList: MutableList<DownloadModel> = mutableListOf()
+        val downloadModelList = CopyOnWriteArrayList(mutableListOf<DownloadModel>())
+
         fun getListData(): String {
             var data = ""
-
             for (i in 0 until downloadModelList.size) {
                 data = (data + downloadModelList[i].url
                         +DOWNLOADER_LIST_ITEM_INTERNAL_KEY
