@@ -390,23 +390,25 @@ abstract class IDownloadService : Service() {
     }
 
     companion object {
+
         val downloadModelList = CopyOnWriteArrayList(mutableListOf<DownloadModel>())
 
         fun getListData(): String {
             var data = ""
-            for (i in 0 until downloadModelList.size) {
-                data = (data + downloadModelList[i].url
+
+//            for (i in 0 until downloadModelList.size) {
+//                data = (data + downloadModelList[i].url
+//                        +DOWNLOADER_LIST_ITEM_INTERNAL_KEY
+//                        +downloadModelList[i].progress
+//                        +DOWNLOADER_LIST_DIVIDER_KEY)
+//            }
+
+            for (item in downloadModelList) {
+                data = (data + item.url
                         +DOWNLOADER_LIST_ITEM_INTERNAL_KEY
-                        +downloadModelList[i].progress
+                        +item.progress
                         +DOWNLOADER_LIST_DIVIDER_KEY)
             }
-//            val copiedList = downloadModelList.toList()
-//            for (item in copiedList) {
-//                data = (data + item.url
-//                        + DOWNLOADER_LIST_ITEM_INTERNAL_KEY
-//                        + item.progress
-//                        + DOWNLOADER_LIST_DIVIDER_KEY)
-//            }
             return data
         }
 
