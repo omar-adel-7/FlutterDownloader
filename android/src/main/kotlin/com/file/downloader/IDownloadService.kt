@@ -251,6 +251,9 @@ abstract class IDownloadService : Service() {
                 if (!Thread.currentThread().isInterrupted) {
                     val tempFile = File(tempFilePath)
                     val targetFile = File(filePath)
+                    if (targetFile.exists()) {
+                        targetFile.delete()
+                    }
                     tempFile.renameTo(targetFile)
                     sendSuccessError(
                         link, true, null,
@@ -405,9 +408,9 @@ abstract class IDownloadService : Service() {
 
             for (item in downloadModelList) {
                 data = (data + item.url
-                        +DOWNLOADER_LIST_ITEM_INTERNAL_KEY
-                        +item.progress
-                        +DOWNLOADER_LIST_DIVIDER_KEY)
+                        + DOWNLOADER_LIST_ITEM_INTERNAL_KEY
+                        + item.progress
+                        + DOWNLOADER_LIST_DIVIDER_KEY)
             }
             return data
         }
