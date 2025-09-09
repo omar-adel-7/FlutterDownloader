@@ -251,7 +251,7 @@ abstract class IDownloadService : Service() {
                 if (!Thread.currentThread().isInterrupted) {
                     val tempFile = File(tempFilePath)
                     val targetFile = File(filePath)
-                    if (targetFile.exists()) {
+                    if (IDownload.isFileExist(targetFile)) {
                         targetFile.delete()
                     }
                     tempFile.renameTo(targetFile)

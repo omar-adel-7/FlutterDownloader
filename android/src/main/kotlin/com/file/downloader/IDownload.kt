@@ -51,10 +51,10 @@ object IDownload {
         return downloadEvent
     }
 
-    fun DeleteRecursive(path: String?) {
+    fun DeleteRecursive(path: String) {
         try {
-            val fileOrDirectory = path?.let { File(it) }
-            if (fileOrDirectory?.exists() == true) {
+            val fileOrDirectory = File(path)
+            if (isFileExist(fileOrDirectory)) {
                 if (fileOrDirectory.isDirectory) for (child in fileOrDirectory.listFiles()!!) DeleteRecursive(
                     child.absolutePath
                 )
@@ -68,9 +68,9 @@ object IDownload {
         return filePath.substring(0, filePath.lastIndexOf(File.separator))
     }
 
-    fun createFolderIfNotExists(folderPath: String?): Boolean {
+    fun createFolderIfNotExists(folderPath: String): Boolean {
         val folder = File(folderPath)
-        return if (!folder.exists()) {
+        return if (!isFileExist(folder)) {
             folder.mkdirs()
         } else {
             true
@@ -82,11 +82,13 @@ object IDownload {
         return stat.blockSizeLong * stat.availableBlocksLong
     }
 
-    fun isFileExist(path: String?): Boolean {
+    fun isFilePathExist(path: String): Boolean {
         val file = File(path)
         return file.exists()
     }
-
+    fun isFileExist(file: File): Boolean {
+        return file.exists()
+    }
     class DownloadEvent {
         var url: String? = null
         var status: String? = null
