@@ -285,7 +285,7 @@ abstract class IDownloadService : Service() {
                 }
             }
         })
-        runnableResults.put(link, result)
+        runnableResults[link] = result
     }
 
     private fun deleteDownloadFile(tempFilePath: String) {
@@ -393,8 +393,7 @@ abstract class IDownloadService : Service() {
     }
 
     companion object {
-
-        val downloadModelList = CopyOnWriteArrayList(mutableListOf<DownloadModel>())
+        val downloadModelList = CopyOnWriteArrayList<DownloadModel>()
 
         fun getListData(): String {
             var data = ""
