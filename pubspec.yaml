@@ -11,14 +11,14 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
-  path: ^1.9.0
+  path: ^1.9.1
   shared_preferences: ^2.5.3
-  flutter_local_notifications: ^19.2.1 #for ios only
+  flutter_local_notifications: ^19.5.0 #for ios only
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

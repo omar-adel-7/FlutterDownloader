@@ -16,8 +16,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  fluttertoast: ^8.2.12
-  permission_handler: ^12.0.0+1
+  fluttertoast: ^9.0.0
+  permission_handler: ^12.0.1
 
   downloader:
     # When depending on this package from a real application you should use:
@@ -43,7 +43,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
