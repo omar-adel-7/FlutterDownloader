@@ -399,13 +399,6 @@ abstract class IDownloadService : Service() {
         fun getListData(): String {
             var data = ""
 
-//            for (i in 0 until downloadModelList.size) {
-//                data = (data + downloadModelList[i].url
-//                        +DOWNLOADER_LIST_ITEM_INTERNAL_KEY
-//                        +downloadModelList[i].progress
-//                        +DOWNLOADER_LIST_DIVIDER_KEY)
-//            }
-
             for (item in downloadModelList) {
                 data = (data + item.url
                         + DOWNLOADER_LIST_ITEM_INTERNAL_KEY
