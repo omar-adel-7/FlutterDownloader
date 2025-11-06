@@ -71,7 +71,7 @@ class _MyAppState extends State<MyApp> {
     // );
   }
 
-  getMaterialApp() {
+  MaterialApp getMaterialApp() {
 
     String url1 = "https://server8.mp3quran.net/frs_a/014.mp3";
     String url2 = "https://server8.mp3quran.net/frs_a/018.mp3";
