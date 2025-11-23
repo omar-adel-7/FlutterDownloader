@@ -31,7 +31,7 @@ class DownloaderPlugin {
   static const String ANDROID_DOWNLOADER_LIST_DIVIDER_KEY =
       "downloader-divider";
 
-  static init(DownloadCubit downloadCubit,
+  static void init(DownloadCubit downloadCubit,
       {bool? is_serial,
       bool? show_ios_notifications,
       String? android_parallel_main_notification_message,
@@ -60,7 +60,7 @@ class DownloaderPlugin {
     }
   }
 
-  static initNotificationStrings(
+  static void initNotificationStrings(
       {String? android_parallel_main_notification_message,
       String? notification_progress_message,
       String? notification_complete_message}) async {
@@ -82,7 +82,7 @@ class DownloaderPlugin {
     }
   }
 
-  static downloadFile({
+  static void downloadFile({
     required String url,
     required String destinationPath,
     required String fileName,
@@ -93,14 +93,13 @@ class DownloaderPlugin {
   }) {
     if (url.isNotEmpty) {
       DownloadManager().downloadFile(
-        url: url,
-        destinationPath: destinationPath,
-        fileName: fileName,
-        notificationMessage: notificationMessage,
-        notificationProgressMessage: notificationProgressMessage,
-        notificationCompleteMessage: notificationCompleteMessage,
-        androidCancel: androidCancel
-      );
+          url: url,
+          destinationPath: destinationPath,
+          fileName: fileName,
+          notificationMessage: notificationMessage,
+          notificationProgressMessage: notificationProgressMessage,
+          notificationCompleteMessage: notificationCompleteMessage,
+          androidCancel: androidCancel);
     }
   }
 
@@ -150,14 +149,14 @@ class DownloaderPlugin {
 
   static Future deleteDownloadedFileAsyncByArgs(
       DownloadArgs downloadArgs) async {
-    downloadArgs.deleteDownloadedFileAsync();
+    return downloadArgs.deleteDownloadedFileAsync();
   }
 
-  static cancelDownloadFile(String url) {
+  static void cancelDownloadFile(String url) {
     DownloadManager().cancelUrlDownload(url);
   }
 
-  static cancelDownloadMultiFiles(List<String> urlsList) {
+  static void cancelDownloadMultiFiles(List<String> urlsList) {
     DownloadManager().cancelMultiUrlsDownload(urlsList);
   }
 
@@ -173,7 +172,7 @@ class DownloaderPlugin {
     return DownloadManager().isDownloadsNotEmpty();
   }
 
-  static clearDownloadsList() {
+  static void clearDownloadsList() {
     DownloadManager().clearDownloadsList();
   }
 
@@ -213,12 +212,13 @@ class DownloaderPlugin {
   }
 
   static bool isToBuildByUrl(String url, DownloadStates downloadState) {
-     return  downloadState is DownloadInitialState ||
-         (downloadState is DownloadAddedState && downloadState.url == url) ||
-         (downloadState is DownloadProgressState && downloadState.url == url) ||
-         (downloadState is DownloadCompletedState && downloadState.url == url) ||
-         (downloadState is DownloadFileDeletedState && downloadState.url == url) ||
-         (downloadState is DownloadErrorState && downloadState.url == url);
+    return downloadState is DownloadInitialState ||
+        (downloadState is DownloadAddedState && downloadState.url == url) ||
+        (downloadState is DownloadProgressState && downloadState.url == url) ||
+        (downloadState is DownloadCompletedState && downloadState.url == url) ||
+        (downloadState is DownloadFileDeletedState &&
+            downloadState.url == url) ||
+        (downloadState is DownloadErrorState && downloadState.url == url);
   }
 
   static DownloadModel? _getDownloadIfExist(String url) {

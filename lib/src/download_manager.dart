@@ -16,7 +16,7 @@ class DownloadManager {
 
   List<DownloadModel> list = [];
 
-  downloadFile({
+  void downloadFile({
     required String url,
     required String destinationPath,
     required String fileName,
@@ -25,7 +25,7 @@ class DownloadManager {
     String? notificationCompleteMessage,
     bool? androidCancel,
   }) async {
-    if(DownloaderPlugin.isPlatformAndroid() && androidCancel == true){
+    if (DownloaderPlugin.isPlatformAndroid() && androidCancel == true) {
       cancelUrlDownload(url);
       await Future.delayed(const Duration(milliseconds: 2000));
     }
@@ -61,7 +61,7 @@ class DownloadManager {
     }
   }
 
-  cancelUrlDownload(String url) {
+  void cancelUrlDownload(String url) {
     DownloadModel? downloadModel = getDownloadIfExist(url);
     if (downloadModel != null) {
       DownloadUtil.cancelUrlDownload(url);
@@ -83,7 +83,7 @@ class DownloadManager {
     }
   }
 
-  cancelMultiUrlsDownload(List<String> urlsList) {
+  void cancelMultiUrlsDownload(List<String> urlsList) {
     bool foundCurrentlyDownloadingLink = false;
     for (String url in urlsList) {
       DownloadModel? downloadModel = getDownloadIfExist(url);
@@ -111,7 +111,7 @@ class DownloadManager {
     }
   }
 
-  getAndroidList(String? listData) {
+  void getAndroidList(String? listData) {
     list.clear();
     if (listData?.isNotEmpty == true) {
       List<String> tempList = listData
@@ -128,21 +128,21 @@ class DownloadManager {
     }
   }
 
-  updateIosProgress(String url, int progress) {
+  void updateIosProgress(String url, int progress) {
     int index = list.indexWhere((element) => element.url == url);
     if (index != -1) {
       list[index].progress = progress;
     }
   }
 
-  iosRemoveDownload(String url) {
+  void iosRemoveDownload(String url) {
     int index = list.indexWhere((element) => element.url == url);
     if (index != -1) {
       list.removeAt(index);
     }
   }
 
-  iosCheckToDownloadNext() {
+  void iosCheckToDownloadNext() {
     if (isDownloadsNotEmpty()) {
       DownloadModel downloadModel = list[0];
       DownloadUtil.startIosDownload(
@@ -179,7 +179,7 @@ class DownloadManager {
     return list.length;
   }
 
-  clearDownloadsList() {
+  void clearDownloadsList() {
     list.clear();
   }
 }

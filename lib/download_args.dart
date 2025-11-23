@@ -31,14 +31,14 @@ class DownloadArgs {
     this.onDeleted,
   });
 
-  updateIsDownloadedWork([bool? value]) {
+  void updateIsDownloadedWork([bool? value]) {
     if (updateIsDownloaded != null) {
       value = value ?? DownloaderPlugin.isFileByArgsExist(this);
       updateIsDownloaded!(value);
     }
   }
 
-  baseCompletedListen(String url, DownloadStates downloadState) {
+  void baseCompletedListen(String url, DownloadStates downloadState) {
     if(downloadState is DownloadCompletedState &&
         downloadState.url == url &&
         DownloaderPlugin.isFileByArgsExist(this))
