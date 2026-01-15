@@ -67,9 +67,9 @@ class AndroidDownloadMethodChannel {
     }
   }
 
-  downloadFile({
+  void downloadFile({
     required String url,
-    required String destinationDirPath,
+    required String destinationPath,
     required String fileName,
     String? notificationMessage,
     String? notificationProgressMessage,
@@ -78,7 +78,7 @@ class AndroidDownloadMethodChannel {
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
       'url': url,
-      'destinationDirPath': destinationDirPath,
+      'destinationPath': destinationPath,
       'fileName': fileName,
       'notificationMessage': notificationMessage ?? fileName,
       'notificationProgressMessage': notificationProgressMessage,
@@ -87,13 +87,13 @@ class AndroidDownloadMethodChannel {
     _channelMethod?.invokeMethod(_androidStart, argsMap);
   }
 
-  cancelDownloadFile(String url) {
+  void cancelDownloadFile(String url) {
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({'url': url});
     _channelMethod?.invokeMethod(_androidCancelSingle, argsMap);
   }
 
-  cancelDownloads() {
+  void cancelDownloads() {
     _channelMethod?.invokeMethod(_androidCancelAll);
   }
 }

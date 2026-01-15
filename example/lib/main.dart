@@ -94,12 +94,12 @@ class _MyAppState extends State<MyApp> {
                 ),
                 onTap: () async {
                   String url = url1;
-                  String destinationDirPath = await getDestination();
+                  String destinationPath = await getDestination();
                   String fileName =
                       "test File 1 Name'with'apostrophe ' and comma, ,.mp3";
                   DownloaderPlugin.downloadFile(
                     url: url,
-                    destinationPath: destinationDirPath,
+                    destinationPath: destinationPath,
                     fileName: fileName,
                     notificationMessage: "test 1 notificationMessage",
                     notificationProgressMessage:
@@ -176,12 +176,12 @@ class _MyAppState extends State<MyApp> {
                 ),
                 onTap: () async {
                   String url = url2;
-                  String destinationDirPath = await getDestination();
+                  String destinationPath = await getDestination();
                   String fileName =
                       "test File 2 Name'with'apostrophe ' and comma, ,.mp3";
                   DownloaderPlugin.downloadFile(
                     url: url,
-                    destinationPath: destinationDirPath,
+                    destinationPath: destinationPath,
                     fileName: fileName,
                     notificationMessage: "test 2 notificationMessage",
                     //  notificationProgressMessage:

@@ -8,7 +8,7 @@ import 'cubit/download_state.dart';
 
 class DownloadArgs {
   final String downloadLink;
-  final String destinationDirPath;
+  final String destinationPath;
   final String fileName;
   String? notificationMessage;
   String? notificationProgressMessage;
@@ -17,11 +17,11 @@ class DownloadArgs {
   void Function(String)? onCompleted;
   void Function()? onDeleted;
 
-  String get filePath => join(destinationDirPath, fileName);
+  String get filePath => join(destinationPath, fileName);
 
   DownloadArgs({
     required this.downloadLink,
-    required this.destinationDirPath,
+    required this.destinationPath,
     required this.fileName,
     this.notificationMessage,
     this.notificationProgressMessage,

@@ -60,7 +60,7 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         if (call.method.equals(CHANNEL_DOWNLOAD_START)) {
             val argsMap = call.arguments as HashMap<*, *>
             val url = argsMap["url"] as String
-            val destinationDirPath = argsMap["destinationDirPath"] as String
+            val destinationPath = argsMap["destinationPath"] as String
             val fileName = argsMap["fileName"] as String
             val notificationMessage = argsMap["notificationMessage"] as String
             val notificationProgressMessage = argsMap["notificationProgressMessage"] as String?
@@ -71,7 +71,7 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     R.string.download_ACTION_START
                 )
                 intent.putExtra(IDownload.SRC_URL_KEY, url)
-                intent.putExtra(IDownload.SRC_DEST_DIR_PATH_KEY, destinationDirPath)
+                intent.putExtra(IDownload.SRC_DEST_DIR_PATH_KEY, destinationPath)
                 intent.putExtra(
                     IDownload.SRC_FILE_NAME_KEY,
                     fileName

@@ -29,7 +29,7 @@ class IOSDownloadMethodChannel {
   Map<String, int> notificationsMap = {};
   int notificationId = 0;
 
-  init(DownloadCubit downloadCubit) {
+  void init(DownloadCubit downloadCubit) {
     _channelMethod = const MethodChannel(_iOSDownloadChannelName);
     _channelMethod?.setMethodCallHandler(methodHandler);
     this.downloadCubit = downloadCubit;
@@ -104,26 +104,26 @@ class IOSDownloadMethodChannel {
     }
   }
 
-  downloadFile(
+  void downloadFile(
       {required String url,
-      required String destinationDirPath,
+      required String destinationPath,
       required String fileName}) {
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({
       'url': url,
-      'destinationPath': destinationDirPath,
+      'destinationPath': destinationPath,
       'fileName': fileName
     });
     _channelMethod?.invokeMethod(_iOSStart, argsMap);
   }
 
-  cancelDownloadFile(String url) {
+  void cancelDownloadFile(String url) {
     Map argsMap = <dynamic, dynamic>{};
     argsMap.addAll({'url': url});
     _channelMethod?.invokeMethod(_iosCancelSingle, argsMap);
   }
 
-  cancelDownloads() {
+  void cancelDownloads() {
     _channelMethod?.invokeMethod(_iosCancelAll);
   }
 }

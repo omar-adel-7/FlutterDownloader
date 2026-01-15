@@ -17,7 +17,7 @@ class DownloadUtil {
       destinationPath = destinationPath + pathSeparator;
     }
       AndroidDownloadMethodChannel.instance.downloadFile( url: url,
-          destinationDirPath: destinationPath,
+          destinationPath: destinationPath,
           fileName: fileName,
           notificationMessage: notificationMessage ,
           notificationProgressMessage: notificationProgressMessage ,
@@ -33,7 +33,7 @@ class DownloadUtil {
       destinationPath = destinationPath + pathSeparator;
     }
       IOSDownloadMethodChannel.instance.downloadFile(
-          url: url, destinationDirPath: destinationPath, fileName: fileName);
+          url: url, destinationPath: destinationPath, fileName: fileName);
   }
 
   static void cancelUrlDownload(String url) {

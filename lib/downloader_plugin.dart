@@ -106,7 +106,7 @@ class DownloaderPlugin {
   static void downloadFileByArgs(DownloadArgs downloadArgs) {
     downloadFile(
         url: downloadArgs.downloadLink,
-        destinationPath: downloadArgs.destinationDirPath,
+        destinationPath: downloadArgs.destinationPath,
         fileName: downloadArgs.fileName,
         notificationMessage: downloadArgs.notificationMessage,
         notificationProgressMessage: downloadArgs.notificationProgressMessage,
@@ -114,16 +114,16 @@ class DownloaderPlugin {
   }
 
   static bool isFileExist({
-    required String destinationDirPath,
+    required String destinationPath,
     required String fileName,
   }) {
-    String path = join(destinationDirPath, fileName);
+    String path = join(destinationPath, fileName);
     return File(path).existsSync();
   }
 
   static bool isFileByArgsExist(DownloadArgs downloadArgs) {
     return isFileExist(
-      destinationDirPath: downloadArgs.destinationDirPath,
+      destinationPath: downloadArgs.destinationPath,
       fileName: downloadArgs.fileName,
     );
   }
@@ -193,11 +193,11 @@ class DownloaderPlugin {
   }
 
   static bool isUrlDownloaded(String url, DownloadStates downloadState,
-      {String? destinationDirPath, String? fileName}) {
-    bool checkFile = (destinationDirPath != null) && (fileName != null);
+      {String? destinationPath, String? fileName}) {
+    bool checkFile = (destinationPath != null) && (fileName != null);
     if (checkFile) {
       bool checkFileResult = isFileExist(
-          destinationDirPath: destinationDirPath, fileName: fileName);
+          destinationPath: destinationPath, fileName: fileName);
       if (checkFileResult &&
           downloadState is DownloadCompletedState &&
           downloadState.url == url) {
