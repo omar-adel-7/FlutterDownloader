@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.ResultReceiver
 import androidx.annotation.NonNull
+import androidx.core.content.ContextCompat
 import com.file.downloader.IDownloadService.Companion.STATUS_DOWNLOAD_ADDED
 import com.file.downloader.IDownloadService.Companion.STATUS_DOWNLOAD_CANCELED
 import com.file.downloader.IDownloadService.Companion.STATUS_DOWNLOAD_COMPLETED
@@ -128,7 +129,9 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                             }
                         }
                     })
-                context.startService(intent)
+                ContextCompat.startForegroundService(
+                    context.applicationContext, intent
+                )
             }
         } else if (call.method.equals(CHANNEL_CANCEL_SINGLE)) {
             val argsMap = call.arguments as HashMap<*, *>
