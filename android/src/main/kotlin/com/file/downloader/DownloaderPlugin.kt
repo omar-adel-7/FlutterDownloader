@@ -148,13 +148,13 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
 
     override fun onDetachedFromActivity() {
-        context = null
-        methodChannel?.setMethodCallHandler(null)
-        methodChannel = null
     }
 
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        context = null
+        methodChannel?.setMethodCallHandler(null)
+        methodChannel = null
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
