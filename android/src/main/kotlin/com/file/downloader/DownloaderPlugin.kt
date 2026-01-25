@@ -38,9 +38,8 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private var context: Context? = null
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        flutterPluginBinding = binding
         if(methodChannel==null){
-            initPlugin(flutterPluginBinding.binaryMessenger)
+            initPlugin(binding.binaryMessenger)
         }
         context = binding.applicationContext
         methodChannel?.invokeMethod(
@@ -143,7 +142,6 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        initPlugin(flutterPluginBinding.binaryMessenger)
     }
 
 
@@ -165,7 +163,6 @@ class DownloaderPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     companion object {
         private var methodChannel: MethodChannel? = null
-        private lateinit var flutterPluginBinding: FlutterPlugin.FlutterPluginBinding
     }
 
 
